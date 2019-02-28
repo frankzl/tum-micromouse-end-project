@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=initIO.c main.c motorFunctions.c pwm1Functions.c qeiFunctions.c timer1Functions.c uartFunctions.c
+SOURCEFILES_QUOTED_IF_SPACED=initIO.c main.c motorFunctions.c pwm1Functions.c qeiFunctions.c timer1Functions.c uartFunctions.c pidFunctions.c stateFunctions.c dmaFunctions.c adcFunctions.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/initIO.o ${OBJECTDIR}/main.o ${OBJECTDIR}/motorFunctions.o ${OBJECTDIR}/pwm1Functions.o ${OBJECTDIR}/qeiFunctions.o ${OBJECTDIR}/timer1Functions.o ${OBJECTDIR}/uartFunctions.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/initIO.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/motorFunctions.o.d ${OBJECTDIR}/pwm1Functions.o.d ${OBJECTDIR}/qeiFunctions.o.d ${OBJECTDIR}/timer1Functions.o.d ${OBJECTDIR}/uartFunctions.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/initIO.o ${OBJECTDIR}/main.o ${OBJECTDIR}/motorFunctions.o ${OBJECTDIR}/pwm1Functions.o ${OBJECTDIR}/qeiFunctions.o ${OBJECTDIR}/timer1Functions.o ${OBJECTDIR}/uartFunctions.o ${OBJECTDIR}/pidFunctions.o ${OBJECTDIR}/stateFunctions.o ${OBJECTDIR}/dmaFunctions.o ${OBJECTDIR}/adcFunctions.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/initIO.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/motorFunctions.o.d ${OBJECTDIR}/pwm1Functions.o.d ${OBJECTDIR}/qeiFunctions.o.d ${OBJECTDIR}/timer1Functions.o.d ${OBJECTDIR}/uartFunctions.o.d ${OBJECTDIR}/pidFunctions.o.d ${OBJECTDIR}/stateFunctions.o.d ${OBJECTDIR}/dmaFunctions.o.d ${OBJECTDIR}/adcFunctions.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/initIO.o ${OBJECTDIR}/main.o ${OBJECTDIR}/motorFunctions.o ${OBJECTDIR}/pwm1Functions.o ${OBJECTDIR}/qeiFunctions.o ${OBJECTDIR}/timer1Functions.o ${OBJECTDIR}/uartFunctions.o
+OBJECTFILES=${OBJECTDIR}/initIO.o ${OBJECTDIR}/main.o ${OBJECTDIR}/motorFunctions.o ${OBJECTDIR}/pwm1Functions.o ${OBJECTDIR}/qeiFunctions.o ${OBJECTDIR}/timer1Functions.o ${OBJECTDIR}/uartFunctions.o ${OBJECTDIR}/pidFunctions.o ${OBJECTDIR}/stateFunctions.o ${OBJECTDIR}/dmaFunctions.o ${OBJECTDIR}/adcFunctions.o
 
 # Source Files
-SOURCEFILES=initIO.c main.c motorFunctions.c pwm1Functions.c qeiFunctions.c timer1Functions.c uartFunctions.c
+SOURCEFILES=initIO.c main.c motorFunctions.c pwm1Functions.c qeiFunctions.c timer1Functions.c uartFunctions.c pidFunctions.c stateFunctions.c dmaFunctions.c adcFunctions.c
 
 
 CFLAGS=
@@ -143,6 +143,34 @@ ${OBJECTDIR}/uartFunctions.o: uartFunctions.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uartFunctions.c  -o ${OBJECTDIR}/uartFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/uartFunctions.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/uartFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/pidFunctions.o: pidFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pidFunctions.o.d 
+	@${RM} ${OBJECTDIR}/pidFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  pidFunctions.c  -o ${OBJECTDIR}/pidFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pidFunctions.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/pidFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/stateFunctions.o: stateFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/stateFunctions.o.d 
+	@${RM} ${OBJECTDIR}/stateFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  stateFunctions.c  -o ${OBJECTDIR}/stateFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/stateFunctions.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/stateFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/dmaFunctions.o: dmaFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/dmaFunctions.o.d 
+	@${RM} ${OBJECTDIR}/dmaFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  dmaFunctions.c  -o ${OBJECTDIR}/dmaFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/dmaFunctions.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/dmaFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/adcFunctions.o: adcFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adcFunctions.o.d 
+	@${RM} ${OBJECTDIR}/adcFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  adcFunctions.c  -o ${OBJECTDIR}/adcFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/adcFunctions.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1    -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/adcFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/initIO.o: initIO.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -192,6 +220,34 @@ ${OBJECTDIR}/uartFunctions.o: uartFunctions.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/uartFunctions.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  uartFunctions.c  -o ${OBJECTDIR}/uartFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/uartFunctions.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/uartFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/pidFunctions.o: pidFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pidFunctions.o.d 
+	@${RM} ${OBJECTDIR}/pidFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  pidFunctions.c  -o ${OBJECTDIR}/pidFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pidFunctions.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/pidFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/stateFunctions.o: stateFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/stateFunctions.o.d 
+	@${RM} ${OBJECTDIR}/stateFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  stateFunctions.c  -o ${OBJECTDIR}/stateFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/stateFunctions.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/stateFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/dmaFunctions.o: dmaFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/dmaFunctions.o.d 
+	@${RM} ${OBJECTDIR}/dmaFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  dmaFunctions.c  -o ${OBJECTDIR}/dmaFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/dmaFunctions.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/dmaFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/adcFunctions.o: adcFunctions.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/adcFunctions.o.d 
+	@${RM} ${OBJECTDIR}/adcFunctions.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  adcFunctions.c  -o ${OBJECTDIR}/adcFunctions.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/adcFunctions.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/adcFunctions.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

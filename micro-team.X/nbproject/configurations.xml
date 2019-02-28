@@ -10,6 +10,10 @@
       <itemPath>qeiFunctions.h</itemPath>
       <itemPath>timer1Functions.h</itemPath>
       <itemPath>uartFunctions.h</itemPath>
+      <itemPath>pidFunctions.h</itemPath>
+      <itemPath>stateFunctions.h</itemPath>
+      <itemPath>dmaFunctions.h</itemPath>
+      <itemPath>adcFunctions.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -25,6 +29,10 @@
       <itemPath>qeiFunctions.c</itemPath>
       <itemPath>timer1Functions.c</itemPath>
       <itemPath>uartFunctions.c</itemPath>
+      <itemPath>pidFunctions.c</itemPath>
+      <itemPath>stateFunctions.c</itemPath>
+      <itemPath>dmaFunctions.c</itemPath>
+      <itemPath>adcFunctions.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
