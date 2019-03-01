@@ -14,6 +14,7 @@
       <itemPath>stateFunctions.h</itemPath>
       <itemPath>dmaFunctions.h</itemPath>
       <itemPath>adcFunctions.h</itemPath>
+      <itemPath>driverFunction.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -33,6 +34,7 @@
       <itemPath>stateFunctions.c</itemPath>
       <itemPath>dmaFunctions.c</itemPath>
       <itemPath>adcFunctions.c</itemPath>
+      <itemPath>driverFunctions.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
