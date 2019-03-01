@@ -3,8 +3,9 @@
 #include "initIO.h"
 #include "motorFunctions.h"
 
-unsigned int adcData[32]__attribute__((space(dma)));
+unsigned int adcData[32]__attribute__((space(dma))); //Map the ADC values to DMA space
 
+//Initialize DMA
 void initDmaChannel4(void)
 {
 
@@ -35,6 +36,7 @@ int* getDistance(){
     return 0;
 }
 
+// Triggered when we get the 3 values from our sensors
 void __attribute__((interrupt, auto_psv)) _DMA4Interrupt(void)
 {
  IFS2bits.DMA4IF   = 0; // Clear DMA interrupt
