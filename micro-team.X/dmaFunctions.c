@@ -31,6 +31,10 @@ void initDmaChannel4(void)
  DMA4CONbits.CHEN  = 1; // enable channel
 }
 
+int* getDistance(){
+    return 0;
+}
+
 void __attribute__((interrupt, auto_psv)) _DMA4Interrupt(void)
 {
  IFS2bits.DMA4IF   = 0; // Clear DMA interrupt
