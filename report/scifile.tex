@@ -9,6 +9,7 @@
 % reference calls and reference-list numbers.
 
 \usepackage{scicite}
+\usepackage{graphicx}
 
 % Use times if you have the font installed; otherwise, comment out the
 % following line.
@@ -41,29 +42,13 @@
 % If your reference list includes text notes as well as references,
 % include the following line; otherwise, comment it out.
 
-\renewcommand\refname{References and Notes}
-
-% The following lines set up an environment for the last note in the
-% reference list, which commonly includes acknowledgments of funding,
-% help, etc.  It's intended for users of BibTeX or the {thebibliography}
-% environment.  Users who are hand-coding their references at the end
-% using a list environment such as {enumerate} can simply add another
-% item at the end, and it will be numbered automatically.
-
-\newcounter{lastnote}
-\newenvironment{scilastnote}{%
-\setcounter{lastnote}{\value{enumiv}}%
-\addtocounter{lastnote}{+1}%
-\begin{list}%
-{\arabic{lastnote}.}
-{\setlength{\leftmargin}{.22in}}
-{\setlength{\labelsep}{.5em}}}
-{\end{list}}
+%\renewcommand\refname{References and Notes}
 
 
 % Include your paper's title here
 
-\title{A simple {\it Science\/} Template} 
+\title{Micromouse: Designing an Educational Racing-Robot from Scratch \\Report} 
+
 
 
 % Place the author information here.  Please hand-code the contact
@@ -72,14 +57,14 @@
 % as shown.  We would also prefer that you don't change the type-size
 % settings shown here.
 
+% I think we should organize our names alphabetically
 \author
-{John Smith,$^{1\ast}$ Jane Doe,$^{1}$ Joe Scientist$^{2}$\\
+{Natalia Poliakova,$^{1}$ Autor 2,$^{2}$, Autor 3$^{3}$, Autor 4, $^{4}$ Autor 5, $^{5}$ Autor 6 $^{6}$\\
 \\
-\normalsize{$^{1}$Department of Chemistry, University of Wherever,}\\
+\normalsize{$^{1}$Department of Informatics, Technical University of Munich}\\
 \normalsize{An Unknown Address, Wherever, ST 00000, USA}\\
 \normalsize{$^{2}$Another Unknown Address, Palookaville, ST 99999, USA}\\
 \\
-\normalsize{$^\ast$To whom correspondence should be addressed; E-mail:  jsmith@wherever.edu.}
 }
 
 % Include the date command, but leave its argument blank.
@@ -107,14 +92,8 @@
 % Place your abstract within the special {sciabstract} environment.
 
 \begin{sciabstract}
-  This document presents a number of hints about how to set up your
-  {\it Science\/} paper in \LaTeX\ .  We provide a template file,
-  \texttt{scifile.tex}, that you can use to set up the \LaTeX\ source
-  for your article.  An example of the style is the special
-  \texttt{\{sciabstract\}} environment used to set up the abstract you
-  see here.
+    Our abstract - short overview of the whole report contents? Probably should be left untouched till we finish with the main report body.
 \end{sciabstract}
-
 
 
 % In setting up this template for *Science* papers, we've used both
@@ -127,97 +106,105 @@
 % choice.  Either way, use the asterisk (*) modifier, as shown, to
 % suppress numbering.
 
-\section*{Introduction}
+\section{Introduction}
 
-In this file, we present some tips and sample mark-up to assure your
-\LaTeX\ file of the smoothest possible journey from review manuscript
-to published {\it Science\/} paper.  We focus here particularly on
-issues related to style files, citation, and math, tables, and
-figures, as those tend to be the biggest sticking points.  Please use
-the source file for this document, \texttt{scifile.tex}, as a template
-for your manuscript, cutting and pasting your content into the file at
-the appropriate places.
+\subsection{Micromouse competition}
+    Short description of the competition, maybe a picture? 
 
-{\it Science\/}'s publication workflow relies on Microsoft Word.  To
-translate \LaTeX\ files into Word, we use an intermediate MS-DOS
-routine \cite{tth} that converts the \TeX\ source into HTML\@.  The
-routine is generally robust, but it works best if the source document
-is clean \LaTeX\ without a significant freight of local macros or
-\texttt{.sty} files.  Use of the source file \texttt{scifile.tex} as a
-template, and calling {\it only\/} the \texttt{.sty} and \texttt{.bst}
-files specifically mentioned here, will generate a manuscript that
-should be eminently reviewable, and yet will allow your paper to
-proceed quickly into our production flow upon acceptance \cite{use2e}.
+Fig.~\ref{fig:micromouse} 
+    
+\begin{figure}[htb]
+    \centering
+    \includegraphics{figures/filler.png}
+    \caption{Caption}
+    \label{fig:micromouse}
+\end{figure}
 
+\subsection{Aims and Objectives}
+    Our general goal in this praktikum (how is it called in proper English btw?..)
+    Basically rephrasing the general Micromouse competition objective but maybe a bit more relaxed. Like "to present a working robot that can move itself and perceive the environment with the help of sensors"
 
-\section*{Formatting Citations}
+\section{Conceptual design and justification of the design}
 
-Citations can be handled in one of three ways.  The most
-straightforward (albeit labor-intensive) would be to hardwire your
-citations into your \LaTeX\ source, as you would if you were using an
-ordinary word processor.  Thus, your code might look something like
-this:
+\subsection{Initial design conditions}
+    Here we talk about the size of the labyrinth, explain the size of the mouse (maybe touch on our initial concept of the mouse design or something similar? - later we could extend this topic and motivate our casing design decisions, obviously mentioning the Fusion workshop, but this comes later)
+    Also here should come some innate design "choices" like using a microcontroller, a number of sensors, why we need those e.t.c
+    Basically the whole logic behind "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)
+    Maybe we could split this section into two subsections:\\
+    - given conditions\\
+    - and our design decisions based on those conditions (justification)
+    
+\subsection{Work program and Gantt chart}
+This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
+Also I think maybe here we should talk about all the initial learning stage we had to go through in the first half of the praktikum (maybe devote a subsection for this here or later in the report)
 
+\section{Hardware and software design}
 
-\begin{quote}
-\begin{verbatim}
-However, this record of the solar nebula may have been
-partly erased by the complex history of the meteorite
-parent bodies, which includes collision-induced shock,
-thermal metamorphism, and aqueous alteration
-({\it 1, 2, 5--7\/}).
-\end{verbatim}
-\end{quote}
+Some introductory info
 
+\subsection{Hardware design}
 
-\noindent Compiled, the last two lines of the code above, of course, would give notecalls in {\it Science\/} style:
+    \subsubsection{Board design}
 
-\begin{quote}
-\ldots thermal metamorphism, and aqueous alteration ({\it 1, 2, 5--7\/}).
-\end{quote}
+    The complete description of our schematics design and board design and what we did and why
+    Also including all calculations we've managed to collect throughout the whole course of said design.
+    Pretty pictures and some tables with calculated values would be amazing.
 
-Under the same logic, the author could set up his or her reference list as a simple enumeration,
+    \subsubsection{Casing design}
 
-\begin{quote}
-\begin{verbatim}
-{\bf References and Notes}
+    The whole journey on the casing design. Pictures of the final 3D model and printed model of course, some calculations and data on the sizes and maybe geometrical values 
+    
+\subsection{Software design}
 
-\begin{enumerate}
-\item G. Gamow, {\it The Constitution of Atomic Nuclei
-and Radioactivity\/} (Oxford Univ. Press, New York, 1931).
-\item W. Heisenberg and W. Pauli, {\it Zeitschr.\ f.\ 
-Physik\/} {\bf 56}, 1 (1929).
-\end{enumerate}
-\end{verbatim}
-\end{quote}
+    The description of our modular architecture, the work principles of the separate modules and basically "how we control the peripherals" such as motors, leds, timers, etc. Logic comes a bit later in here.
+    Also all info on DMA and pin remapping and our pretty mapping table are also welcomed here I think
 
-\noindent yielding
+\section{Controller Design and Approach}
 
-\begin{quote}
-{\bf References and Notes}
+Here goes the whole logic of the mouse movement control (how should it behave when is faced with the wall or on contrary - with the gap in the labyrinth). PID controller design and the logic behind it.
 
-\begin{enumerate}
-\item G. Gamow, {\it The Constitution of Atomic Nuclei and
-Radioactivity\/} (Oxford Univ. Press, New York, 1931).
-\item W. Heisenberg and W. Pauli, {\it Zeitschr.\ f.\ Physik} {\bf 56},
-1 (1929).
-\end{enumerate}
-\end{quote}
+\section{Summary of tests}
 
-That's not a solution that's likely to appeal to everyone, however ---
-especially not to users of B{\small{IB}}\TeX\ \cite{inclme}.  If you
-are a B{\small{IB}}\TeX\ user, we suggest that you use the
-\texttt{Science.bst} bibliography style file and the
-\texttt{scicite.sty} package, both of which we are downloadable from our author help site
-(http://www.sciencemag.org/about/authors/prep/TeX\_help/).  You can also
-generate your reference lists by using the list environment
-\texttt{\{thebibliography\}} at the end of your source document; here
-again, you may find the \texttt{scicite.sty} file useful.
+Here goes everything practical we could possibly test - for example the speeding curve of the motor, the temperature conditions of the board (when we'll solder it - whether it is able to work without overheating and such) 
+Of course, the PID working values (such as the error convergence rate)
+Possible subsections:\\
+    - casing tests \\
+    - schematic tests \\
+    - software logic tests \\
 
-Whether you use B{\small{IB}}\TeX\ or \texttt{\{thebibliography\}}, be
-very careful about how you set up your in-text reference calls and
-notecalls.  In particular, observe the following requirements:
+\section{Implementation challenges}
+Some general words about our journey with the mouse.
 
+\subsection{Summary of problems encountered}
+Well, here go all the problems we faced coupled with our solutions for them. Potentially the longest part in the report. Can be split in parts similarly to the previous sections (talking about software, board and casing)
+
+\subsection{Learning experience} %the name is terrible, please smb name it properly, I'm out of imagination
+
+What we learned basically? What was especially hard to grasp, e.t.c.
+We could somehow present it as the short submission from each of us (as well as the previous part) Here we could also put the story of the first half of the semester (at least in the summarized form) and what concepts and practices and stuff we learned from that.
+
+\section{Conclusions}
+Here - short summary of the achieved results, maybe some general words and praises for our final mouse version, just something positive to end the mouse story well.
+
+\subsection{Expectations}
+Slightly controversial part, we could omit it (I would like not to though) or rephrase it somehow. Basically - what did we expect from the course. Not sure if this part actually belongs here, but for now it works.
+\subsection{Propositions}
+Our suggestions to maybe somehow improve or better organize some parts of the praktikum or the task or whatever.
+
+\newpage
+\section*{Appendix}
+some extra figures
+
+\vspace{3cm}
+
+\bibliography{scibib}
+
+\bibliographystyle{Science}
+
+\newpage
+
+Some guidelines from the template
+\vspace{5cm}
 \begin{enumerate}
 \item Please follow the style for references outlined at our author
   help site and embodied in recent issues of {\it Science}.  Each
@@ -347,17 +334,6 @@ What you should send to {\it Science\/} will depend on the stage your manuscript
 % preamble and that allows authors to add a reference at the end of the
 % list that's not signaled in the text; such references are used in
 % *Science* for acknowledgments of funding, help, etc.
-
-\begin{scilastnote}
-\item We've included in the template file \texttt{scifile.tex} a new
-environment, \texttt{\{scilastnote\}}, that generates a numbered final
-citation without a corresponding signal in the text.  This environment
-can be used to generate a final numbered reference containing
-acknowledgments, sources of funding, and the like, per {\it Science\/}
-style.
-\end{scilastnote}
-
-
 
 
 % For your review copy (i.e., the file you initially send in for
