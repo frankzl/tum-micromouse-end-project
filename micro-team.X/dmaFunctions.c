@@ -32,7 +32,7 @@ void initDmaChannel4(void)
  DMA4CONbits.CHEN  = 1; // enable channel
 }
 
-int* getDistance(){
+unsigned int getDistance(){
     return 0;
 }
 
