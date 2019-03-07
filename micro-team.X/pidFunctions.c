@@ -7,6 +7,7 @@
 
 #include "pidFunctions.h"
 
+//Initialize PID
 void pid_init(pid_ctrl *pid)
 {
     //pid_set_gains(pid, 1.49, 0.1, .5);
@@ -18,6 +19,7 @@ void pid_init(pid_ctrl *pid)
     pid->frequency = 1.;
 }
 
+//Set the PID gains
 void pid_set_gains(pid_ctrl *pid, float kp, float ki, float kd)
 {
     pid->kp = kp;
@@ -25,6 +27,7 @@ void pid_set_gains(pid_ctrl *pid, float kp, float ki, float kd)
     pid->kd = kd;
 }
 
+//Main control function
 float pid_process(pid_ctrl *pid, float error)
 {
     float output;

@@ -8,13 +8,15 @@
 
 #include "stateFunctions.h"
 
-
+//The state variable
 static States state;
 
+//Initiallize state
 void initState(){
     state = IDLE;
 }
 
+//Update state depending on sensor measurements... discrete??
 void updateState(struct Observation obs){
     if (obs.right_free){
         state = TURN_RIGHT;
@@ -25,6 +27,7 @@ void updateState(struct Observation obs){
     }
 }
 
+//Take action according to the state we are into, use controller
 void triggerAction(){
     switch(state){
         case IDLE:

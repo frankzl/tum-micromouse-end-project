@@ -7,6 +7,7 @@
 #ifndef PID_H
 #define PID_H
 
+//The PID controller
 typedef struct{
     float kp;
     float ki;
