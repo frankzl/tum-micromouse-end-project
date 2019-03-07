@@ -9,7 +9,7 @@ typedef enum {
     TURN_RIGHT
 } States;
 
-//Struct containing the sensor measurements (discrete))
+//Struct containing the sensor measurements (discrete)), set thresholds for what is free and what not
 struct Observation {
    int front_free;
    int left_free;
