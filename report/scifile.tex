@@ -87,13 +87,16 @@
 
 \maketitle 
 
-
-
 % Place your abstract within the special {sciabstract} environment.
 
 \begin{sciabstract}
     Our abstract - short overview of the whole report contents? Probably should be left untouched till we finish with the main report body.
 \end{sciabstract}
+
+\newpage
+
+\tableofcontents
+
 
 
 % In setting up this template for *Science* papers, we've used both
@@ -106,103 +109,23 @@
 % choice.  Either way, use the asterisk (*) modifier, as shown, to
 % suppress numbering.
 
-\section{Introduction}
+\newpage
 
-\subsection{Micromouse competition}
+\input{chapters/01-introduction}
 
-According to the general description of the micromouse competition, "in this contest the contestant, or team of contestants, must design and build an autonomous robotic ”mouse” capable of traversing a maze of standard dimensions from a specified corner to its center in the shortest time." \cite{MicromouseRules}.\\
-General example of a competition setup can be seen on the Fig.~\ref{fig:micromouse} 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/micromouse-maze.jpg}
-    \caption{Micromouse competition photo: labyrinth and robot example \cite{MicromousePhotoLink}}
-    \label{fig:micromouse}
-\end{figure}
+\input{chapters/02-concept-design}
 
-\subsection{Aims and Objectives}
+\input{chapters/03-hw-sw-design}
 
-    Short summary of the general competition rules is as following \cite{MicromouseRules}:
+\input{chapters/04-controller}
 
-    \begin{itemize}
-    \item Self-Containment: A Micromouse shall be self-contained (no remote controls).
-    \item Method of Movement: A Micromouse shall not jump over, fly over, climb, scratch,cut, burn, mark, damage, or destroy the walls of the maze.
-    \item Maze Dimensions: The maze is composed of 18cm x 18cm unit squares arranged as 16 x 16 units. The walls of the units of the maze are 5 cm high and 1.2 cm thick 
-    \item Multiple Paths: Multiple paths to the destination square are allowed and are to be expected. The destination square will be positioned so that a wall-hugging mouse will NOT be able to find it.
-    \end{itemize}
-    
- In the case of our project, the aforementioned rules were used in a slightly modified way. The labyrinth is reduced in size to 8x8 units in order to fit better to the project conditions. The micromouse competition consists of 2 runs: in the first run, the robot is going through the maze and, according to arbitrary chosen algorithm, constructs the maze map; in the second run the mouse should reach the center of the maze (found in the first run) as quickly as possible, according to the composed map of the labyrinth. \\
- The main goal of the project was set to:  "get as close to the realization of the procedure described above as possible".
- The ways and approaches that were chosen to reach this goal are named and described properly in the following section.
- \\
-    \textit{Our general goal in this praktikum (how is it called in proper English btw?..)
-    Basically rephrasing the general Micromouse competition objective but maybe a bit more relaxed. Like "to present a working robot that can move itself and perceive the environment with the help of sensors"}
+\input{chapters/05-tests}
 
-\section{Conceptual design and justification of the design}
 
-\subsection{Initial design conditions}
-    Here we talk about the size of the labyrinth, explain the size of the mouse (maybe touch on our initial concept of the mouse design or something similar? - later we could extend this topic and motivate our casing design decisions, obviously mentioning the Fusion workshop, but this comes later)
-    Also here should come some innate design "choices" like using a microcontroller, a number of sensors, why we need those e.t.c
-    Basically the whole logic behind "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)
-    Maybe we could split this section into two subsections:\\
-    - given conditions\\
-    - and our design decisions based on those conditions (justification)
-    
-\subsection{Work program and Gantt chart}
-This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
-Also I think maybe here we should talk about all the initial learning stage we had to go through in the first half of the praktikum (maybe devote a subsection for this here or later in the report)
+\input{chapters/06-challenges}
 
-\section{Hardware and software design}
 
-Some introductory info
-
-\subsection{Hardware design}
-
-    \subsubsection{Board design}
-
-    The complete description of our schematics design and board design and what we did and why
-    Also including all calculations we've managed to collect throughout the whole course of said design.
-    Pretty pictures and some tables with calculated values would be amazing.
-
-    \subsubsection{Casing design}
-
-    The whole journey on the casing design. Pictures of the final 3D model and printed model of course, some calculations and data on the sizes and maybe geometrical values 
-    
-\subsection{Software design}
-
-    The description of our modular architecture, the work principles of the separate modules and basically "how we control the peripherals" such as motors, leds, timers, etc. Logic comes a bit later in here.
-    Also all info on DMA and pin remapping and our pretty mapping table are also welcomed here I think
-
-\section{Controller Design and Approach}
-
-Here goes the whole logic of the mouse movement control (how should it behave when is faced with the wall or on contrary - with the gap in the labyrinth). PID controller design and the logic behind it.
-
-\section{Summary of tests}
-
-Here goes everything practical we could possibly test - for example the speeding curve of the motor, the temperature conditions of the board (when we'll solder it - whether it is able to work without overheating and such) 
-Of course, the PID working values (such as the error convergence rate)
-Possible subsections:\\
-    - casing tests \\
-    - schematic tests \\
-    - software logic tests \\
-
-\section{Implementation challenges}
-Some general words about our journey with the mouse.
-
-\subsection{Summary of problems encountered}
-Well, here go all the problems we faced coupled with our solutions for them. Potentially the longest part in the report. Can be split in parts similarly to the previous sections (talking about software, board and casing)
-
-\subsection{Learning experience} %the name is terrible, please smb name it properly, I'm out of imagination
-
-What we learned basically? What was especially hard to grasp, e.t.c.
-We could somehow present it as the short submission from each of us (as well as the previous part) Here we could also put the story of the first half of the semester (at least in the summarized form) and what concepts and practices and stuff we learned from that.
-
-\section{Conclusions}
-Here - short summary of the achieved results, maybe some general words and praises for our final mouse version, just something positive to end the mouse story well.
-
-\subsection{Expectations}
-Slightly controversial part, we could omit it (I would like not to though) or rephrase it somehow. Basically - what did we expect from the course. Not sure if this part actually belongs here, but for now it works.
-\subsection{Propositions}
-Our suggestions to maybe somehow improve or better organize some parts of the praktikum or the task or whatever.
+\input{chapters/07-conclusions}
 
 \newpage
 \section*{Appendix}
