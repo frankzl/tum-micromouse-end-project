@@ -1,14 +1,37 @@
 \section{Conceptual design and justification of the design}
 
+In order to set the right design goals and milestones during the semester, adequately estimate the workload and organize the working process in the most effective way, we needed to: analyze the initial design conditions and restrictions, roughly formulate the implementation blocks along with respective skill-sets of all project members and - after that - write down the most suitable working program. Both steps are described in detail below.
+
 \subsection{Initial design conditions}
-    Here we talk about the size of the labyrinth, explain the size of the mouse (maybe touch on our initial concept of the mouse design or something similar? - later we could extend this topic and motivate our casing design decisions, obviously mentioning the Fusion workshop, but this comes later)
-    Also here should come some innate design "choices" like using a microcontroller, a number of sensors, why we need those e.t.c
-    Basically the whole logic behind "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)
-    Maybe we could split this section into two subsections:\\
-    - given conditions\\
-    - and our design decisions based on those conditions (justification)
-    
+The main question to answer was to grasp and implement using the knowledge acquired the logic behind the "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)?"
+
+There are some predefined conditions and tools that we used as a starting point in answering this question:
+
+\begin{itemize}
+    \item Geometric constraints\\
+    As was mentioned in the previous section, the geometric parameters of the maze in our case were as following: 8x8 identical squares with a side of 16cm. Therefore, our "mouse" was logically required to be smaller than 16cm in width and length, ideally the size that would allow it to move freely while performing any type of movement within the maze (therefore leaving at least 2-3 centimeters of distance to the surrounding walls)
+    \item Power supply\\
+    According to the unified formal requirements of the Micromouse competition, the robot should be autonomous, which infers carrying it's own power supply in form of a standard 9V battery.
+    \item Sensing the environment\\
+    The initial condition in regards to sensing simply states that the robot should be able to perceive the environment and make informed decisions about the next movement (moving straight or turning in one of the directions - the turn angle was set to be fixed at 90 degrees in order to simplify the design) based on the analysis of the information received from the sensors. The sensor type that is the most efficient for the cause - simple infrared proximity sensor. We had an option to either order the desired amount of sensors or to build them ourselves.
+    \item Motors\\
+    In order for the "mouse" to move, we were provided with predefined 2619-SR-IE2-16 motors and sets of wheels of different diameter.
+    \item Microcontroller\\
+    Initially, for the educational purposes and in order to gain some knowledge in configuring and setting up the microcontroller to control the needed peripherals, a pair of dsPIC30F4011 microcontrollers was provided. Appropriate for the goal task microcontroller was decided to be chosen later. Overall, it had to have all required pins and interfaces, such as:\\
+    - PWM outputs for the motor control\\
+    - analog inputs to receive data from sensors\\
+    - enough extra pins to connect peripherals (such as LEDs)\\
+    - flexible and convenient pin mapping in order to satisfy the geometric constraints
+    \item PCB\\
+    The printed circuit board for the robot was to be designed independently, according to all the aforementioned conditions.
+    \item Casing\\
+    In order for all of the components (such as the board, the motors and the battery) to hold together in one single "mouse" unit, it was set that a custom casing must be designed and printed.
+\end{itemize}
+
+Based on those conditions and also tools and devices provided, we came up with the implementation plan, which can be seen in detail in the next part.
+
 \subsection{Work program and Gantt chart}
-This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
-Also I think maybe here we should talk about all the initial learning stage we had to go through in the first half of the praktikum (maybe devote a subsection for this here or later in the report)
+I would suggest to fit here the part with "design decisions based on the aforementioned conditions (justification)"
+\textit{ This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
+Also I think maybe here we should talk about all the initial learning stage we had to go through in the first half of the praktikum (maybe devote a subsection for this here or later in the report)}
 
