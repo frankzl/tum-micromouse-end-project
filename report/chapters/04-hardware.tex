@@ -15,30 +15,47 @@ The schematic of the micromouse can be seen in Fig. \ref{fig:schematic_overview}
 \end{figure}
 
 This can look intimidating at first and definitely not readable in such a miniature picture. So, let's break it down to its components and describe its sub-circuits.
+
 With the exception of the first subsection, the components will be presented from left to right and from top to bottom, so that the reader may always refer to the overview schematic to get a clear picture of a component's relation to the whole.
 
 \FloatBarrier
 
 \subsubsection{Microcontroller (MCU)}
 
-Describe pins locations and assignment. Include a table, like the one in our excel spreadsheet.
-Describe the labels utility in Eagle. 
-Describe the pins electrical limitations according to the datasheet.
+The microcontroller (mcu) can be seen in Fig. \ref{fig:mcuL}.
+Notice that the symbolic representation of the mcu, specifically when it comes to the location of its pins, doesn't correspond to the real model. For the purpose of the schematic, we don't really care about the real location of the pins. As will be seen later, this becomes of importance when placing the components on the board to be printed.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/MCU.PNG}
     \caption{The dsPIC33FJ64MC804 microcontroller}
-    \label{fig:mcu}
+    \label{fig:mcuL}
 \end{figure}
 
 \FloatBarrier
 
+The assignment of mcu pins to components is presented in the Software Section and will not be repeated here. Please refer to that Section for understanding the functionality of its pin in our circuit.
+
+Another point to notice about the pin connections is the convenient label feature that Eagle offers. Notice how some of the components are wired to the pins of the mcu, while other connections are represented as labels. Labels in the circuit are the equivalent of wires and greatly contribute to the readability and modularity of the schematic. As long as two wires anywhere in the circuit share the same label, they are connected.
+
+A last comment has to be made about the pins of the mcu: The pins, as everything in our circuit, are very real components and therefore are subject to electrical limitations. This is a very important point to keep in mind, when driving any load, such as LEDs or a motor, but also when connecting input signals, such as sensors.
+Specifically, in the section "Electrical Characteristics" in \cite{mcu}, we find maximum values for individual pins and for all utilized pins combined. These can be seen in Fig. \ref{fig:electrical}. These characteristics lead to some important design decisions, specifically named in later subsections.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/Electrical.PNG}
+    \caption{Electrical limitations for the pins of the mcu}
+    \label{fig:electrical}
+\end{figure}
+
+\FloatBarrier
+
+
 \subsubsection{Votage Regulators}
 
-Describe the different votages needed in the circuit.
-Describe the role of a voltage regulator.
-Describe the need for decoupling capacitors.
+The necessity for voltage regulators, which can be seen in Fig. \ref{fig:battery}, arises from the need for different voltages present in our system. 
+Specifically, as found in \cite{mcu}, the mcu considers 3.3V as logical one and it is this voltage we need to provide to it (see VDD pins). The distance sensors used (taken from a previous micromouse model) need 5V. And yet the motors need 6V, as can be seen in \cite{motor}. 
+Notice that we are using a battery of 9V. Therefore, we need a way to generate the required 3 different voltages.
 
 \begin{figure}[htb]
     \centering
@@ -48,6 +65,14 @@ Describe the need for decoupling capacitors.
 \end{figure}
 
 \FloatBarrier
+
+When it comes to the motor, we can regulate the voltage we feed it with, by regulating the maximum duty cycle of the PWM (explained in another Section). So, we provide it with a fraction of the available 9V.
+For the distance sensors and the mcu, 2 voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly.
+
+Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used in the input and output of the voltage regulators. Additionally, a bunch of capacitors can be observed at the far right part of the sub-circuit.
+All of these capacitors have both a special name and function. They are called decoupling capacitors and their role is to help in providing steady voltage. Specifically, they are always physically connected close to their corresponding component and should a temporary lack of electrons happen, they provide from their surplus, keeping the voltage steady.
+The capacitors at the far right are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND).
+
 
 
 \subsubsection{H-Bridge and Motors}
