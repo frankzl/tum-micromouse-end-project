@@ -25,6 +25,8 @@ With the exception of the first subsection, the components will be presented fro
 
 \subsubsection{Microcontroller (MCU)}
 
+%%% Somewhere introduce the general concept of the MCU. our specific choice and why, its capabilities that we need and cool stuff about it (e.g.dma, multiple pwm, pin reassignment).
+
 The microcontroller (mcu) can be seen in Fig. \ref{fig:mcuL}.
 Notice that the symbolic representation of the mcu, specifically when it comes to the location of its pins, doesn't correspond to the real model. For the purpose of the schematic, we don't really care about the real location of the pins. As will be seen later, this becomes of importance when placing the components on the board to be printed.
 
@@ -78,7 +80,10 @@ The capacitors at the far right are only symbolically placed there in the circui
 
 \vspace{1cm}
 
+
 \subsubsection{H-bridge and Motors}
+
+%%% Somewhere else talk about the QE of the motor and the mcu and how the damn they communicate, show the diagram of the phase shifter signals.
 
 Next, the motors and H-bridge sub-circuit will be presented. 
 First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the motors are symmetrically connected to the H-bridge and to the mcu. So, let us concentrate on one of them, the left. The same explanation applies for the other one.
@@ -122,6 +127,7 @@ We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of
 As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called catch diodes and their use is nicely described in \cite{catchDiodes}. In the same source, an extensive description of the functionality of an H-bridge can be found, in a beginner friendly way.
 
 For our purposes, it suffices to say that the presence of catch diodes is necessary for the smooth functioning of our brushed motor. Consider the switching of direction phases or simply the breaking of the motor. The remaining current that was supplied to the motor has to go ("escape") somewhere. It is not a good idea to dissipate the current to our pins, without an alternative. The catch diodes provide this alternative. 
+%% Check with Alex for these paragraphs...
 
 A commonly used type of diode for this purpose is the Schottky diode (also the case in our circuit), which is characterized by a fast recovery time. Generally, when a diode switches from forward conducting to reverse current blocking mode, for a short period of time (recovery time) reverse current flows through the diode. Exactly this phenomenon is utilized in the catch diode case.
 
@@ -147,11 +153,15 @@ $$V = I*R => 3.3 = I*47 => I = 0.07mA$$
 
 If a much smaller value for the resistance was used, then the current would be much larger, leading to unnecessary power dissipation on the resistance and heating. Also, in this case, there is the possibility for the input to the mcu pin to be stuck in a low, logical 0 level, no matter if the button is pressed or not.
 
+%%% Here it could be that the resistance should be 4.7k
 \vspace{1cm}
+
 
 \subsubsection{Programmer}
 
-Describe the usage of the programmer.
+%%% Somewhere talk about the programmer used (PicKit)
+
+The programmer is the device that allows for (re)programming of the mcu. The way it is connected is rather straightforward and can be seen in Fig. \ref{fig:programmer}.
 
 \begin{figure}[htb]
     \centering
@@ -161,12 +171,17 @@ Describe the usage of the programmer.
 \end{figure}
 
 \FloatBarrier
+\vspace{1cm}
 
 
 \subsubsection{Reset Button}
 
-Describe the need for a reset button.
-Describe the negative logic and pull-up resistor.
+A reset button is needed in case something goes wrong during the execution of the program in the mcu, or if one simply needs to start the execution from the start again. Notice that the MCLR (Master Clear) pin is also used by the programmer for programming and debugging, as can be found in \cite{mcu}.
+
+The reset activation logic in our mcu is negative or inverse, as can be seen in Fig. \ref{fig:reset}. A diode and a pull-up resistor (similar to the pull-down used for the other button) connect the voltage feed to the mcu. Once the button is pressed, a connection with the ground is made and the mcu is reset.
+Again the choice of the resistance value is a bit arbitrary.
+
+%%%% Ask Alex about this. I am afraid that the 47k is a mistake. It should be 4.7k...
 
 \begin{figure}[htb]
     \centering
@@ -176,19 +191,28 @@ Describe the negative logic and pull-up resistor.
 \end{figure}
 
 \FloatBarrier
+\vspace{1cm}
 
 
 \subsubsection{Battery Measurement}
 
-Describe the need for measuring the battery voltage level
-and adjusting the PWM accordingly. 
-Describe the concept of voltage divider and the values chosen.
+In an ideal world, our battery would provide steadily 9V until its exhaustion. However, this is not the case. As the battery is depleted, the voltage it provides is reduced. It would be useful to know exactly how much voltage the battery provides at any given point in time. Feeding this value to the mcu, we can take decisions accordingly. For example, we can regulate the PWM maximum duty cycle value to keep the motor spinning at its maximum velocity, even though the battery is depleted. Remember that our motor can take a maximum of 6V for its fastest performance.
 
+In order to realize such a schema, a simple voltage divider sub-circuit and an analog pin of the mcu can be used, as can be seen in the above Fig. \ref{fig:programmer}.
+In order to keep the amount of different components to a minimum, a resistance of 47k is used. The question now is, what should the value of the other resistance be, in order for the input voltage to the mcu to be 3.3V for a 9V battery. 
+
+If we call the unknown resistor R8, as in the figure, we can use the known equation for a voltage divider:
+
+$$V_{MCU} = \frac{R_8}{47+R_8} * 9V = 3.3V$$
+
+With a value of $ R_8 = 22k $, we can easily calculate the resulting $V_{MCU} = 2.87V$. This is a convenient value, since for example another battery of higher voltage, e.g. 10V, could be used. By choosing this value we fulfill our initial purpose and have some flexibility for higher voltages.
+
+\vspace{1cm}
 
 \subsubsection{Universal Asynchronous Communication (UART)}
 
 
-Describe the need for UART, to issue commands at will.
+Despite us building an autonomous micromouse robot that can navigate in a labyrinth, we would still like to be able to issue stand-alone commands via UART. Hence, the UART sub-circuit of Fig. \ref{fig:uart}. The connection is straight-forward. Only attention is required in connecting RX to TX of the mcu and vice-versa.
 
 \begin{figure}[htb]
     \centering
@@ -198,11 +222,13 @@ Describe the need for UART, to issue commands at will.
 \end{figure}
 
 \FloatBarrier
+\vspace{1cm}
 
 
 \subsubsection{LEDs}
 
-Describe the need for mechanical stability and the usage of LEDs. Say why we want to blink them.
+Describe the need for mechanical stability and the usage of LEDs. 
+Say why we want to blink them.
 Describe why transistors are needed and briefly the way they are connected.
 
 \begin{figure}[htb]
@@ -217,7 +243,9 @@ Describe why transistors are needed and briefly the way they are connected.
 
 \subsubsection{Oscillator}
 
-Describe the choice for an external oscillator and the need for capacitors (mcu datasheet).
+%%% Somewhere describe the external oscillator choice, the PLL used, the system frequency.
+
+The external oscillator and its capacitors can be seen in Fig. \ref{fig:oscillator}.
 
 \begin{figure}[htb]
     \centering
@@ -227,6 +255,7 @@ Describe the choice for an external oscillator and the need for capacitors (mcu 
 \end{figure}
 
 \FloatBarrier
+\vspace{1cm}
 
 
 \subsubsection{Distance Sensors}
