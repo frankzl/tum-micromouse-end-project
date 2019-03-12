@@ -2,6 +2,8 @@
 
 In this section, the hardware design and implementation of the micromouse robot are described. First, the corresponding electrical circuit, known as scematic, is broken down to its components and thoroughly presented. In the next subsection, the actual components chosen for the hardware implementation are listed. The model for the final Printed Circuit Board (PCB) follows right after, where the chosen electrical components are placed in the computer model. Last, but not least, the protective casing for the micromouse is described.
 
+\vspace{1cm}
+
 \subsection{Schematic and Components Description}
 
 The first step in the development of the hardware is the drawing of the electrical circuit. The realization of a moving micromouse demands for the combination of a variety of components connected to each other. Exactly this is described in the so called schematic of the circuit, which resembles a drawing on paper. 
@@ -19,6 +21,7 @@ This can look intimidating at first and definitely not readable in such a miniat
 With the exception of the first subsection, the components will be presented from left to right and from top to bottom, so that the reader may always refer to the overview schematic to get a clear picture of a component's relation to the whole.
 
 \FloatBarrier
+\vspace{1cm}
 
 \subsubsection{Microcontroller (MCU)}
 
@@ -49,7 +52,7 @@ Specifically, in the section "Electrical Characteristics" in \cite{mcu}, we find
 \end{figure}
 
 \FloatBarrier
-
+\vspace{1cm}
 
 \subsubsection{Votage Regulators}
 
@@ -73,13 +76,12 @@ Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used i
 All of these capacitors have both a special name and function. They are called decoupling capacitors and their role is to help in providing steady voltage. Specifically, they are always physically connected close to their corresponding component and should a temporary lack of electrons happen, they provide from their surplus, keeping the voltage steady.
 The capacitors at the far right are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND).
 
+\vspace{1cm}
 
+\subsubsection{H-bridge and Motors}
 
-\subsubsection{H-Bridge and Motors}
-
-Describe the motors pins, with picture.
-Describe the need for an H-bridge and its functionality, with picture.
-Describe the escape diodes and their functionality.
+Next, the motors and H-bridge sub-circuit will be presented. 
+First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the motors are symmetrically connected to the H-bridge and to the mcu. So, let us concentrate on one of them, the left. The same explanation applies for the other one.
 
 \begin{figure}[htb]
     \centering
@@ -90,10 +92,44 @@ Describe the escape diodes and their functionality.
 
 \FloatBarrier
 
+In Fig. \ref{fig:motorPins} taken from the motor datasheet, the motor pins can be noticed. 
+One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember that we are using PWM (max 6V) to control how fast the motor turns and notice that if the voltage is reversed, the rotation of the motor is also reversed. As we will shortly see, for this purpose, the H-bridge is needed. The function of reversing the motor's rotation is hihgly desirable, since we want our 2-wheels micromouse to be able to move backwards and to turn on spot (imagine one wheel moving to one direction and the other to the opposite direction with the same velocity).
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/motor.PNG}
+    \caption{The motor pins as presented in its datasheet}
+    \label{fig:motorPins}
+\end{figure}
+
+\FloatBarrier
+
+Another pair of pins (3, 4) refers to the voltage feed of the motor encoder. And the last pair of pins (5, 6) are used for the output of the motor encoder signals. These signals encode the motor's rotational position every moment and are fed to the mcu. In the mcu, with the help of the quadrature encoder (QE) module, they can be translated to real position in space.
+
+Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the tracks on a PCB. Instead, the H-bridge can conveniently reverse the voltage. First, have a look at the exemplary circuit in Fig. \ref{fig:HData}, take from the datasheet of the H-bridge \cite{Hbridge}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/HbridgeDatasheet.PNG}
+    \caption{Exemplary motor connection from the H-bridge datasheet}
+    \label{fig:HData}
+\end{figure}
+
+\FloatBarrier
+
+We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of rotation of the motor. The truth table is simple: If one direction pin is 1 and the other 0, then the logical 1 defines the direction. If both of the pins are set to logical 0 or 1, the motor breaks. Notice how the pins 3 and 6 feed the voltage to the motor and are coupled with the direction pins.
+
+As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called catch diodes and their use is nicely described in \cite{catchDiodes}. In the same source, an extensive description of the functionality of an H-bridge can be found, in a beginner friendly way.
+
+For our purposes, it suffices to say that the presence of catch diodes is necessary for the smooth functioning of our brushed motor. Consider the switching of direction phases or simply the breaking of the motor. The remaining current that was supplied to the motor has to go ("escape") somewhere. It is not a good idea to dissipate the current to our pins, without an alternative. The catch diodes provide this alternative. 
+
+A commonly used type of diode for this purpose is the Schottky diode (also the case in our circuit), which is characterized by a fast recovery time. Generally, when a diode switches from forward conducting to reverse current blocking mode, for a short period of time (recovery time) reverse current flows through the diode. Exactly this phenomenon is utilized in the catch diode case.
+
+\vspace{1cm}
 
 \subsubsection{Extra Button}
 
-Describe the need for an extra button and the pull-down resistor and value choice.
+Naturally, the more input options we have for our micromouse robot, the more flexible the commands we can issue and the more complicated the software can be. Therefore, we added a button (switch), which can be seen in Fig. \ref{fig:button}.
 
 \begin{figure}[htb]
     \centering
@@ -104,6 +140,14 @@ Describe the need for an extra button and the pull-down resistor and value choic
 
 \FloatBarrier
 
+A typical pull-down resistor of 47k is used, to make sure the mcu pin never has an undefined logical value ("floating"). When it comes to the resistance value, it is somewhat arbitrary in that it does its job. A different value could have been selected.
+For the current that flows through the resistor, when the button is pressed, we have:
+
+$$V = I*R => 3.3 = I*47 => I = 0.07mA$$
+
+If a much smaller value for the resistance was used, then the current would be much larger, leading to unnecessary power dissipation on the resistance and heating. Also, in this case, there is the possibility for the input to the mcu pin to be stuck in a low, logical 0 level, no matter if the button is pressed or not.
+
+\vspace{1cm}
 
 \subsubsection{Programmer}
 
