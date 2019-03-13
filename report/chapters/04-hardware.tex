@@ -75,8 +75,9 @@ When it comes to the motor, we can regulate the voltage we feed it with, by regu
 For the distance sensors and the mcu, 2 voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly.
 
 Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used in the input and output of the voltage regulators. Additionally, a bunch of capacitors can be observed at the far right part of the sub-circuit.
+
 All of these capacitors have both a special name and function. They are called decoupling capacitors and their role is to help in providing steady voltage. Specifically, they are always physically connected close to their corresponding component and should a temporary lack of electrons happen, they provide from their surplus, keeping the voltage steady.
-The capacitors at the far right are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND).
+The capacitors at the far right are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND). Every decoupling capacitor is ideally connected as close to the actual component pins as possible, as will be later seen in the PCB Section. The values of the capacitors are dictated by the datasheets of the specific components used. For example, have a look in \cite{mcu}.
 
 \vspace{1cm}
 
@@ -132,6 +133,7 @@ For our purposes, it suffices to say that the presence of catch diodes is necess
 A commonly used type of diode for this purpose is the Schottky diode (also the case in our circuit), which is characterized by a fast recovery time. Generally, when a diode switches from forward conducting to reverse current blocking mode, for a short period of time (recovery time) reverse current flows through the diode. Exactly this phenomenon is utilized in the catch diode case.
 
 \vspace{1cm}
+
 
 \subsubsection{Extra Button}
 
@@ -225,11 +227,14 @@ Despite us building an autonomous micromouse robot that can navigate in a labyri
 \vspace{1cm}
 
 
-\subsubsection{LEDs}
+\subsubsection{Light-emmiting Diodes (LEDs)}
 
-Describe the need for mechanical stability and the usage of LEDs. 
-Say why we want to blink them.
-Describe why transistors are needed and briefly the way they are connected.
+To motivate the use of 2 LEDs in our micromouse, imagine the following: The PCB lies on the 2 wheels, which are screwed on either side somewhere in the middle. Naturally, the PCB will tilt forwards or backwards until it touches the ground, depending on where most weight lies (front sensors). This is highly unwanted: Not only would it result in an unelegant movement creating uneccessary impedance, but the PCB could be potentially damaged by friction and by ground anomalies.
+
+Therefore, for mechanical stability, we use one LED on the front and one on the back of our PCB. They are through-hole components, with the head of the LED resting on the under side of the PCB. The smooth surface of the head works to our favor, not only stabilizing the micromouse, but also offering minimum resistance while moving. The height of the protruding LED head can be decided during soldering according to mechanical needs.
+
+Now, since we have the LEDs, it would be nice to be able to turn them on and off at will. For example we can light the front LED when the micromouse is moving forward and the back one when it's moving backwards.
+The sub-circuit for controlling the LEDs can be seen in Fig. \ref{fig:leds}.
 
 \begin{figure}[htb]
     \centering
@@ -237,9 +242,23 @@ Describe why transistors are needed and briefly the way they are connected.
     \caption{The LEDs used for mechanical stability}
     \label{fig:leds}
 \end{figure}
-
 \FloatBarrier
 
+The sub-circuits for both LEDs are identical, so let us examine one of them, say the front one. The main component, besides the LED, is an N-channel metal-oxide semiconductor field-effect transistor (MOSFET).
+
+To motivate the need for the MOSFET, imagine connecting the LED directly to the I/O pin. In the datasheet of a typical low current LED (and also the one we will be using) \cite{leds}, we find that the nominal current is somewhere between 25 - 140 mA. Also that the voltage drop on the LED is 2.2 - 2.5V for $I = 20mA$.
+Remember the electrical characteristics of the mcu pins as presented in Fig. \ref{fig:electrical}. Notice that the limit current per pin is 4mA! In other words, if we directly connect the LED to the mcu, we will damage the mcu pin and potentially other parts of the mcu circuit. 
+Now, the MOSFET serves as a switch: By providing a low current to its gate (the pin of the MOSFET connected to the mcu pin), its channel between the drain and source opens. in other words, it allows current to flow from the LED side to the ground side, thus closing the circuit and lighting the LED up! 
+
+The resistor R2 in the sub-circuit is used to charge the capacitance of the transistor gate. Hence its value is not critical in our case, since no intense time precision demands are made on the LED. We can use our typical 47k resistors also here. Notice that exactly next to the mcu pin, a header pin is placed with the name JP9. This is just a convenient way to later check the voltage of the pin on the pcb for debugging purposes.
+
+The last component to cover is the resistor on the side of the LED. To choose an appropriate value, we need to consider the voltage drop on the LED. As we read above it's somewhere between 2.2 and 2.5V. We can use $\Omega$mhs law, by considering the resistance of the transisto r negligible and the resistance of the diode fixed.. For the current flowing, let's choose a value between the 25 and 140mA. 
+
+$$V_R = I * R => 5 - V_{diode} = I * R$$
+
+For the values $V_{diode} = 2.5V$ and $I = 25mA$ we acquire a value of 100$\Omega$. This is a brief calculation. We need an approximate value only and this will do. Further computations could be conducted with the min and max possible values of the current and voltage drop. We notice how smaller the resistance needs to be here, comparing to other parts of the circuit.
+
+\vspace{1cm}
 
 \subsubsection{Oscillator}
 
@@ -260,8 +279,7 @@ The external oscillator and its capacitors can be seen in Fig. \ref{fig:oscillat
 
 \subsubsection{Distance Sensors}
 
-Describe the need for sensors and the way they are connected.
-Explain why we chose to have transistors there.
+The distance sensors are necessary for perceiving the distance from maze walls. Their sub-circuit can be seen in Fig. \ref{fig:sensors}.
 
 \begin{figure}[htb]
     \centering
@@ -272,14 +290,46 @@ Explain why we chose to have transistors there.
 
 \FloatBarrier
 
+To understand their pins, have a look at Fig. \ref{fig:sensorsData} taken from the datasheet \cite{sens}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/sensorData.PNG}
+    \caption{Internal schematic of the distance sensors}
+    \label{fig:sensorsData}
+\end{figure}
+\FloatBarrier
+
+Instead of connecting the voltage feed directly to 5V, we use a P-channel MOSFET to turn the sensors on and off at will. The connection of the transistor is the opposite of the N-channel described above (Section LEDs) and its functionality is the same: It is used as a switch. Notice the 47k resistors that connect the gates of the transistors to the pins of the mcu. By offering current from the pins, we close the switch and activate the sensors. Being able to turn the sensors on and off mostly offers flexibility in software.
+
+Last, we feed the incoming data from the sensors to dedicated analog pins in our mcu.
+
+\vspace{1cm}
 
 
 \subsection{Components}
 
-List the actual components we ordered.
-No need to explain the values for resistors and capacitors.
-Explain specific choices if needed.
+In this section, just for reference, we list the actual components we chose to order. All the components were ordered from \textit{RSComponents} and can be found by a search on their site.
 
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/hardware/components1.PNG}
+    \caption{List of components ordered}
+    \label{fig:comp1}
+\end{figure}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/hardware/components2.PNG}
+    \caption{List of components ordered (cont.)}
+    \label{fig:comp2}
+\end{figure}
+\FloatBarrier
+
+The list is straight-forward to follow: The quantities are apparent from the schematic and the values have been already discussed. The choice of specific components has been somewhat arbitrary and dictated by needs and component availability.
+
+\vspace{1cm}
 
 \subsection{Printed Circuit Board (PCB)}
 
