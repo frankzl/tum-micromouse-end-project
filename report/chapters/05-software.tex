@@ -58,9 +58,18 @@ With the current values, we can now set different duty cycles for our motors by 
 
 
 \subsubsection*{Quadrature Encoder Inferface(QEI)}
-\textcolor{red}{
-how does qei work?
-}
+To measure the position and velocity of our motors, we are provided with a \textit{quadrature encoder}. The principle of a quadrature encoder is depicted in figure \ref{fig:qei_demo}. 
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/software/qei_demo.png}
+    \caption {Principle of a rotary shaft encoder \cite{alex}}
+    \label{fig:qei_demo}
+\end{figure}
+
+Whenever the wheel is rotated, light emitted from the LED will hit the light sensor (phototransistor) if there is a hole between them. Light sensor and emitter are separated by the wheel seen in \ref{fig:qei_demo}.
+The time passed between the phototransistor turning on after registering light and turning off again after the light disappears behind the wheel will determine the velocity of our motor.
+
 
 \subsubsection*{Analogue-to-Digital Conversion(ADC)}
 
