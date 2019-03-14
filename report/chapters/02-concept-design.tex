@@ -2,13 +2,14 @@
 
 In order to set the right design goals and milestones during the semester, adequately estimate the workload and organize the working process in the most effective way, we needed to: analyze the initial design conditions and restrictions, roughly formulate the implementation blocks along with respective skill-sets of all project members and - after that - write down the most suitable working program. Both steps are described in detail below.
 
-\subsection{Initial design conditions}
-The main question to answer was to grasp and implement using the knowledge acquired the logic behind the "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)?"
+\subsection{Initial design conditions} 
+The main question to answer was to grasp and implement using the knowledge we had acquired plus the logic behind the "how do we build a robot that should drive in the labyrinth and be able to make intelligent decisions (turns) based on the observations (made by sensors)"?
 
-There are some predefined conditions and tools that we used as a starting point in answering this question:
+\noindent 
+There are some predefined conditions and tools that we used as a starting point in answering this question: 
 
 \begin{itemize}
-    \item Geometric constraints\\
+    \item Geometric constraints\\ 
     As was mentioned in the previous section, the geometric parameters of the maze in our case were as following: 8x8 identical squares with a side of 16cm. Therefore, our "mouse" was logically required to be smaller than 16cm in width and length, ideally the size that would allow it to move freely while performing any type of movement within the maze (therefore leaving at least 2-3 centimeters of distance to the surrounding walls)
     \item Power supply\\
     According to the unified formal requirements of the Micromouse competition, the robot should be autonomous, which infers carrying it's own power supply in form of a standard 9V battery.
@@ -31,6 +32,33 @@ There are some predefined conditions and tools that we used as a starting point 
 Based on those conditions and also tools and devices provided, we came up with the implementation plan, which can be seen in detail in the next part.
 
 \subsection{Work program and Gantt chart}
+In the below Fig. \ref{fig:gantt}, we describe our planned stages within a Gantt chart.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/micromouse-gantt.png}
+    \caption{Gantt chart of our progress}
+    \label{fig:gantt}
+\end{figure}
+
+\noindent
+In the first half of the semester we started off with a basic introduction to electronics engineering. By using the dsPIC30F4012 we followed a practical course and learned to use the Microchip MPLABX environment in order to create and simulate the code for the micromouse. 
+
+\noindent
+The practial course was comprised of the following topics:
+\begin{itemize}
+    \item Digital I/O
+    \item Interrupts
+    \item PWM
+    \item UART
+    \item Quadrature Encoders
+    \item Analogue Inputs
+\end{itemize}
+During the practial course we applied our learnings onto a breadboard. By doing this we got an idea of what kind of electronic parts we will need to get accustomed with for the creation of the final micromouse. Our acquired knowledge will be described in more detail in the next section.
+\textcolor{red}{Insert image of breadboard}
+
+
+
 \textcolor{red}{I would suggest to fit here the part with "design decisions based on the aforementioned conditions (justification)"
 \textit{ This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
 Also I think maybe here we should talk about all the initial learning stage we had to go through in the first half of the praktikum (maybe devote a subsection for this here or later in the report)}}
