@@ -49,7 +49,7 @@ For our motors, we have the following parameters:
     \item PWM period register $P1TPER = 2000 - 1$
     \item PWM duty cycle $PDC \in [0, 2*(P1TPER + 1)]$
 \end{itemize}
-$T_{PWM} = ( PTPER + 1 ) * T_{CY} = 2000 * 20ns = 40000 ns$
+$T_{PWM} = ( PTPER + 1 ) * T_{CY} = 2000 * 25ns = 50000 ns$
 
 
 $f_{PWM} = \frac{1}{T_{PWM}} = 0.25 * 10^{5} Hz$
@@ -76,7 +76,47 @@ The time passed between the phototransistor turning on after registering light a
 \subsubsection*{Direct Memory Access (DMA) - does this belong here?}
 
 \subsubsection*{Universal Asynchronous Receiver Transmitter (UART)}
+Our dsPIC33FJ64MC804 has a Universal Asynchronous Receiver Transmitter (UART)  module for serial port communication.
+The UART can communicate with peripheral devices. 
+In our case, we use it to commmunicate with an outside computer to send commands or read out values. This was especially useful to find fitting parameters for our gains in the controller logic (chapter).
 
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/software/uart_demo.png}
+    \caption {String transmission of 8 bit characters with one start bit and one stop bit (no parity) \cite{alex}}
+    \label{fig:uart_demo}
+\end{figure}
+
+Figure \ref{fig:uart_demo} shows the transmission of a string consisting of three characters. 
+The dsPIC33FJ64MC804 allows us to specify the properties of our transmission. The most important settings:
+\begin{itemize}
+    \item Baud rate: 57.6 kbit/s
+    \item Data Selection Bits: 8
+    \item Parity bit: 0
+    \item Stop bit: 1
+\end{itemize}
+
+In order to send out messages, we require another module. We therefore connect our microcontroller to the \textbf{HC-05 Bluetooth Module} (figure \ref{fig:hc_05} so that we can send messages to that module which again transfers those messages via bluetooth to our computer where we read out the values.
+
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.5\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/software/uart_hc05.jpg}
+              \caption{HC-05 Bluetooth Module}
+                \label{fig:hc_05}
+    \end{minipage}%
+    \begin{minipage}{.5\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/software/uart_plug.png}
+              \caption{Connecting the HC-05 module to our microcontroller}
+                \label{fig:wire_3}
+    \end{minipage}
+\end{figure}
+
+The 3-wire UART as seen in figure \ref{fig:wire_3} shows our configuration for a full-duplex communication. The Bluetooth module sends out the message it gets on the reception line (Rx) and sends back messages to the microcontroller through its transmission line (Tx). To receive the message from our microcontroller, we need to connect our computer to the HC-05 module via bluetooth.
+
+It is important to configure the baud rate of the HC-05 module in advance, such that it matches our microcontroller's baud rate. Also, in order to read out values, the baud rate on the PC we are reading from, must also match (in this case 57.6 kbit/s)
 
 \subsection{Pin Mapping}
 \textcolor{red}{
