@@ -29,6 +29,42 @@ During the whole implementation process we've faced a significant amount of chal
 
 \subsection{Software design challenges}
 \subsection{PCB design challenges}
+\begin{enumerate}
+  \item Missing knowledge of a PCB
+    \begin{itemize}
+      \item Problem encountered:\\
+      As it was mentioned in earlier stages of this document, at the beginning of this project, all of us didn't know how to design or even build a PCB board due to lack of knowledge in electrical engineering. 
+      \item Solution found:\\
+      During the practical course we learned the basics of how a schematic has to look like by rebuilding the schematic of the "dsPIC30F4011 Prototype Design" from scratch onto a breadboard. We sometimes also had to have a look at lasts year's micromouse PCB board for reference of placing several parts. 
+    \end{itemize}
+  \item Design of the final schematic and PCB
+    \begin{itemize}
+      \item Problem encountered:\\
+      The overall process of designing the complete board took at approx. five to six weeks, which is far too long than we had anticipated. One of the main issues was the identification of the correct electronic components we needed for the board. The constraint was to only order parts from RSComponents, but not every component we had found was offered by them.
+      Another time-consuming act was the decision of how to place all components so their elecromagnetic interference won't interfere with each other.
+      \item Solution found:\\
+      Most of the components we needed were already used by us in the practical course, hence we could copy them and their placement from the "dsPIC30F4011 Prototype Design" schematic. The main difference was that we changed the microcontroller to a dsPIC33FJ64MC804 - with almost double the amounts of pins, which didn't made it easier to design. But still we had to find a proper way of placing all components on the PCB which doesn't take too much space and doesn't lead to interfering parts.
+    \end{itemize}
+  \item Tracing of the PCB
+    \begin{itemize}
+      \item Problem encountered:\\
+      We had to take into account the limited space we had on the board plus the correct size of the tracing for the several circuits. For example the tracing for the 9V battery circuit had to be bigger in size because of the higher possible current than on the 5V and 3.3V circuits.
+      Another difficulty was to connect all pins according to the schematic due to the high amount of traces we needed. The finishing touch was to draw traces by using as few as possible vias.
+      \item Solution found:\\
+      After revising each iteration after another and talking to our professor, we finally reached a final state which was satisfactory for all of us. Although not all vias could be avoided, in the end we created a clean layout for the tracing.
+    \end{itemize}
+  \item Using Autodesk Eagle
+    \begin{itemize}
+      \item Problem encountered:\\
+      Autodesk Eagle is a huge software environment for creating schematics and its counterpart the PCB - which no one of the team had ever used before. This means that we encountered a lot of problems on how to find the correct parts within the "Parts Library" and later on in the added "SamacSys Library". We had difficulties in selecting the correct parts which we used later on in the final version, and no idea whether the placement of the components is right or not. 
+      \item Solution found:\\
+      Through self-learning and literally trying out functionalities we managed to use Eagle as we pleased. In the end we had two experts for Eagle within our team, which did the part selection, placement and tracing of the components.
+    \end{itemize}
+\end{enumerate}
+
+\textcolor{red}{
+The huge delay in time from fetching the information of what parts are the right one. And the design of the layout of the schematic and the pcb. The long process of actually tracing all electrical parts.
+}
 \subsection{Casing design challenges}
 
 \textcolor{red}{
