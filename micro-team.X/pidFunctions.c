@@ -6,20 +6,19 @@
  */
 
 #include "pidFunctions.h"
+#include "uartFunctions.h"
 
-//Initialize PID
 void pid_init(pid_ctrl *pid)
 {
     //pid_set_gains(pid, 1.49, 0.1, .5);
-    pid_set_gains(pid, 7, 1, 0);
+    pid_set_gains(pid,8., .2, 0.);
     
     pid->integrator = 0.;
     pid->previous_error = 0.;
-    pid->integrator_limit = 10000;
+    pid->integrator_limit = 10000.;
     pid->frequency = 1.;
 }
 
-//Set the PID gains
 void pid_set_gains(pid_ctrl *pid, float kp, float ki, float kd)
 {
     pid->kp = kp;
@@ -27,7 +26,6 @@ void pid_set_gains(pid_ctrl *pid, float kp, float ki, float kd)
     pid->kd = kd;
 }
 
-//Main control function
 float pid_process(pid_ctrl *pid, float error)
 {
     float output;
@@ -35,13 +33,15 @@ float pid_process(pid_ctrl *pid, float error)
     
     if (pid->integrator > pid-> integrator_limit){
         pid->integrator = pid->integrator_limit;
-    } else if (pid->integrator < -pid->integrator_limit){
+    } else if (pid->integrator < -1.*pid->integrator_limit){
         pid->integrator = - pid->integrator_limit;
     }
     
-    output =   - pid->kp * error;
-    output +=  - pid->ki * pid->integrator / pid->frequency;
-    output +=  - pid->kd * (error - pid->previous_error) * pid->frequency;
+    
+    output =    pid->kp * error;
+    output +=   pid->ki * pid->integrator / pid->frequency;
+    output +=   pid->kd * (error - pid->previous_error) * pid->frequency;
+    
     
     pid->previous_error = error;
     return output;
