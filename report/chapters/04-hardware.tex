@@ -1,6 +1,6 @@
 \section{Hardware design} \label{chap:hardware}
 
-In this section, the hardware design and implementation of the micromouse robot are described. First, the corresponding electrical circuit, known as schematic, is broken down to its components and thoroughly presented. In the next subsection, the actual components chosen for the hardware implementation are listed. The model for the final Printed Circuit Board (PCB) follows right after, where the chosen electrical components are placed in the computer model. Last, but not least, the protective casing for the micromouse is described.
+In this section, the hardware design and implementation of the micromouse robot are described. First, the corresponding electrical circuit, known as scematic, is broken down to its components and thoroughly presented. In the next subsection, the actual components chosen for the hardware implementation are listed. The model for the final Printed Circuit Board (PCB) follows right after, where the chosen electrical components are placed in the computer model. Last, but not least, the protective casing for the micromouse is described.
 
 \vspace{1cm}
 
@@ -24,8 +24,6 @@ With the exception of the first subsection, the components will be presented fro
 \vspace{1cm}
 
 \subsubsection{Microcontroller (MCU)}
-
-%%% Somewhere introduce the general concept of the MCU. our specific choice and why, its capabilities that we need and cool stuff about it (e.g.dma, multiple pwm, pin reassignment).
 
 The microcontroller (mcu) can be seen in Fig. \ref{fig:mcuL}.
 Notice that the symbolic representation of the mcu, specifically when it comes to the location of its pins, doesn't correspond to the real model. For the purpose of the schematic, we don't really care about the real location of the pins. As will be seen later, this becomes of importance when placing the components on the board to be printed.
@@ -84,8 +82,6 @@ The capacitors at the far right are only symbolically placed there in the circui
 
 \subsubsection{H-bridge and Motors}
 
-%%% Somewhere else talk about the QE of the motor and the mcu and how the damn they communicate, show the diagram of the phase shifter signals.
-
 Next, the motors and H-bridge sub-circuit will be presented. 
 First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the motors are symmetrically connected to the H-bridge and to the mcu. So, let us concentrate on one of them, the left. The same explanation applies for the other one.
 
@@ -125,12 +121,9 @@ Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge a
 
 We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of rotation of the motor. The truth table is simple: If one direction pin is 1 and the other 0, then the logical 1 defines the direction. If both of the pins are set to logical 0 or 1, the motor breaks. Notice how the pins 3 and 6 feed the voltage to the motor and are coupled with the direction pins.
 
-As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called catch diodes and their use is nicely described in \cite{catchDiodes}. In the same source, an extensive description of the functionality of an H-bridge can be found, in a beginner friendly way.
+As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called \textit{catch diodes} and to understand their use, please refer to \cite{catchDiodes}, where a beginners-friendly introduction to H-bridges is offered.
 
-For our purposes, it suffices to say that the presence of catch diodes is necessary for the smooth functioning of our brushed motor. Consider the switching of direction phases or simply the breaking of the motor. The remaining current that was supplied to the motor has to go ("escape") somewhere. It is not a good idea to dissipate the current to our pins, without an alternative. The catch diodes provide this alternative. 
-%% Check with Alex for these paragraphs...
-
-A commonly used type of diode for this purpose is the Schottky diode (also the case in our circuit), which is characterized by a fast recovery time. Generally, when a diode switches from forward conducting to reverse current blocking mode, for a short period of time (recovery time) reverse current flows through the diode. Exactly this phenomenon is utilized in the catch diode case.
+For our purposes, it suffices to say that the presence of catch diodes is necessary for the smooth functioning of our brushed motor. Consider the case, when the motor changes direction or stops from spinning. In order for this to happen, the internal switches of the H-bridge need to open (remember the direction pins). Temporarily, the current that was flowing in the circuit through the motor has to go ("escape") somewhere, since due to the inductance nature of the motor, the current cannot instantly go to zero . It is not a good idea to dissipate the current through our H-bridge pins/ switches, without an alternative: The current will try to jump an open switch, creating a spark and probably burning the pin/ switch. The catch diodes provide this alternative: The current flows through them in a forward manner and is returned to the source.
 
 \vspace{1cm}
 
@@ -155,13 +148,10 @@ $$V = I*R => 3.3 = I*47 => I = 0.07mA$$
 
 If a much smaller value for the resistance was used, then the current would be much larger, leading to unnecessary power dissipation on the resistance and heating. Also, in this case, there is the possibility for the input to the mcu pin to be stuck in a low, logical 0 level, no matter if the button is pressed or not.
 
-%%% Here it could be that the resistance should be 4.7k
 \vspace{1cm}
 
 
 \subsubsection{Programmer}
-
-%%% Somewhere talk about the programmer used (PicKit)
 
 The programmer is the device that allows for (re)programming of the mcu. The way it is connected is rather straightforward and can be seen in Fig. \ref{fig:programmer}.
 
@@ -182,8 +172,6 @@ A reset button is needed in case something goes wrong during the execution of th
 
 The reset activation logic in our mcu is negative or inverse, as can be seen in Fig. \ref{fig:reset}. A diode and a pull-up resistor (similar to the pull-down used for the other button) connect the voltage feed to the mcu. Once the button is pressed, a connection with the ground is made and the mcu is reset.
 Again the choice of the resistance value is a bit arbitrary.
-
-%%%% Ask Alex about this. I am afraid that the 47k is a mistake. It should be 4.7k...
 
 \begin{figure}[htb]
     \centering
@@ -246,17 +234,19 @@ The sub-circuit for controlling the LEDs can be seen in Fig. \ref{fig:leds}.
 
 The sub-circuits for both LEDs are identical, so let us examine one of them, say the front one. The main component, besides the LED, is an N-channel metal-oxide semiconductor field-effect transistor (MOSFET).
 
-To motivate the need for the MOSFET, imagine connecting the LED directly to the I/O pin. In the datasheet of a typical low current LED (and also the one we will be using) \cite{leds}, we find that the nominal current is somewhere between 25 - 140 mA. Also that the voltage drop on the LED is 2.2 - 2.5V for $I = 20mA$.
+To motivate the need for the MOSFET, imagine connecting the LED directly to the I/O pin. In the datasheet of a typical low current LED (and also the one we will be using) \cite{leds}, we find that the current can be somewhere between 25 - 140 mA. However, the value of 140mA can only be reached under certain PWM conditions. In our case, 20mA steady current will suffice for a bright enough LED. Also the voltage drop on the LED is 2.2 - 2.5V for $I = 20mA$.
+
 Remember the electrical characteristics of the mcu pins as presented in Fig. \ref{fig:electrical}. Notice that the limit current per pin is 4mA! In other words, if we directly connect the LED to the mcu, we will damage the mcu pin and potentially other parts of the mcu circuit. 
 Now, the MOSFET serves as a switch: By providing a low current to its gate (the pin of the MOSFET connected to the mcu pin), its channel between the drain and source opens. in other words, it allows current to flow from the LED side to the ground side, thus closing the circuit and lighting the LED up! 
 
 The resistor R2 in the sub-circuit is used to charge the capacitance of the transistor gate. Hence its value is not critical in our case, since no intense time precision demands are made on the LED. We can use our typical 47k resistors also here. Notice that exactly next to the mcu pin, a header pin is placed with the name JP9. This is just a convenient way to later check the voltage of the pin on the pcb for debugging purposes.
 
-The last component to cover is the resistor on the side of the LED. To choose an appropriate value, we need to consider the voltage drop on the LED. As we read above it's somewhere between 2.2 and 2.5V. We can use $\Omega$mhs law, by considering the resistance of the transisto r negligible and the resistance of the diode fixed.. For the current flowing, let's choose a value between the 25 and 140mA. 
+
+The last component to cover is the resistor on the side of the LED. To choose an appropriate value, we need to consider the voltage drop on the LED. As we read above it's somewhere between 2.2 and 2.5V. We can use $\Omega$mhs law, by considering the resistance of the transistor negligible and the resistance of the diode fixed. For the current flowing, let's choose 20mA as stated above. 
 
 $$V_R = I * R => 5 - V_{diode} = I * R$$
 
-For the values $V_{diode} = 2.5V$ and $I = 25mA$ we acquire a value of 100$\Omega$. This is a brief calculation. We need an approximate value only and this will do. Further computations could be conducted with the min and max possible values of the current and voltage drop. We notice how smaller the resistance needs to be here, comparing to other parts of the circuit.
+For the values $V_{diode} = 2.2V$ and $I = 20mA$ we acquire a value of 140$\Omega$. So, this is the value we need for the resistor.
 
 \vspace{1cm}
 
@@ -309,37 +299,69 @@ Last, we feed the incoming data from the sensors to dedicated analog pins in our
 
 \subsection{Components}
 
-In this section, just for reference, we list the actual components we chose to order. All the components were ordered from \textit{RSComponents} and can be found by a search on their site.
+In this section, just for reference, we list the actual components we chose to order. Most of the components were ordered from \textit{RSComponents}, Fig. \ref{fig:compRS} and the rest from \textit{Mouser}, Fig. \ref{fig:compMou}. The purpose of the lists provided are simply for reference. The components chosen are not unique. Also, the choice of supplier was mostly made due to component availability reasons.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\textwidth]{figures/hardware/components1.PNG}
+    \includegraphics[width=1\textwidth]{figures/hardware/Components1.PNG}
     \caption{List of components ordered}
+    \label{fig:compRS}
+\end{figure}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/hardware/Components2.PNG}
+    \caption{List of components ordered (cont.)}
+    \label{fig:compMou}
+\end{figure}
+\FloatBarrier
+
+Notice that the quantities mentioned are not referring to one board only. The quantities ordered were chosen with the thought of building 4 PCBs, checking the availability of existing components in the lab and the minimum components order of the suppliers. 
+For the number of components needed per board, please refer to the Schematic and Fig. \ref{fig:comp1} and \ref{fig:comp2}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/hardware/CompList.PNG}
+    \caption{List of components needed for one PCB}
     \label{fig:comp1}
 \end{figure}
 
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1\textwidth]{figures/hardware/components2.PNG}
-    \caption{List of components ordered (cont.)}
+    \includegraphics[width=1\textwidth]{figures/hardware/CompList2.PNG}
+    \caption{List of components needed for one PCB (cont.)}
     \label{fig:comp2}
 \end{figure}
 \FloatBarrier
 
-The list is straight-forward to follow: The quantities are apparent from the schematic and the values have been already discussed. The choice of specific components has been somewhat arbitrary and dictated by needs and component availability.
-
 \vspace{1cm}
+
 
 \subsection{Printed Circuit Board (PCB)}
 
-\textcolor{red}{
 Comment on the restrictions of the PCB, dimensions and shape.
 Explain the components' placement choice.
 Describe the concept of 2 layers and via points.
 Describe the concept of ground plane.
 Comment on electrical noise, its sources and why it doesn't really matter in our case.
-}
+Explain the track size chosen.
+
+In this chapter, the PCB of the micromouse will be presented. All in all, the PCB is the body and soul of the robot: Its physical aspect constitutes the largest part of the robot and hosts the mcu (the brain of the robot) and all the necessary components already described in Schematic Section. 
+
+The connections between components are made with tracks of copper running through the PCB. It can be easily seen that the dimensions of the PCB are a trade-off between comfort and practicality: The larger the PCB, the more spacious, the easier it is to solder components on it and design easily distinguishable tracks. The smaller it is the smaller and lighter the robot. In our case the dimensions of the PCB are 
+%%% Measure dimensions properly.
+
+Notice that in our case, a 2 layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, keep in mind that there are 2 different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
+
+The through-hole components actually go through the PCB. The manufacturer needs to drill holes for this purpose. An advantage of this type is mechanical stability. Another advantage comes in the tracking phase, when connecting the components: The through-hole ones can have tracks leading to and from them in both the top and bottom layers. The reason is obvious, they have physical presence in both layers, since they go through the surface of the PCB to the other side. However, the whole concept does occupy more space than the SMD components. Also, drilling holes costs more on the side of the manufacturer.
+
+Now the SMD components are soldered only on the surface of the PCB (top or bottom layer) and no drilling is required. They occupy less space too. However, a track can lead to or from them only in the layer they are found. If a connection between SMD components in different layers needs to be made, a change of layer on the track is necessary, somehwere in its course.
+
+Such changes are accomplished through the so-called "via points".
+
+
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/PCB.PNG}
@@ -379,12 +401,10 @@ Comment on electrical noise, its sources and why it doesn't really matter in our
 
 \subsection{Casing}
 
-\textcolor{red}{
 Present the need for casing.
 Describe it.
 Present necessary pictures.
 Describe important calculations.
-}
 
 
 
