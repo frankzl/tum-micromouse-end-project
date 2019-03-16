@@ -1,6 +1,6 @@
 \section{Hardware design} \label{chap:hardware}
 
-In this section, the hardware design and implementation of the micromouse robot are described. First, the corresponding electrical circuit, known as scematic, is broken down to its components and thoroughly presented. In the next subsection, the actual components chosen for the hardware implementation are listed. The model for the final Printed Circuit Board (PCB) follows right after, where the chosen electrical components are placed in the computer model. Last, but not least, the protective casing for the micromouse is described.
+In this section, the hardware design and implementation of the micromouse robot are described. First, the corresponding electrical circuit, known as Schematic, is broken down to its components and thoroughly presented. In the next subsection, the actual components chosen for the hardware implementation are listed. The model for the final Printed Circuit Board (PCB) follows right after, where the chosen electrical components are placed in the computer model. Last, but not least, the protective casing for the micromouse is described.
 
 \vspace{1cm}
 
@@ -16,7 +16,7 @@ The schematic of the micromouse can be seen in Fig. \ref{fig:schematic_overview}
     \label{fig:schematic_overview}
 \end{figure}
 
-This can look intimidating at first and definitely not readable in such a miniature picture. So, let's break it down to its components and describe its sub-circuits.
+This can look intimidating at first and definitely not readable in such a miniature picture. So, let's break it down to its components and describe its sub-circuits. Notice that all of the components appearing in the Schematic were downloaded one by one from the suppliers' site, together with their pcb models, as will be seen later.
 
 With the exception of the first subsection, the components will be presented from left to right and from top to bottom, so that the reader may always refer to the overview schematic to get a clear picture of a component's relation to the whole.
 
@@ -30,7 +30,7 @@ Notice that the symbolic representation of the mcu, specifically when it comes t
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/hardware/MCU.PNG}
+    \includegraphics[width=1\textwidth]{figures/hardware/MCU.PNG}
     \caption{The dsPIC33FJ64MC804 microcontroller}
     \label{fig:mcuL}
 \end{figure}
@@ -54,7 +54,7 @@ Specifically, in the section "Electrical Characteristics" in \cite{mcu}, we find
 \FloatBarrier
 \vspace{1cm}
 
-\subsubsection{Votage Regulators}
+\subsubsection{Voltage Regulators}
 
 The necessity for voltage regulators, which can be seen in Fig. \ref{fig:battery}, arises from the need for different voltages present in our system. 
 Specifically, as found in \cite{mcu}, the mcu considers 3.3V as logical one and it is this voltage we need to provide to it (see VDD pins). The distance sensors used (taken from a previous micromouse model) need 5V. And yet the motors need 6V, as can be seen in \cite{motor}. 
@@ -62,7 +62,7 @@ Notice that we are using a battery of 9V. Therefore, we need a way to generate t
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/hardware/VoltageandCapacitors.PNG}
+    \includegraphics[width=1\textwidth]{figures/hardware/VoltageandCapacitors.PNG}
     \caption{The battery and voltage regulators}
     \label{fig:battery}
 \end{figure}
@@ -87,7 +87,7 @@ First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the 
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/hardware/MotorsandHBridge.PNG}
+    \includegraphics[width=1\textwidth]{figures/hardware/Motors.PNG}
     \caption{The motors and the H-bridge}
     \label{fig:motors}
 \end{figure}
@@ -108,7 +108,7 @@ One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember tha
 
 Another pair of pins (3, 4) refers to the voltage feed of the motor encoder. And the last pair of pins (5, 6) are used for the output of the motor encoder signals. These signals encode the motor's rotational position every moment and are fed to the mcu. In the mcu, with the help of the quadrature encoder (QE) module, they can be translated to real position in space.
 
-Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the tracks on a PCB. Instead, the H-bridge can conveniently reverse the voltage. First, have a look at the exemplary circuit in Fig. \ref{fig:HData}, take from the datasheet of the H-bridge \cite{Hbridge}.
+Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the traces on a PCB. Instead, the H-bridge can conveniently reverse the voltage. First, have a look at the exemplary circuit in Fig. \ref{fig:HData}, take from the datasheet of the H-bridge \cite{Hbridge}.
 
 \begin{figure}[htb]
     \centering
@@ -273,7 +273,7 @@ The distance sensors are necessary for perceiving the distance from maze walls. 
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/hardware/DistanceSensors.PNG}
+    \includegraphics[width=1\textwidth]{figures/hardware/DistanceSensors.PNG}
     \caption{The distance sensors}
     \label{fig:sensors}
 \end{figure}
@@ -340,57 +340,125 @@ For the number of components needed per board, please refer to the Schematic and
 
 
 \subsection{Printed Circuit Board (PCB)}
-\textcolor{red}{
-Comment on the restrictions of the PCB, dimensions and shape.
-Explain the components' placement choice.
-Describe the concept of 2 layers and via points.
-Describe the concept of ground plane.
-Comment on electrical noise, its sources and why it doesn't really matter in our case.\\
-}
 
-Explain the track size chosen.
-
-In this chapter, the PCB of the micromouse will be presented. All in all, the PCB is the body and soul of the robot: Its physical aspect constitutes the largest part of the robot and hosts the mcu (the brain of the robot) and all the necessary components already described in Schematic Section. 
-
-The connections between components are made with tracks of copper running through the PCB. It can be easily seen that the dimensions of the PCB are a trade-off between comfort and practicality: The larger the PCB, the more spacious, the easier it is to solder components on it and design easily distinguishable tracks. The smaller it is the smaller and lighter the robot. In our case the dimensions of the PCB are 
-%%% Measure dimensions properly.
-
-Notice that in our case, a 2 layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, keep in mind that there are 2 different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
-
-The through-hole components actually go through the PCB. The manufacturer needs to drill holes for this purpose. An advantage of this type is mechanical stability. Another advantage comes in the tracking phase, when connecting the components: The through-hole ones can have tracks leading to and from them in both the top and bottom layers. The reason is obvious, they have physical presence in both layers, since they go through the surface of the PCB to the other side. However, the whole concept does occupy more space than the SMD components. Also, drilling holes costs more on the side of the manufacturer.
-
-Now the SMD components are soldered only on the surface of the PCB (top or bottom layer) and no drilling is required. They occupy less space too. However, a track can lead to or from them only in the layer they are found. If a connection between SMD components in different layers needs to be made, a change of layer on the track is necessary, somehwere in its course.
-
-Such changes are accomplished through the so-called "via points".
-
+In this Section, the PCB of the micromouse will be presented. All in all, the PCB is the body and soul of the robot: Its physical aspect constitutes the largest part of the robot, hosts the mcu (the brain of the robot) and all the necessary components already described in Schematic Section. 
+The finished PCB can be seen in Fig. \ref{fig:pcb}. The dimensions are: From head to tail 11.6 cm and from side to side 8.5 cm. The printed PCB can be seen in Fig. \ref{fig:print} .
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/PCB.PNG}
-    \caption{The PCB with both top and bottom tracks visible}
+    \caption{The final PCB version}
     \label{fig:pcb}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/printed.jpg}
+    \caption{The printed board (bottom layer)}
+    \label{fig:print}
+\end{figure}
+
+Our PCB features 2 layers: The top and bottom layer. Keep in mind that they are both physically and electrically isolated, unless we deliberately create a connection, as explained later. Generally, all necessary concepts are explained when needed in the following subsections, so it is important to read through them in order.
+
+The process roughly consists of 3 steps, corresponding to the subsections that follow.
+
+\FloatBarrier
+
+\subsubsection{Components Placing}
+
+Generating the PCB board from the Schematic is straight-forward in Eagle: The software offers an empty board and the models of the Schematic components placed out of it.
+
+The first step of the procedure is to actually place the components on the board. There are no hard restrictions here, but rather a few rules of thumb. For example, it is desirable to reduce the size of the PCB as much as possible, but still place the components comfortably enough for connections to be made (traces). So a good trade-off has to be found. Before we continue with more examples of such rules, there are few details that need to be mentioned.
+
+It is important to notice here, that the casing of the components was chosen as 805 and not smaller. We wanted a size that would allow us to comfortably solder the components on the board.
+
+The final placement of components can be seen in Fig. \ref{fig:comp}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/PCB_Components.PNG}
+    \caption{The final placement of components on the PCB}
+    \label{fig:comp}
+\end{figure}
+
+As mentioned, in our case, a 2 layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, notice that there are 2 different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
+
+The through-hole components actually go through the PCB. The manufacturer needs to drill holes for this purpose. An advantage of this type is mechanical stability. Another advantage comes in the tracing phase, when connecting the components: The through-hole ones can have traces leading to and from them in both the top and bottom layers. The reason is obvious, they have physical presence in both layers, since they go through the surface of the PCB to the other side. However, the whole concept does occupy more space than the SMD components. Also, drilling holes costs more, when ordering the PCB.
+
+Now the SMD components are soldered only on the surface of the PCB (top or bottom layer) and no drilling is required. They occupy less space too. However, a track can lead to or from them only in the layer they are found. If a connection between SMD components in different layers needs to be made, a change of layer on the track is necessary, somewhere in its course. We will come back to tracing in the next subsection. 
+
+\FloatBarrier
+\vspace{1cm}
+
+For now, let us consider some of the needs that led to this particular placement of components. The following train of thought is definitely not unique and a different placement could have been chosen.
+
+Referring to Fig. \ref{fig:comp}, let's start with the sensors' pin headers. It is clear that the distance sensors need to  be placed in the front (right side of the PCB). Therefore their pins have to be placed nearby. Now, notice the analog nature of the sensors output: We want the traces of those signals to the mcu to be as short as possible, since analog signals are susceptible to noise. Hence the mcu is placed in the front of the board, as well.
+
+After this choice is done, the location of several components is obvious: The oscillator needs to be as close as possible as well. The decoupling capacitors, whether on the top or bottom layer, need to be placed as close to their connecting pins, as possible. It is a good idea to also place the programmer and the UART pin headers close to the mcu for convenience.
+
+The buttons need not necessarily be placed close to  the mcu. Admittedly, a more convenient location for them could be found on the board, for example one in the front and one in the back.
+
+Notice the empty space in the middle of the board. It is planned for the battery. In our case, instead of using a through-hole battery case on the board, the battery is to be floating above it, in a dedicated case of the casing. Even though it would be possible to dismiss the space kept on the board, we chose to keep it as a plan B, just in case the casing is not available. To the left and right of the battery more space is kept for the motors, dictated by their dimensions and the casing to host them. Finally, notice the four drills at the left and right sides of the board. As will be explained later, the design of the casing allows for sliding the board in it, before the motors and wheels are placed. However, just in case extra stability is needed, these four holes allow for screws to hold the PCB and the casing together.
+
+Since we are still in the middle of the board, notice the 2 voltage regulators, in succession of the battery pins. The 5V one is only needed for the sensors. The 3.3V one, however, feeds components both in the front and the back of the PCB. A placement in the middle is rather convenient.
+
+Moving on to the back of the PCB, the H-bridge needs to be placed in the middle of the 2 motors' pins. The back LED, much like the front one in placed approximately in the middle of the edge, since its role is mechanical stability. The little tail, where the LED is placed, is just a nice artistic touch, as are the front cuts on the board.
+
+
+\subsubsection{Tracing (Connecting Components)}
+
+Now that the components have been placed and the shape of the PCB decided, they need to be connected. This procedure is called "tracing", since the components are connected through copper traces on the board.
+As mentioned above, the traces can be on the top or bottom layer and the 2 layers are isolated, hence the traces on different layers are also isolated from each other. 
+The final tracing can be seen in Fig. \ref{fig:pcb} above.
+A view with the traces on the top layer can be seen in Fig. \ref{fig:top}. The view featuring only the traces on the bottom layer can be seen in Fig. \ref{fig:bottom}.
+
+\begin{figure}[htb]
+    \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/PCB_Top.PNG}
-    \caption{The PCB with only top layer tracks visible}
+    \caption{The PCB with only top layer traces visible}
     \label{fig:top}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/PCB_Bottom.PNG}
-    \caption{The PCB with only bottom layer tracks visible}
+    \caption{The PCB with only bottom layer traces visible}
     \label{fig:bottom}
 \end{figure}
 
+\FloatBarrier
+
+This is a good point to introduce the concept of "via points". Notice how traces on the top layer (red) change to traces on the bottom layer (blue) and vice versa. The point where the layer (and color) changes is a via point. A via point is a drill on the PCB, to allow for the trace to change layer. 
+Hopefully, the above discussion about SMD and through-hole components makes more sense now. Notice how, in some cases, the traces change layer just before connecting to an SMD component, in order to get to the component's layer.
+All in all, drawing traces in an organized manner is not straight-forward. Two restrictions to keep in mind: Keep both the number of via points and the length of the traces as low as possible. The reason for the first being the cost of the PCB and for the latter, the cost and the accuracy of the corresponding signal.
+
+One important aspect of tracing is the choice of trace width. So to speak, professionals quickly develop a feeling for this, but for the rest of us, there is always the scientific way:
+
+The total resistance of a trace is given by the following formula
+
+$$R = \rho * \frac{l}{A}$$
+
+Here, $\rho$ is the specific electrical resistance of copper (as material). It equals to $1.68*10^{-8} \Omega *m$ at $20 \degree C$.
+l is the length of the trace and A is the height of the trace (usually 0.035mm) multiplied with the width.
+In order for the right width to be chosen, we need to consider the desirable value for the resistance. And in order to do that, again $\Omega$mhs Law has to be considered, referring to the current we expect to run through our trace.
+This analysis leads to the intuitive result: When we expect a large value for the current, then a smaller resistance is needed and thus a larger width value for the trace needs to be selected. For smaller values of current, smaller width may be selected. In any case, a minimum width is dictated by the manufacturer rules and the good connection of a component's pin.
+
+For example, it is known that motors can draw a lot of current, especially when they first start moving. Thus, the traces to the motors and the H-Bridge need to have a wider width.
+
+Eagle offers a nice feature when it comes to measuring trace length and acquiring an estimation of relevant values. A ULP script provides us with this info, by running the command \textit{run length-freq-ri} in Eagle's command line. An example from our circuit can be seen in Fig. \ref{fig:length}. Notice how the estimation for the maximum current on the trace is shown in the end right column and how the wider traces of the motor (e.g. DIRA2 etc.) can take more than 1A.
+
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/hardware/PCB_Components.PNG}
-    \caption{The PCB without tracks, only components visible}
-    \label{fig:comp}
+    \includegraphics[width=1\textwidth]{figures/hardware/ULP.PNG}
+    \caption{Trace length and other info}
+    \label{fig:length}
 \end{figure}
+
+All in all, we kept it simple and well in the limits with  the choice of the width: There are only 3 different widths in our PCB traces. The largest is 1.016mm and is used for the connections between the motors, the H-bridge and the battery. The we have 0.6096mm for the connections from the 5V regulator (essentially the sensors). Last, the smaller width is 0.4064mm and is used for all the rest. Especially in the case of the close to each other mcu pins, a larger width would be a nuisance, since there needs to be a minimum clearance between the traces.
+
+\vspace{1cm}
+
+The last concept to be introduced in this chapter is the "ground plane" (GND). The ground plane is a convenient way of connecting all the GND nodes (pins) of the components. In essence, it is a layer placed on one of the PCB layers, which connects everything on it. It can be seen in Fig. \ref{fig:gnd}.
 
 \begin{figure}[htb]
     \centering
@@ -399,15 +467,40 @@ Such changes are accomplished through the so-called "via points".
     \label{fig:gnd}
 \end{figure}
 
+The copper traces run through this all-connecting surface, in order to connect the necessary pins. This is especially visible in the above pictures of the actual PCB, where the green entire surface is GND and the tracks running through it are the traces mentioned above, playing the role of wires in a physical circuit.
+
+Remember that the GND surface is applied to one of the layers, in our case, the top. What about the SMD components that are placed on the bottom layer, but still need tp have one or more of their pins connected to GND? The solution might not seem very elegant, but is functional: A trace is runs from the gnd pin of the component, on the bottom layer, and ends in a via point. Hence, it connects to the GND on the top layer. An example from our circuit can be seen in Fig. \ref{fig:via}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/Via.PNG}
+    \caption{How an SMD component on the bottom layer connects to the GND surface on the top layer}
+    \label{fig:via}
+\end{figure}
+
 \FloatBarrier
 
+\subsubsection{Design Rules Check (DRC)}
+
+Once the traces are in place, a final check has to be performed, before the board is handed to the manufacturer. Luckily, Eagle provides a straight-forward tool to check for minimal distances between components and traces, overlapping, floating connections and other issues: The DRC (Design Rules Check).
+
+In our case, the manufacturer PCB-Pool provides a set of their own rules about minimum trace width, via points, clearance rules etc. After incorporating it in Eagle and checking, all of the found issues need to be fixed, before the board is ready for production.
+An instance of the interface can be seen in Fig. \ref{fig:drc}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\textwidth]{figures/hardware/DRC.PNG}
+    \caption{Interface of DRC and list of found violations}
+    \label{fig:drc}
+\end{figure}
+
+
+\FloatBarrier
+\vspace{1cm}
+
 \subsection{Casing}
-\textcolor{red}{
-Present the need for casing.
-Describe it.
-Present necessary pictures.
-Describe important calculations.
-}
+
+
 
 
 
