@@ -469,6 +469,7 @@ The last concept to be introduced in this chapter is the "ground plane" (GND). T
 
 The copper traces run through this all-connecting surface, in order to connect the necessary pins. This is especially visible in the above pictures of the actual PCB, where the green entire surface is GND and the tracks running through it are the traces mentioned above, playing the role of wires in a physical circuit.
 
+%this might be understood as that only one GND plane is allowed.
 Remember that the GND surface is applied to one of the layers, in our case, the top. What about the SMD components that are placed on the bottom layer, but still need tp have one or more of their pins connected to GND? The solution might not seem very elegant, but is functional: A trace is runs from the gnd pin of the component, on the bottom layer, and ends in a via point. Hence, it connects to the GND on the top layer. An example from our circuit can be seen in Fig. \ref{fig:via}.
 
 \begin{figure}[htb]
