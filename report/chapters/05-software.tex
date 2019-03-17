@@ -210,6 +210,42 @@ Here goes the whole logic of the mouse movement control (how should it behave wh
 }
 
 \subsubsection{Proportional-Integral-Derivative Controller (PID)}
+\subsubsection*{Need for control loop feedback}
+
+The robot velocity is controlled by varying the PWM duty cycle but it is not guaranteed that the motor is driving exactly at this value. A feedback mechanism is necessary to control and verify this value.\\
+A proportional–integral–derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value e(t) as the difference between a desired setpoint (SP) and a measured process variable (PV) and applies a correction based on proportional, integral, and derivative terms.\\
+The overall control function can be expressed mathematically as : 
+$$Output = K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
+$$e(t) = setpoint - input $$
+ 
+where Kp, Ki, and Kd, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively.
+
+\subsubsection*{P term}
+
+KP is proportional to the current value of the error. \\
+A simple P controller prevents the system from reaching its target value. The system settles in a steady state error since it requires an error to generate the proportional response.\\
+Graph test1 : Test of P controller on the motor. the target value is not reached
+\subsubsection{I term}
+
+It accounts for past values of the error and integrates them over time to produce the I term. \\
+Introducing the I term, solves the previous problem with a historic cumulative value of the error.
+Graph test 2: Test of PI controller on the motor. The target value is reached
+
+\subsubsection{Clamping I term and PID output}
+
+The integral term can grow very largely through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it’s necessary to limit this term.\\
+Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check. 
+
+\subsubsection{Cascade controller: position and velocity}
+
+We use 2 controllers to adjust both the position and speed of each wheel. 
+
+The position control is performed with a simple P controller which error is the different between the measures distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
+We only need a P controller because the inertia of the robot leads to an integration (the wheels automatically integrate) as the robot moves on.
+
+The output of this controller (desired velocity) is used as the setpoint for the PI controller that adjusts the speed of the wheel. It takes as input the error between the desired and current velocity and returns a PDC value that sets the new motor speed.
+
+To find the optimal parameters that maximize the responsiveness to the error we perform loop tuning. Refer to test section for more on loop tuning. 
 
 \subsubsection{State Machine}
 
