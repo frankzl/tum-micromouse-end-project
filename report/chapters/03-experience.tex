@@ -1,18 +1,120 @@
-\section{Acquired Knowledge} %is this good?..
+\section{Studying dsPICs}
 
-\textcolor{red}{Some introductory info.}
+The first part of the practical course was dedicated to learning the main control practices and hardware features of the dsPIC digital signal controllers from Microchip, widely used in embedded applications and robotics.
 
-\subsection{Studying dsPICs}
+\textbf{Developed skills:}
+\begin{itemize}
+    \item extracting relevant information from datasheets
+    \item expressing it in C language
+    \item Cross-compiling
+    \item Debugging (using Simulation environment)
+\end{itemize}
 
-\textcolor{red}{Some theoretical knowledge.
-Something like listing a short summary of everything we've studied. }
+In the following section we introduce the most important aspects of each hardware peripheral of the microcontroller. For more details refer to dsPICOverview.\\
+Refer to the Software section of the report to have more details about the peripheral’s settings used for our robot.
 
-\subsection{Fusion}
+\subsection{Digital I/O:}
 
-\textcolor{red}{We can mention a workshop here}
+The general purpose I/O pins allow the microcontroller to monitor and control other devices.
+Many pins are shared between several peripherals and the general purpose I/O pins.  An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic.\\
+All port pins have three Special Function Registers (SFR), registers that control various aspects of the microprocessor's function, directly associated with the operation of the port pin:
+\begin{itemize}
+    \item \textbf{TRIS}: the TRI-State Register sets the direction of the pin. 1 corresponds to an input pin and 0 to an output pin.\\
+    The direction needs to be set before reading or writing the data from the ports. \\
+    Only pins configured as digital can be used as input or output pins. Pins configured as analogue must be used as input pin.
+    \item \textbf{LAT}: it sets the output value of the pin and returns the logic state of the output latch.
+    \item \textbf{PORT}: it returns the logic state of the pin. 
+\end{itemize}
+To avoid Read-Modify-Write issue, we always read from the port and write to the latch.
 
-\subsection{Eagle}
+\subsection{Interrupts:}
 
-\textcolor{red}{Not sure if we should mention it here, but why not.
-\linebreak
-\textbf{your suggestions for other subsections are highly appreciated}}
+Interrupts are mechanisms that allow the microcontroller to react to external and internal events.\\
+When the microcontroller receives an interrupt request (IRQ), it jumps to the interrupt service routine (ISR), executes it and returns back to the main program. 
+Consequently, interrupts enable a quick reaction and are efficient for asynchronous events as they allow the microcontroller to allocate its maximum processing time for other tasks by avoiding redundant checking tasks.\\
+
+To be signalled to the CPU by the interrupt controller, the interrupt must be enabled and have a priority higher than the current CPU priority.\\
+The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table. (refer to datasheet table 7-1)
+
+\subsection{Timer: timer driven by interrupt}
+
+Timers are used to measure the time or generate the accurate time delay using a binary counter that can be configured to count clock pulses. Once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
+
+To generate the range of delays, we must set the maximum count value using the following formulas:\\
+We first multiply the cycle period by a prescaler, to deduce the time between two increments of the counter:
+$$tick=prescaler*T_{CY}$$
+Then we derive the maxcount:
+$$maxcount=Timer delay/tick$$
+The prescaler is necessary when the maxcount exceeds its maximum value $$(2^{16}-1=65535).$$ 
+If many solutions are possible, the smallest prescaler value should be chosen to increase the timer resolution. 
+
+\subsection{Pulse Width Modulation:} 
+
+Pulse width modulation (PWM) is the method of choice to control the amount of energy that is supplied to an actuator, light source or any other device when employing digital control systems.\\
+The duty cycle is defined as the proportion of time the PWM output is switched on with respect to the PWM period.
+The PWM period (TPWM) is fixed and represents the cycle time of the signal.
+
+The PWM frequency is application dependent. However, we should keep in mind that high frequency requires very fast switches and may cause electromagnetic interference problems. Whereas, low frequency causes the load to follow the pulse.\\
+For driving a motor, a typical value would range between 5kHz and 50kHz but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
+
+The main elements of a PWM generator are a timer/counter and a comparator which outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value. When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value and then resets, completing one PWM period.
+
+PWM period:
+$$T_{PWM}=\frac{T_{CY}*(PTPER+1)}{PTMR Prescale Value}$$
+
+DC: 
+$$DC=100* \frac{PDC}{(2*(PTPER+1)}$$
+
+
+\subsection{Universal Asynchronous Receiver Transmitter:}
+
+UART is the most commonly used protocol for asynchronous serial communication in microcontrollers due to its simplicity, easy implementation, and minimum hardware requirements.\\
+When no character is transmitted, the bus is typically logically high and transmission begins with the start bit which is logically low. After this, typically 8 data bits are transmitted and the transmission finishes with a logical high as a stop bit.\\
+To receive data from UART, we utilize a UART receive interrupt that will trigger every time a data packet is received in the UART receive registers (U1RXREG). This data is transferred to another variable and the receive buffer is cleared if full.
+
+The main criterion for UART communication is its baud rate, i.e. transmission speed. It is measured in bits per second and usually takes the following values: 9600bits/s, 28.8kbits/s, 57.6kbits/s.
+This value is stored in U1/2BRG register and is derived from the clock cycle.
+$$BaudRate = \frac{f_{CY}}{UnBRG+1}$$
+For successful communication, both the device’s receiver and transmitter should be set to same baud rate.
+
+
+\subsection{Quadrature Encoder Interface:}
+
+Quadrature encoders (also known as incremental encoders or optical encoders) are used for position and speed detection of rotating motion systems. They enable closed loop control of many motor control applications.
+
+The Quadrature Encoder module provides a simple interface to incremental optical encoders, which allows to obtain signed velocity using 2 photo-transistors that are offset by 1 quarter of the cycle period. It accepts the A, B and index connections from the incremental encoder and stores the accumulated count pulses in a dedicated 16-bit time base.
+
+The two channels, Phase A (QEA) and Phase B (QEB) enable to know the direction of the motor. If Phase A leads Phase B, then the direction of the motor is forward (counter is incremented). If Phase A lags Phase B then the direction of the motor is reverse (counter is decremented). A third channel, termed Index pulse, occurs once per revolution and is used as a reference to establish an absolute position.\\
+However, the high resolution of the encoders leads rapidly to an overflow or underflow of the 16 bits counter register. To keep track of the total counts, a global variable should be updated accordingly at each interrupt call.
+
+\subsection{Analogue to Digital Converter:}
+
+Since we employ a digital microcontroller, it is necessary to convert the analogue values from sensors to digital values. This is performed by the analogue to digital converters (ADC).\\
+The ADC module converts a continuous time and value signal to a discrete time and value signal by sampling at a fixed sample period and converting the analogue values into an integer values stored in a k-bits binary representation.
+
+During conversion the analogue signal should be "held" constant throughout the process. This is usually done with a sample and hold circuit. It takes a "snapshot" of the input signal and stores it on the plates of a capacitor to have a steady signal. The acquisition time should be long enough for the capacitor to charge enough to match, as closely as possible, the incoming voltage.\\
+After the analogue input is captured by the sample-and-hold (S/H) amplifier, it is compared with the output of a digital-to-analogue converter to perform the conversion. 
+
+DSPs have integrated ADCs, depending on the dsPIC type, they are either 10 bit or 12 bit ADCs.  The most commonly used ADCs are based on the successive approximation principle which uses a binary search to find each bit of the output voltage.\\
+ADC raises an interrupt when all the configured channels have been sampled. The results are available on the 16 16-bit ADC buffers (ADCBUF0, …, ADCUFF).
+
+
+\subsection{Direct Memory Access:}
+
+Direct memory access (DMA) is the ability for an I/O device to transfer data directly to or from memory.  It can be seen as a co-processor that is used to quickly transfer data between main memory and peripherals without the intervention of the CPU. Hence, freeing up the CPU for more valuable tasks while the DMA controller takes care of the data movement and pointer incrementing.
+
+Some dsPIC families have an integrated DMA controller optimized for high-performance, real-time, embedded applications. DMA uses a second bus master within the system and therefore, can continue to transfer data when the CPU has entered Idle mode.\\
+When data is ready to be transferred from the peripheral, a DMA request is issued by the peripheral. When the block transfer is complete, the DMA channel issues an interrupt (if enabled).
+
+The DMA channel supports different operating modes:
+\begin{itemize}
+    \item Post-Increment or static DPSRAM addressing.
+    \item Peripheral Indirect Addressing or Register Indirect Addressing.
+    \item One-Shot or continuous block transfers.
+    \item Ping-Pong mode (Auto-switch between two start addresses offsets (DMAxSTA or DMAxSTB) after each transfer complete)
+\end{itemize}
+
+
+
+
+
