@@ -1,14 +1,65 @@
 \section{Software design} \label{chap:software}
 \textcolor{red}{some general info}
 
-\subsection{Peripherals} %please think about the appropriate name!
-The description of our modular architecture, the work principles of the separate modules and basically "how we control the peripherals" such as motors, leds, timers, etc. Logic comes a bit later in here.
-Also all info on DMA and pin remapping and our pretty mapping table are also welcomed here I think
+\textbf{MCU specification:}\\
+Some MCU specification and features relevant for the Software setup:
+\begin{itemize}
+    \item 44 pins
+    \item 3.3V device 
+    \item 16-bit wide data path
+    \item up to 40 MIPS operation
+    \item Flexible clock options (External, crystal, resonator, internal RC)
+    \item Flash program memory (up to 128 Kbytes)
+    \item Data SRAM (up to 16 Kbytes)
+    \item Peripheral pin Select functionality
+    \item Up to 35 programmable digital I/O pins
+    \item 2-Quadrature Encoder Interface modules
+    \item Peripherals with supported DMA functionality
+\end{itemize}
+For more details refer to datasheet (page 3-5)
 
-\subsubsection*{Timer 1}
+\subsection{Primary configuration}
+
+\subsubsection*{Configuration bits:}
+
+Configuration bits define the microcontroller’s behaviour and enable to set its essential features (Watchdog timer, System Clock Oscillator mode, Phase-Locked Loop…).\\
+These settings are required before the program starts to run and cannot be changed during the run-time.\\
+We invoke pre-processors macros to set the device configuration bits in the main header file.\\
+In the main c file, we configure PLL to set the internal clock frequency, call all initialization functions for each of the modules and finally run an infinite background loop so that the system never stops.
+
+Oscillator setup:
+Configure Phase Lock Loop (PLL) for the system clock reference at 40MHz 
+	$$F_{IN} (Oscillator frequency) = 16MHz  $$  
+    $$F_{OSC} (Clock frequency) =  80MHz$$
+ 	$$F_{CY} = 1/2 * F_{OSC} = 1/2 * (F_{IN}*M/(N1*N2)) = 0.5 * (16MHz*20/(2*2)) = 40 MIPS$$
+$$Fcy=40Mhz, Tcy=25ns$$
+After the PLL setup, we wait in while loop, for PLL to lock, i.e. stabilize. 
+
+\subsubsection*{Pin Mapping}
+
+Peripheral Pin Select (PPS) allows the programmer to map the I/O of most digital peripherals to a selection of pins using an internal switch matrix.
+PPS capable pins are identified in the pinout with the designation RPn, with n the port’s pin number. 
+
+\textit{Strategy for pin choice:}
+
+We start by selecting fixed pins for the following modules / functions: A2D, PWM, OSCL, Programmer, MCLR. We then, find a pin mapping for the rest of the peripherals from the remappable pins that optimizes the PCB wiring.
+
 \textcolor{red}{
-Short description on how we worked out the time
+maybe a diagram of which peripheral maps to which pin
 }
+
+\textit{Software:}
+
+Before performing pin remapping, we unlock the oscillator, configure the pin mapping, lock the oscillator (enable it again) and wait for a short delay for the remapping to stabilize.\\
+The setup differs between input and output pins. For input pin mapping, we need to configure the pin number to the peripheral register. For output pin mapping, we choose the pin register and then map it to the corresponding device code (table 11-2 in datasheet)
+
+\subsection{Peripherals}
+\subsubsection*{Timer 1}
+The dsPIC33F/PIC24H device family offers several 16-bit Timer modules. We use the timer 1 to function as a real time clock that generate cyclic internal events.\\
+We set the timer period to 10ms, which is derived from the external oscillator clock.
+$$tick=prescaler*T_{CY}= 64*25ns= 1.6us $$ 
+We derive the maximum count with:
+$$max_count=Timer delay/tick=6250 (6250<2^{16}-1)$$
 
 \subsubsection*{Pulse Width Modulation (PWM)}
 
@@ -73,7 +124,40 @@ The time passed between the phototransistor turning on after registering light a
 
 \subsubsection*{Analogue-to-Digital Conversion(ADC)}
 
-\subsubsection*{Direct Memory Access (DMA) - does this belong here?}
+To convert the analogue sensor values to digital values that can be processed by the controller, we configure the ADC module. \\
+We sample 3 analogue channels for our 3 sensors: AN4, AN6, AN8 using a configuration with 12-bit conversion (output is an unsigned integer) and 1 sample and hold unit.\\
+In a general configuration, ADC raises an interrupt when all the configured channels have been sampled and the results are available on the 16-bit ADC buffers but Since our device has a DMA module, the storing of converted values can be automated without the need of CPU involvement and disable the ADC interrupt.
+
+\textbf{Sampling and conversion settings:}
+Requirements from datasheet table 31-16: 
+\begin{itemize}
+    \item minimum conversion clock $$T_{AD} = 117.6 ns$$
+    \item minimum acquisition time $$T_{ACQ}=3*tad= 352.8ns $$
+    \item maximum sampling rate for 12 bit conversion is 500 Ksps
+\end{itemize}
+
+We derive the ADC Conversion Clock from the system clock with:
+\begin{itemize}
+    \item Conversion clock: $$T_{AD}=T_{CY}*(ADCS+1)= T_{CY}*8 = 8/40M= 200ns (200ns>117.6ns)$$
+    \item Acquisition time:$$ T_{ACQ}= SAMC*T_{AD}= 5*T_{AD}=1us (1us>352.8ns)$$
+    \item ADC total Conversion time (12 bit): $$T_{CONV}=14*T_{AD}=2.8us$$
+    \item sampling rate (user 10ms timer) is 100sps $$(100sps < 500Ksps)$$
+\end{itemize}
+$$T_{SAMP}-(T_{ACQ}+T_{CONV})*3=10ms-6us$$ 
+we have enough margin since the sampling starts not immediately after last conversion but when ASAM bit is set in timer ISR.
+
+\textbf{Remarks:}
+
+If the acquisition time is too short, the sample and hold will not settle and the accuracy will decrease.\\
+During the conversion the capacitor is discharging. If the conversion time is too long, we lose accuracy. \\
+We tried to find a trade-off between to ensure optimal accuracy.
+
+\subsubsection*{Direct Memory Access (DMA):}
+
+We define a DMA data buffer adcData, a global variable where all conversion results are stored in the same order in which the conversions are performed by the ADC module.\\
+We store one sample per channel and generate an interrupt after the 3 channel values have been transferred. The interrupt service routine stops the sampling that is again started at each timer interrupt call. 
+
+We set the dma operating mode to a peripheral indirect addressing mode ((peripheral generates destination address [increment by 2]) and a continuous no ping pong setting (continuous transfer of data with the same buffer start address)
 
 \subsubsection*{Universal Asynchronous Receiver Transmitter (UART)}
 Our dsPIC33FJ64MC804 has a Universal Asynchronous Receiver Transmitter (UART)  module for serial port communication.
@@ -117,11 +201,6 @@ In order to send out messages, we require another module. We therefore connect o
 The 3-wire UART as seen in figure \ref{fig:wire_3} shows our configuration for a full-duplex communication. The Bluetooth module sends out the message it gets on the reception line (Rx) and sends back messages to the microcontroller through its transmission line (Tx). To receive the message from our microcontroller, we need to connect our computer to the HC-05 module via bluetooth.
 
 It is important to configure the baud rate of the HC-05 module in advance, such that it matches our microcontroller's baud rate. Also, in order to read out values, the baud rate on the PC we are reading from, must also match (in this case 57.6 kbit/s)
-
-\subsection{Pin Mapping}
-\textcolor{red}{
-maybe a diagram of which peripheral maps to which pin
-}
 
 
 \subsection{Controller Design and Approach}
