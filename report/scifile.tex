@@ -38,6 +38,17 @@
 \footskip 1.0cm
 
 
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+
 %The next command sets up an environment for the abstract to your paper.
 
 \newenvironment{sciabstract}{%
@@ -98,6 +109,25 @@
 \begin{sciabstract}
     Our abstract - short overview of the whole report contents? Probably should be left untouched till we finish with the main report body.
 \end{sciabstract}
+
+\newpage
+
+\Large \textbf{Contribution to the project}\\
+
+\normalsize Short description of how each Micromouse project member contributed to the final result.
+
+\begin{itemize}
+    \item Adam
+    \item Frank
+    \item Meryem
+    \item Natalia\\
+        In the first ("acquiring basic knowledge") half of the semester, due to the previous experience in embedded programming, I was mainly focused on helping other project members to grasp various concepts that were new to them, answering questions regarding the material and implementing the prototypes from weekly exercises on the breadboard.
+        After the group reorganization (which followed shortly after the actual work on building the micromouse started) I joined the hardware team and with other team members worked on the first versions of schematics design, performed the initial PCB tracing, contributed to maintaining the component ordering and description tables. 
+        Moreover, I tried to help other teams whenever possible as well as to maintain the connection between teams and inform everyone of the current progress.
+    \item Rene 
+    \item Sihong
+\end{itemize}
+
 
 \newpage
 
