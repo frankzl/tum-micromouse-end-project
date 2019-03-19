@@ -261,7 +261,7 @@ Now, the MOSFET serves as a switch: By providing a low current to its gate (the 
 The resistor R2 in the sub-circuit is used to charge the capacitance of the transistor gate. Hence its value is not critical in our case, since no intense time precision demands are made on the LED. We can use our typical 47k resistors also here. Notice that exactly next to the mcu pin, a header pin is placed with the name JP9. This is just a convenient way to later check the voltage of the pin on the pcb for debugging purposes.
 
 
-The last component to cover is the resistor on the side of the LED. To choose an appropriate value, we need to consider the voltage drop on the LED. As we read above it's somewhere between 2.2 and 2.5V. We can use $\Omega$mhs law, by considering the resistance of the transistor negligible and the resistance of the diode fixed. For the current flowing, let's choose 20mA as stated above. 
+The last component to cover is the resistor on the side of the LED. To choose an appropriate value, we need to consider the voltage drop on the LED. As we read above it's somewhere between 2.2 and 2.5V. We can use $\Omega$hm's law, by considering the resistance of the transistor negligible and the resistance of the diode fixed. For the current flowing, let's choose 20mA as stated above. 
 
 $$V_R = I * R => 5 - V_{diode} = I * R$$
 
@@ -271,9 +271,8 @@ For the values $V_{diode} = 2.2V$ and $I = 20mA$ we acquire a value of 140$\Omeg
 
 \subsubsection{Oscillator}
 
-%%% Somewhere describe the external oscillator choice, the PLL used, the system frequency.
-
-The external oscillator and its capacitors can be seen in Fig. \ref{fig:oscillator}.
+The external oscillator and its capacitors can be seen in Fig. \ref{fig:oscillator}. As can be found in the datasheet of the mcu (\cite{mcu}), the internal oscillator offer up to 8MHz frequency. For this reason and also for the flexibility of being able to choose, we opted out for a 16Mhz external oscillator.
+The capacitors are necessary for the functioning of the crystal oscillator, since they are not included in it.
 
 \begin{figure}[htb]
     \centering
@@ -459,7 +458,7 @@ $$R = \rho * \frac{l}{A}$$
 
 Here, $\rho$ is the specific electrical resistance of copper (as material). It equals to $1.68*10^{-8} \Omega *m$ at $20 \degree C$.
 l is the length of the trace and A is the height of the trace (usually 0.035mm) multiplied with the width.
-In order for the right width to be chosen, we need to consider the desirable value for the resistance. And in order to do that, again $\Omega$mhs Law has to be considered, referring to the current we expect to run through our trace.
+In order for the right width to be chosen, we need to consider the desirable value for the resistance. And in order to do that, again $\Omega$hm's Law has to be considered, referring to the current we expect to run through our trace.
 This analysis leads to the intuitive result: When we expect a large value for the current, then a smaller resistance is needed and thus a larger width value for the trace needs to be selected. For smaller values of current, smaller width may be selected. In any case, a minimum width is dictated by the manufacturer rules and the good connection of a component's pin.
 
 For example, it is known that motors can draw a lot of current, especially when they first start moving. Thus, the traces to the motors and the H-Bridge need to have a wider width.
