@@ -57,7 +57,7 @@ Specifically, in the section "Electrical Characteristics" in \cite{mcu}, we find
 \subsubsection{Voltage Regulators}
 
 The necessity for voltage regulators, which can be seen in Fig. \ref{fig:battery}, arises from the need for different voltages present in our system. 
-Specifically, as found in \cite{mcu}, the mcu considers 3.3V as logical one and it is this voltage we need to provide to it (see VDD pins). The distance sensors used (taken from a previous micromouse model) need 5V. And yet the motors need 6V, as can be seen in \cite{motor}. 
+Specifically, as found in \cite{mcu}, the mcu considers 3.3V as logical one and it is this voltage we need to provide to it (see $V_{DD}$ pins). The distance sensors used (taken from a previous micromouse model) need 5V. And yet the motors need 6V, as can be seen in \cite{motor}. 
 Notice that we are using a battery of 9V. Therefore, we need a way to generate the required 3 different voltages.
 
 \begin{figure}[htb]
@@ -70,12 +70,16 @@ Notice that we are using a battery of 9V. Therefore, we need a way to generate t
 \FloatBarrier
 
 When it comes to the motor, we can regulate the voltage we feed it with, by regulating the maximum duty cycle of the PWM (explained in another Section). So, we provide it with a fraction of the available 9V.
-For the distance sensors and the mcu, 2 voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly.
+For the distance sensors and the mcu, 2 voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly. A voltage regulator essentially contains a variable resistor, which changes according to current needs of the load, e.g. the mcu, in order to provide a stable voltage in its output.
 
-Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used in the input and output of the voltage regulators. Additionally, a bunch of capacitors can be observed at the far right part of the sub-circuit.
+A question that arises is: Why use 9 V, when much less is actually needed in the circuit? One needs to keep in mind that voltage regulators need a minimum difference between the input and the output voltage to ensure steady output voltage. This difference is called "dropout voltage" and can be found in the datasheets of the voltage regulators (\cite{3.3V}, \cite{5V}). For example, the dropout voltage of both the regulators we have chosen for our micromouse is 2V. So, one sees that provision for higher extra voltage has to be made.
 
-All of these capacitors have both a special name and function. They are called decoupling capacitors and their role is to help in providing steady voltage. Specifically, they are always physically connected close to their corresponding component and should a temporary lack of electrons happen, they provide from their surplus, keeping the voltage steady.
-The capacitors at the far right are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND). Every decoupling capacitor is ideally connected as close to the actual component pins as possible, as will be later seen in the PCB Section. The values of the capacitors are dictated by the datasheets of the specific components used. For example, have a look in \cite{mcu}.
+Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used in the input and output of the voltage regulators. As can be in the datasheets of the regulators (\cite{3.3V}, \cite{5V}), the capacitors' values are well specified and they are required for the behavior of the regulators to be optimal. Specifically, the input capacitor functions as noise filtering for the voltage supply and the output one ensures improved transient response. For a deeper understanding on the transient response of regulators, refer to \cite{regul}. The article refers to low-dropout linear regulators (it"s not the case for the voltage regulators used here, with 2V dropout), but the main principle of the output capacitor holds just the same.
+
+Additionally,  few capacitors can be observed at the far right part of the sub-circuit.
+These capacitors have both a special name and function: They are called decoupling capacitors and their role is to help provide steady voltage and current to the load (here our mcu). Specifically, they are always physically connected close to their corresponding component and should a temporary lack of electrons happen, they provide from their surplus, keeping the voltage and current steady. Such an event can happen frequently, since the mcu is a load that changes its demands on current, depending to the components it's in turn connected to. By changing the demand on current, the voltage regulator, being essentially a variable resistor, needs to readjust, in order to provide the new current. This refers to the transient response of the regulator and it takes a small amount of time for the regulator to adjust. During that time, the decoupling capacitor offers the electrons and thus the current needed.
+
+The decoupling capacitors are only symbolically placed there in the circuit. In reality, they are connected between the pins of the mcu that connect to VDD (3.3V) and ground (GND). Every decoupling capacitor is ideally connected as close to the actual component pins as possible, as will be later seen in the PCB Section. The values of the capacitors are dictated by the datasheets of the specific components used. For example, have a look in \cite{mcu}.
 
 \vspace{1cm}
 
@@ -95,7 +99,7 @@ First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the 
 \FloatBarrier
 
 In Fig. \ref{fig:motorPins} taken from the motor datasheet, the motor pins can be noticed. 
-One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember that we are using PWM (max 6V) to control how fast the motor turns and notice that if the voltage is reversed, the rotation of the motor is also reversed. As we will shortly see, for this purpose, the H-bridge is needed. The function of reversing the motor's rotation is hihgly desirable, since we want our 2-wheels micromouse to be able to move backwards and to turn on spot (imagine one wheel moving to one direction and the other to the opposite direction with the same velocity).
+One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember that we are using PWM (max 6V) to control how fast the motor turns and notice that if the voltage is reversed, the rotation of the motor is also reversed. As we will shortly see, for this purpose, the H-bridge is needed. The function of reversing the motor's rotation is highgly desirable, since we want our 2-wheels micromouse to be able to move backwards and to turn on spot (imagine one wheel moving to one direction and the other to the opposite direction with the same velocity).
 
 \begin{figure}[htb]
     \centering
@@ -108,7 +112,18 @@ One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember tha
 
 Another pair of pins (3, 4) refers to the voltage feed of the motor encoder. And the last pair of pins (5, 6) are used for the output of the motor encoder signals. These signals encode the motor's rotational position every moment and are fed to the mcu. In the mcu, with the help of the quadrature encoder (QE) module, they can be translated to real position in space.
 
-Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the traces on a PCB. Instead, the H-bridge can conveniently reverse the voltage. First, have a look at the exemplary circuit in Fig. \ref{fig:HData}, take from the datasheet of the H-bridge \cite{Hbridge}.
+Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the traces on a PCB. Instead, the H-bridge can conveniently reverse the voltage. 
+
+The main principle of an H-bridge can be seen in Fig. \ref{fig:HPrinciple}. The bridge functions with a pair of switches (MOSFETs in the figure). When one pair is closed, current flows through the motor and it rotates to one direction. Notice that at the same time, the other set of switches is open. When we want the motor to rotate in the other direction, the other set of switches closes and this one opens. A time delay is necessary, where all switches are open, else the voltage source will be short-circuited and this is something we want to avoid at all costs.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/hardware/H-Principle.PNG}
+    \caption{The principle of how an H-bridge allows flipping rotation direction of the motor, taken from \cite{catchDiodes}}
+    \label{fig:HPrinciple}
+\end{figure}
+
+Next, have a look at the exemplary circuit in Fig. \ref{fig:HData}, take from the datasheet of the H-bridge \cite{Hbridge}.
 
 \begin{figure}[htb]
     \centering
@@ -119,10 +134,9 @@ Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge a
 
 \FloatBarrier
 
-We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of rotation of the motor. The truth table is simple: If one direction pin is 1 and the other 0, then the logical 1 defines the direction. If both of the pins are set to logical 0 or 1, the motor breaks. Notice how the pins 3 and 6 feed the voltage to the motor and are coupled with the direction pins.
+We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of rotation of the motor. The truth table is simple: If one direction pin is 1 and the other 0, then the logical 1 defines the direction. If both of the pins are set to logical 0 or 1, the motor breaks. Notice how the pins 3 and 6 feed the voltage to the motor and are coupled with the direction pins. Comparing figures \ref{fig:HPrinciple} and \ref{fig:HData}, the direction pins in the latter hide inside them the functioning pair of switches mentioned in the earlier.
 
 As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called \textit{catch diodes} and to understand their use, please refer to \cite{catchDiodes}, where a beginners-friendly introduction to H-bridges is offered.
-
 For our purposes, it suffices to say that the presence of catch diodes is necessary for the smooth functioning of our brushed motor. Consider the case, when the motor changes direction or stops from spinning. In order for this to happen, the internal switches of the H-bridge need to open (remember the direction pins). Temporarily, the current that was flowing in the circuit through the motor has to go ("escape") somewhere, since due to the inductance nature of the motor, the current cannot instantly go to zero . It is not a good idea to dissipate the current through our H-bridge pins/ switches, without an alternative: The current will try to jump an open switch, creating a spark and probably burning the pin/ switch. The catch diodes provide this alternative: The current flows through them in a forward manner and is returned to the source.
 
 \vspace{1cm}
@@ -154,6 +168,7 @@ If a much smaller value for the resistance was used, then the current would be m
 \subsubsection{Programmer}
 
 The programmer is the device that allows for (re)programming of the mcu. The way it is connected is rather straightforward and can be seen in Fig. \ref{fig:programmer}.
+Of particular interest is the use of the MCLR pin (Master Clear) in the mcu. In order for the EEPROM (electrically erasable programmable read-only memory) to be reprogrammed, the programmer device needs to raise the voltage of this pin higher than $V_{DD}$. The MCLR pin is used both for programming and reseting purposes.
 
 \begin{figure}[htb]
     \centering
@@ -161,6 +176,8 @@ The programmer is the device that allows for (re)programming of the mcu. The way
     \caption{The programmer}
     \label{fig:programmer}
 \end{figure}
+
+More details about the reprogramming of the flash memory of the mecu can be found in \cite{mcu}, in the section "FLASH PROGRAM MEMORY".
 
 \FloatBarrier
 \vspace{1cm}
@@ -170,7 +187,7 @@ The programmer is the device that allows for (re)programming of the mcu. The way
 
 A reset button is needed in case something goes wrong during the execution of the program in the mcu, or if one simply needs to start the execution from the start again. Notice that the MCLR (Master Clear) pin is also used by the programmer for programming and debugging, as can be found in \cite{mcu}.
 
-The reset activation logic in our mcu is negative or inverse, as can be seen in Fig. \ref{fig:reset}. A diode and a pull-up resistor (similar to the pull-down used for the other button) connect the voltage feed to the mcu. Once the button is pressed, a connection with the ground is made and the mcu is reset.
+The reset activation logic in our mcu is negative or inverse, as can be seen in Fig. \ref{fig:reset}. A diode and a pull-up resistor (similar to the pull-down used for the other button) connect the voltage feed to the mcu. Once the button is pressed, a connection with the ground is made and the mcu is reset. Remember from the previous section, that during programming of the mcu, the voltage for this particular pin is raised higher than 3.3V. For this reason, the diode is needed in series with the pull-up resistor.
 Again the choice of the resistance value is a bit arbitrary.
 
 \begin{figure}[htb]
@@ -187,6 +204,8 @@ Again the choice of the resistance value is a bit arbitrary.
 \subsubsection{Battery Measurement}
 
 In an ideal world, our battery would provide steadily 9V until its exhaustion. However, this is not the case. As the battery is depleted, the voltage it provides is reduced. It would be useful to know exactly how much voltage the battery provides at any given point in time. Feeding this value to the mcu, we can take decisions accordingly. For example, we can regulate the PWM maximum duty cycle value to keep the motor spinning at its maximum velocity, even though the battery is depleted. Remember that our motor can take a maximum of 6V for its fastest performance.
+
+Additionally, as described in the subsection \textit{Voltage Regulators} above, the voltage regulators have a characteristic dropout voltage. In this case, the 5V voltage regulator will stop providing steady 5V, once the battery starts offering less than 7V. This means, that our circuit will malfunction, from the mcu to the distance sensors. We need to detect this in time to change the battery.
 
 In order to realize such a schema, a simple voltage divider sub-circuit and an analog pin of the mcu can be used, as can be seen in the above Fig. \ref{fig:programmer}.
 In order to keep the amount of different components to a minimum, a resistance of 47k is used. The question now is, what should the value of the other resistance be, in order for the input voltage to the mcu to be 3.3V for a 9V battery. 
@@ -458,7 +477,8 @@ All in all, we kept it simple and well in the limits with  the choice of the wid
 
 \vspace{1cm}
 
-The last concept to be introduced in this chapter is the "ground plane" (GND). The ground plane is a convenient way of connecting all the GND nodes (pins) of the components. In essence, it is a layer placed on one of the PCB layers, which connects everything on it. It can be seen in Fig. \ref{fig:gnd}.
+The last concept to be introduced in this chapter is the "ground plane" (GND). The ground plane is a convenient way of connecting all the GND nodes (pins) of the components, meaning the pins that need to be connected to 0V. For our purposes here, we will call it ground. In essence, it is a layer that can be placed on a PCB layer, which connects everything on it. It can be seen in Fig. \ref{fig:gnd}.
+In reality, there is a much more important motivation to create a GND plane, instead of connecting pins of components like with positive voltage: Noise rejection. We will not go into this here, but it is worth considering the noise signals coming our of the pcb and the ones produced in the pcb. Closed traces of high-frequency may function as antennas, when the space they encompass is large. This would be the case if one used traces also for the 0V connections. By using a GND plane, however, this area is kept to a minimum, working to our advantage.
 
 \begin{figure}[htb]
     \centering
@@ -469,8 +489,7 @@ The last concept to be introduced in this chapter is the "ground plane" (GND). T
 
 The copper traces run through this all-connecting surface, in order to connect the necessary pins. This is especially visible in the above pictures of the actual PCB, where the green entire surface is GND and the tracks running through it are the traces mentioned above, playing the role of wires in a physical circuit.
 
-%this might be understood as that only one GND plane is allowed.
-Remember that the GND surface is applied to one of the layers, in our case, the top. What about the SMD components that are placed on the bottom layer, but still need tp have one or more of their pins connected to GND? The solution might not seem very elegant, but is functional: A trace is runs from the gnd pin of the component, on the bottom layer, and ends in a via point. Hence, it connects to the GND on the top layer. An example from our circuit can be seen in Fig. \ref{fig:via}.
+The GND surface can be applied to one of the layers or both. In our case, we placed one only on the top layer,since the SMD components on the bottom layer that needed to be connected to GND were very few. The solution might not seem very elegant, but is functional: A trace runs from the gnd pin of the component, on the bottom layer, and ends in a via point. Hence, it connects to the GND on the top layer. An example from our circuit can be seen in Fig. \ref{fig:via}.
 
 \begin{figure}[htb]
     \centering
