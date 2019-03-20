@@ -401,13 +401,52 @@ Such changes are accomplished through the so-called "via points".
 
 \subsection{Casing}
 
-Present the need for casing.
-Describe it.
-Present necessary pictures.
-Describe important calculations.
+To house not only the PCB, but also sensors ,motors and the battery in a safe and robust way, a set of casing for the micromouse is designed and 3D printed.
+
+\subsubsection{CAD Modelling}
+\begin{itemize}
+    \item Base Casing\\ 
+    This casing is the encompassing platform, on which all hardware components are placed. See Fig. ref{fig:base_casing} for the CAD model of the base casing.
+
+    PCB rests on the bottom wrapper, and is fastened on with screws. Motors are mounted on the side with screws as well. Sensors are placed one front centre, another two facing left and right.
+
+    In this CAD model, there are several components. Other than the base wall, the most prominent components are the sensor casings. These are actually one component, but imported on 3 positions, modified according to other components and integrated into the assembly design. 
+
+    The approach to model the sensor casing separately as a component and later integrate reduces duplicate work. This separation also ensures that even a change in sensor model would only result in limited modification work to the final design.
+
+    \item Battery Cover\\ 
+    In order to secure the battery safely and make our robot space efficient, a battery cover is designed to hold the battery above PCB and other components. It also serves as a covering case for aesthetic purposes to some extent.
+
+    This cover is designed to be a snap fit with the base casing, see Fig {fig:SnapFit}.
+
+    For designing the surface of this cover, the freeform modelling and sculpting feature is used, in addition to the more traditional parametric modelling and solid modelling. This allows us to more easily model a visually pleasing surface to the design, giving our mouse a more “sporty” look, rather than the usual “boxy” appearance from more traditional CAD methods.
+
+    In the design of the battery cover, attention was paid to reduce overhanging structure, so that the supporting structures needed are minimised. For example, the front side of the battery holder is left empty, as it eliminates support structure when this part is printed vertically (front is facing up). However, some support is unavoidable, for example when there is enclosing structure such as a circle.
+
+\end{itemize}
 
 
+\subsubsection{3D printing the casing}
+\begin{itemize}
+    \item Method\\ 
+    There are many types of 3D printing process, most common ones include Material Extrusion method such as Fused Deposition Modeling (FDM), and Vat Polymerization such as Stereolithography (SLA), Direct Light Processing (DLP). FDM is most widely available method of 3D printing, meanwhile SLA has a better dimensional accuracy (lower limit ± 0.10 mm in a desktop SLA printer compared to lower limit ± 0.5 mm in a desktop FDM printer).
 
+    The 3D printing method we used is Fused Deposition Modeling (FDM). Out of the 2 available 3D printer FDM and SLA, the FDM method is chosen for its shorter lead and print time, as it does not require a curing process as for SLA. The dimensional accuracy is also acceptable to our application.
+
+    \item Material\\ 
+    There are 2 kinds of material for the FDM printer available for us, which are also the 2 most widely used materials for FDM 3D printing, namely PLA (Polylactic Acid) and ABS (Acrylonitrile Butadiene Styrene). They both can be used to print dimensionally accurate parts, with very similar cost. PLA is under correct condition biodegradable, whereas ABS is not but recyclable.
+
+    ABS is chosen for our project due to its improved ductility, higher flexural strength, and slightly better mechanical properties. Because ABS is less brittle than PLA, it has also better machinability, that means drilling hole or sanding would be easier, which we will likely do, whereas PLA would require more care during such post-processing.
+
+    \item Process\\ 
+    For this project, the 3D print process includes generating STL file from 3D CAD model, slicing and adding support structure, printing, and post processing work.
+
+    One problem that often occurs during 3D printing is handling critical surface, therefore attention is paid to ensure that the critical surfaces in our design such as inside surface of sensor casing are all parallel or vertical to the platform plane, so that the 3D printer can produce a more precise and smooth result.
+
+    Specialized programs or Slicers "cut" CAD models into layers and computes how the printer's extruder would assemble each layer. When necessary, support structures are also added in this stage, depending on if there is overhanging structures in the model.
+
+    Post processing is mostly removing support structures from the printed parts, and sanding and polishing rough edges and surfaces.
+\end{itemize}
 
 
 
