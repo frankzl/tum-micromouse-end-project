@@ -64,6 +64,37 @@ During the whole implementation process we've faced a significant amount of chal
 
 \subsection{Casing design challenges}
 
+\begin{enumerate}
+  \item Coordination with PCB Design
+  \begin{itemize}
+      \item Problem encountered:\\
+      For design processes that are in parallel to each other, it is unavoidable to go back and forth. The challenge is to make modifications to the design without causing too much unnecessary work, as these modifications can happen quite frequently and making changes to existing design can often be error-prone.
+      \item Solution found:\\
+      One solution is to take advantage of “Parameters” feature of Fusion 360. To effectively utilising this feature, we need to make sure that non-critical dimensions are built upon these selected ones in a logical fashion, this is the key idea of parameter centric design approach. Since Fusion 360 provides an easy interface for modifying set parameters and automatically updates any design dimensions that are constrained upon these parameters, it can be a chain reaction after each modification to parameters. A set of effectively selected parameters not only ensures that we can modify the design according to our needs even later in the process, but also eliminates or at least minimises excessive manual modification.
+      
+      For example, when choosing the position of the motor’s central point, there are many things that can influence or change our decision, such as the dimension of the wheel and the clearance height from the floor that is necessary. One logical thing to do is to design the motor mount, through holes for the screws fastening the motor based on this motor position and set this position as our “parameter”. In this way if the wheel’s dimension is somehow changed, and we need to change the position of the motor, only slight modification to this “parameter” is needed, and Fusion 360 will automatically update the position of the motor mount etc.
+  \end{itemize}
+  \item Design for Tolerance
+  \begin{itemize}
+      \item Problem encountered:\\
+      Any mechanical design of parts needs to take into account tolerance of dimensional errors. With the FDM 3D printer that we used providing a dimensional accuracy of lower limit of around  ± 0.5 mm, and ordered parts such as the distance sensor having a (default) tolerance of ± 0.3 mm \cite{sens}, it is worth paying attention when designing for fitting these parts to the casing.
+      \item Solution found:\\
+      The solution is quite straightforward, it is to design for the maximum error, and leave enough room for a tight fit. One exception is the case snap fit, where the clearance between two fit structures is 0.4 mm as recommended in [  ].
+      
+  \end{itemize}
+  \item Design for 3D Printing
+  \begin{itemize}
+      \item Problem encountered:\\
+      3D printing is a relatively fast and cheap way to produce prototypes, but it comes with its limitations. The 3D printing method we used (FDM) requires certain support structures to be added if there are steep overhanging parts, because heated and fluid material can not be deposited onto thin air. Without support structure, the print would deform and sometimes cause print fail. If support structures are used, removing such structures will leave the surface rough.
+      \item Solution found:\\
+      To alleviate such problem, it is firstly important to be mindful of the limitations that come with 3D printing, when designing parts that are supposed to be 3D printed. Avoid support structure as much as possible, one helpful thing to keep in mind is the 45 degree rule of FDM printing. It is said that FDM 3D printers can handle a overhanging structure of 45 degree, larger than that the print will deform. Therefore, by utilising this design rule, many overhanging structures can be avoided. Since support structures leave rough edges, it is important to identify the critical surfaces that require a high precision and accuracy to not have support structures, these surfaces are called critical surfaces. These critical surfaces are identified, such as inside wall of sensor casing, and designed in a way that they do not need support structures. However, it is sometimes difficult to avoid such support structures, it is then best to place support structures on non-critical surfaces, so that the negative consequence is only optical rather than functional.
+      
+      Second, when printing, a well chosen printing configuration can also help. Sometimes just by rotating the angle, at which the part is printed, can save a lot of support structures, by utilising the 45 degree rule.
+      
+      Lastly, when support structures are unavoidable, for example when there is a ring like structure, it would then be necessary to post-process the printed part by sanding, polishing etc.
+  \end{itemize}
+\end{enumerate}
+
 \textcolor{red}{
 Well, here go all the problems we faced coupled with our solutions for them. Potentially the longest part in the report. Can be split in parts similarly to the previous sections (talking about software, board and casing)
 }
