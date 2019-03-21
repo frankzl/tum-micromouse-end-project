@@ -59,67 +59,39 @@ The dsPIC33F/PIC24H device family offers several 16-bit Timer modules. We use th
 We set the timer period to 10ms, which is derived from the external oscillator clock.
 $$tick=prescaler*T_{CY}= 64*25ns= 1.6us $$ 
 We derive the maximum count with:
-$$max_count=Timer delay/tick=6250 (6250<2^{16}-1)$$
+$$max\_count=(10 ms)/tick=6250 (6250<2^{16}-1)$$
+
+Hence, we set the period \textbf{PR = 6250 - 1} with a prescaler of \textbf{64}. We choose a high prescaler due to reasons mentioned in \ref{subsec: timer: timer driven by interrupt}
 
 \subsubsection*{Pulse Width Modulation (PWM)}
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/software/pwm_demo.png}
-    \caption {Principle of PWM \cite{alex}}
-    \label{fig:pwm_demo}
-\end{figure}
-
 Pulse Width Modulation allows us to control the amount of energy supplied to an actuator. In this case we use the PWM signal to drive our motors and control their speed. Using different pulse widths, we can supply different amount of power to our motors. \cite{alex}
 
+We want to set the registers, such that we achieve a frequency of 20 kHz.
+$$f_{PWM} = 20 kHz$$
+$$T_{PWM} = \frac{1}{f_{PWM}} = 50 us$$
 
-As seen in figure \ref{fig:pwm_demo}, we have a fixed PWM period $T_{PWM}$. We can now vary the so called duty cycle $DC$ by changing the time the PWM output is switched on ($T_{DC}$).
-\begin{equation}
-    DC = \frac{T_{DC}}{T_{PWM}}
-\end{equation}
-For our PWM unit, we mainly have to choose the parameters:
-\begin{enumerate}
-    \item PWM period
-    \item PWM duty cycle
-\end{enumerate}
+We fix the prescaler to be \textbf{1}. Given that $T_{PWM} = 50 us$ and $T_{CY}=25 ns$, we conclude:
 
+$$T_{PWM} = prescaler * T_{CY} * (PTPER + 1)$$
+$$\iff PTPER = \frac{T_{PWM}}{T_{CY}} - 1  = 2000 - 1 = 1999$$
 
-Depending on our PWM period, we get different amount of ripple in our resulting signal. More on this can be found in \cite[Chapter~5.1]{alex}. In figure \ref{fig:pwm_choice} is an example of possible choices for the PWM period register ($PTPER$) and the PWM duty cycle register ($PDC$)
+Depending on our PWM period, we get different amount of ripple in our resulting signal. More on this can be found in \cite[Chapter~5.1]{alex}.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/software/pwm_choice.png}
-    \caption {Example: Resolution of PWM duty cycle \cite{alex}}
-    \label{fig:pwm_choice}
-\end{figure}
-
-For our motors, we have the following parameters:
-\begin{itemize}
-    \item \textbf{fixed}: $T_{CY} = 25 ns$
-    \item timer prescaler $PTCKPS = 0b00$ (option 1:1)
-    \item PWM period register $P1TPER = 2000 - 1$
-    \item PWM duty cycle $PDC \in [0, 2*(P1TPER + 1)]$
-\end{itemize}
-$T_{PWM} = ( PTPER + 1 ) * T_{CY} = 2000 * 25ns = 50000 ns$
-
-
-$f_{PWM} = \frac{1}{T_{PWM}} = 0.25 * 10^{5} Hz$
-
-With the current values, we can now set different duty cycles for our motors by choosing valid values for the $PDC$ register.
+Our PWM duty cycle can take the following values: $PDC \in [0, 2*(P1TPER + 1)] = [0, 4000]$
 
 
 \subsubsection*{Quadrature Encoder Inferface(QEI)}
-To measure the position and velocity of our motors, we are provided with a \textit{quadrature encoder}. The principle of a quadrature encoder is depicted in figure \ref{fig:qei_demo}. 
+To measure the position and velocity of our motors, we are provided with a \textit{quadrature encoder}.
+The following values are set twice for each motor (left and right).
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/software/qei_demo.png}
-    \caption {Principle of a rotary shaft encoder \cite{alex}}
-    \label{fig:qei_demo}
-\end{figure}
+Our motor from the Faulhaber 2619 series posesses 16 lines per revolution. If we were to measure only the amount of times light is registered on the photo-transistors, the maximum counts for one revolution would be 16. But since we can also count the times it turns off, we can go up to 32 measurements per revolution. Lastly taking the two channels, A and B, into consideration, we get 64 counts per revolution.
 
-Whenever the wheel is rotated, light emitted from the LED will hit the light sensor (phototransistor) if there is a hole between them. Light sensor and emitter are separated by the wheel seen in \ref{fig:qei_demo}.
-The time passed between the phototransistor turning on after registering light and turning off again after the light disappears behind the wheel will determine the velocity of our motor.
+We call this setting \textbf{edge gain}. In our case we have set it to 4 to achieve 64 counts per revolution.
+
+Our $POSCNT$ stores the current position of our wheel and our $MAXCNT$ register stores the maximum value we count to.
+
+We set $MAXCNT$ to the maximum possible value \textbf{0xffff} and $POSCNT$ to half of it.
 
 
 \subsubsection*{Analogue-to-Digital Conversion(ADC)}

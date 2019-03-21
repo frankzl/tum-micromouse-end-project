@@ -45,7 +45,7 @@ To be signalled to the CPU by the interrupt controller, the interrupt must be en
 The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table. (refer to datasheet table 7-1)
 
 \begin{figure}
-    \caption{Principle of the Timer 1}
+    \caption{Principle of the Timer 1 \cite{alex}}
         \centering
             \includegraphics[width=0.5\textwidth]{figures/software/t1_demo.png}
             \label{fig:t1_demo}
@@ -80,14 +80,34 @@ $$maxcount=Timer delay/tick$$
 \textcolor{red}{Could you please add references?}
 \textcolor{red}{Could you please remove the colons for each subsection's title?}
 
+
+\begin{figure}
+    \caption{Principle of PWM \cite{alex}}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/pwm_demo.png}
+            \label{fig:pwm_demo}
+\end{figure}
+
 Pulse width modulation (PWM) is the method of choice to control the amount of energy that is supplied to an actuator, light source or any other device when employing digital control systems.\\
 The duty cycle is defined as the proportion of time the PWM output is switched on with respect to the PWM period.
-The PWM period (TPWM) is fixed and represents the cycle time of the signal.
+The PWM period ($T_{PWM}$) is fixed and represents the cycle time of the signal.
+
+As seen in figure \ref{fig:pwm_demo} we can vary the duty cycle by changing the time that the PWM output is switched on ($T_{DC}$).
+
+$$DC = \frac{T_{DC}}{T_{PWM}}$$
+
+\begin{figure}
+    \caption{Resolution of a PWM duty cycle \cite{alex}}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/pwm_choice.png}
+            \label{fig:pwm_demo}
+\end{figure}
 
 The PWM frequency is application dependent. However, we should keep in mind that high frequency requires very fast switches and may cause electromagnetic interference problems. Whereas, low frequency causes the load to follow the pulse.\\
 For driving a motor, a typical value would range between 5kHz and 50kHz but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
 
-The main elements of a PWM generator are a timer/counter and a comparator which outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value. When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value and then resets, completing one PWM period.
+
+The main elements of a PWM generator are a timer/counter and a comparator \textcolor{red}{which} \textcolor{blue}{whose} outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value ($PDC$). When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value ($PTPER$) and then resets, completing one PWM period (see figure \ref{fig:pwm_choice}.
 
 PWM period:
 $$T_{PWM}=\frac{T_{CY}*(PTPER+1)}{PTMR Prescale Value}$$
@@ -113,6 +133,15 @@ For successful communication, both the device’s receiver and transmitter shoul
 Quadrature encoders (also known as incremental encoders or optical encoders) are used for position and speed detection of rotating motion systems. They enable closed loop control of many motor control applications.
 
 The Quadrature Encoder module provides a simple interface to incremental optical encoders, which allows to obtain signed velocity using 2 photo-transistors that are offset by 1 quarter of the cycle period. It accepts the A, B and index connections from the incremental encoder and stores the accumulated count pulses in a dedicated 16-bit time base.
+
+\begin{figure}
+    \caption{Principle of a Quadrature Encoder \cite{alex}}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/qei_demo.png}
+            \label{fig:qei_demo}
+\end{figure}
+
+Whenever the wheel is rotated, light emitted from the LED will hit the photo-transistor if there is a hole between them. Light sensor and emitter are separated by the wheel seen in figure \ref{fig:qei_demo}. The time passed between the phototransistor turning on after registering light and turning off again after the light disappears behind the wheel, will determine the velocity of our motor.
 
 The two channels, Phase A (QEA) and Phase B (QEB) enable to know the direction of the motor. If Phase A leads Phase B, then the direction of the motor is forward (counter is incremented). If Phase A lags Phase B then the direction of the motor is reverse (counter is decremented). A third channel, termed Index pulse, occurs once per revolution and is used as a reference to establish an absolute position.\\
 However, the high resolution of the encoders leads rapidly to an overflow or underflow of the 16 bits counter register. To keep track of the total counts, a global variable should be updated accordingly at each interrupt call.
