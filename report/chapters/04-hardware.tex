@@ -6,17 +6,18 @@ In this section, the hardware design and implementation of the micromouse robot 
 
 \subsection{Schematic and Components Description}
 
-The first step in the development of the hardware is the drawing of the electrical circuit. The realization of a moving micromouse demands for the combination of a variety of components connected to each other. Exactly this is described in the, so called, Schematic of the circuit, which resembles a drawing on paper. 
+The first step in the development of the hardware is the drawing of the electrical circuit. The realization of a moving micromouse demands for the combination of a variety of components connected to each other. Exactly this is described in the so called Schematic of the circuit, which resembles a drawing on paper. 
 The Schematic of the micromouse can be seen in Fig. \ref{fig:schematic_overview}.
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/hardware/Schematic.PNG}
     \caption{Schematic overview of the micromouse}
     \label{fig:schematic_overview}
 \end{figure}
 
-This can look intimidating at first and definitely not readable in such a miniature picture. So, let's break it down to its components and describe its sub-circuits. Notice that all of the components appearing in the Schematic were downloaded one by one from the suppliers' site, together with their pcb models, as will be seen later.
+\noindent
+This can look intimidating at first and definitely not readable in such a miniature picture. So, let's break it down to its components and describe its sub-circuits. Notice that all of the components appearing in the Schematic were downloaded one by one from the suppliers' site, together with their PCB models, as will be seen later.
 
 With the exception of the first subsection, the components will be presented from left to right and from top to bottom, so that the reader may always refer to the overview schematic to get a clear picture of a component's relation to the whole.
 
@@ -37,9 +38,10 @@ Notice that the symbolic representation of the mcu, specifically when it comes t
 
 \FloatBarrier
 
-The assignment of mcu pins to components is presented in the Software Section and will not be repeated here. Please refer to that Section for understanding the functionality of its pins in our circuit.
+\noindent
+The assignment of mcu pins to components is presented in the software section and will not be repeated here. Please refer to that section for understanding the functionality of its pins in our circuit.
 
-Another point to notice about the pin connections is the convenient label feature that Eagle offers. Notice how some of the components are wired to the pins of the mcu, while other connections are represented as labels. Labels in the circuit are the equivalent of wires and greatly contribute to the readability and modularity of the schematic. As long as two wires anywhere in the circuit share the same label, they are connected.
+Another point to notice about the pin connections is the convenient label feature that Autodesk Eagle offers. Notice how some of the components are wired to the pins of the mcu, while other connections are represented as labels. Labels in the circuit are the equivalent of wires and greatly contribute to the readability and modularity of the schematic. As long as two wires anywhere in the circuit share the same label, they are connected.
 
 A last comment has to be made about the pins of the mcu: The pins, as everything in our circuit, are very real components and therefore are subject to electrical limitations. This is a very important point to keep in mind, when driving any load, such as LEDs or a motor, but also when connecting input signals, such as sensors.
 Specifically, in the section "Electrical Characteristics" in the mcu datasheet \cite{mcu}, we find maximum values for individual pins and for all utilized pins combined. These can be seen in Fig. \ref{fig:electrical}. These characteristics lead to some important design decisions, specifically named in later subsections.
@@ -58,7 +60,7 @@ Specifically, in the section "Electrical Characteristics" in the mcu datasheet \
 
 The necessity for voltage regulators, which can be seen in Fig. \ref{fig:battery}, arises from the need for different voltages present in our system. 
 Specifically, as found in \cite{mcu}, the mcu considers 3.3V as logical one and it is this voltage we need to provide to it (see $V_{DD}$ pins). The distance sensors used (taken from a previous micromouse model) need 5V. And yet the motors need 6V, as can be seen in \cite{motor}. 
-Notice that we are using a battery of 9V. Therefore, we need a way to generate the required 3 different voltages.
+Notice that we are using a battery of 9V. Therefore, we need a way to generate the required three different voltages.
 
 \begin{figure}[htb]
     \centering
@@ -69,10 +71,10 @@ Notice that we are using a battery of 9V. Therefore, we need a way to generate t
 
 \FloatBarrier
 
-When it comes to the motor, we can regulate the voltage we feed it with, by regulating the maximum duty cycle of the PWM (explained in another Section). So, we provide it with a fraction of the available 9V.
-For the distance sensors and the mcu, 2 voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly. A voltage regulator essentially contains a variable resistor, which changes according to current needs of the load, e.g. the mcu, in order to provide a stable voltage in its output.
+When it comes to the motor, we can regulate the voltage we feed it with, by regulating the maximum duty cycle of the PWM (explained in another section). So, we provide it with a fraction of the available 9V.
+For the distance sensors and the mcu, two voltage regulators are used in succession. They provide our components with steady voltage, necessary for functioning properly. A voltage regulator essentially contains a variable resistor, which changes according to current needs of the load, e.g. the mcu, in order to provide a stable voltage in its output.
 
-A question that arises is: Why use 9 V, when much less is actually needed in the circuit? One needs to keep in mind that voltage regulators need a minimum difference between the input and the output voltage to ensure steady output voltage. This difference is called "dropout voltage" and can be found in the datasheets of the voltage regulators \cite{3.3V}, \cite{5V}. For example, the dropout voltage of both the regulators we have chosen for our micromouse is 2V. So, one sees that provision for higher extra voltage has to be made.
+A question that arises is: Why use 9V, when much less is actually needed in the circuit? One needs to keep in mind that voltage regulators need a minimum difference between the input and the output voltage to ensure steady output voltage. This difference is called "dropout voltage" and can be found in the datasheets of the voltage regulators \cite{3.3V}, \cite{5V}. For example, the dropout voltage of both the regulators we have chosen for our micromouse is 2V. So, one sees that provision for higher extra voltage has to be made.
 
 Now, notice the capacitors used in Fig. \ref{fig:battery}. Capacitors are used in the input and output of the voltage regulators. As can be read in the datasheets of the regulators \cite{3.3V}, \cite{5V}, the capacitors' values are well specified and they are required for the behavior of the regulators to be optimal. Specifically, the input capacitor functions as noise filtering for the voltage supply and the output one ensures improved transient response. For a deeper understanding on the transient response of regulators, refer to \cite{regul}. The article refers to low-dropout linear regulators (it"s not the case for the voltage regulators used here, with 2V dropout), but the main principle of the output capacitor holds just the same.
 
@@ -97,7 +99,7 @@ First, let us consider the motors. As can be seen in Fig. \ref{fig:motors}, the 
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 In Fig. \ref{fig:motorPins} taken from the motor datasheet, the motor pins can be noticed. 
 One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember that we are using PWM (max 6V) to control how fast the motor turns and notice that if the voltage is reversed, the rotation of the motor is also reversed. As we will shortly see, for this purpose, the H-bridge is needed. The function of reversing the motor's rotation is highgly desirable, since we want our 2-wheels micromouse to be able to move backwards and to turn on spot (imagine one wheel moving to one direction and the other to the opposite direction with the same velocity).
 
@@ -109,7 +111,7 @@ One pair of pins (1, 2) refers to the voltage we feed to the motor. Remember tha
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 Another pair of pins (3, 4) refers to the voltage feed of the motor encoder. And the last pair of pins (5, 6) is used for the output of the motor encoder signals. These signals encode the motor's rotational position every moment and are fed to the mcu. In the mcu, with the help of the quadrature encoder (QE) module, they can be translated to real position in space.
 
 Finally, let us consider the H-bridge. As mentioned, the need for the H-bridge arises from the function of reversing the motor polarity and thus its rotation. Without the use of an H-bridge, one would have to physically reverse the wires for the motor feed. If it is impractical with the use of wires, it is impossible with the traces on a PCB. Instead, the H-bridge can conveniently reverse the voltage. 
@@ -123,6 +125,7 @@ The main principle of an H-bridge can be seen in Fig. \ref{fig:HPrinciple}. The 
     \label{fig:HPrinciple}
 \end{figure}
 
+\noindent
 Next, have a look at the exemplary circuit in Fig. \ref{fig:HData}, taken from the datasheet of the H-bridge \cite{Hbridge}.
 
 \begin{figure}[htb]
@@ -133,7 +136,7 @@ Next, have a look at the exemplary circuit in Fig. \ref{fig:HData}, taken from t
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 We feed our PWM in pin 1. Pins 2 and 7 are used for controlling the direction of rotation of the motor. The truth table is simple: If one direction pin is 1 and the other 0, then the logical 1 defines the direction. If both of the pins are set to logical 0 or 1, the motor breaks. Notice how the pins 3 and 6 feed the voltage to the motor and are coupled with the direction pins. Comparing figures \ref{fig:HPrinciple} and \ref{fig:HData}, the direction pins in the latter hide inside them the functioning pair of switches mentioned in the earlier.
 
 As a last comment, in both Fig. \ref{fig:HData} and Fig. \ref{fig:motors} notice the existence of diodes. Again, these diodes have both a special name and a special function. They are called \textit{catch diodes} and to understand their use, please refer to \cite{catchDiodes}, where a beginners-friendly introduction to H-bridges is offered.
@@ -154,7 +157,7 @@ Naturally, the more input options we have for our micromouse robot, the more fle
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 A typical pull-down resistor of 47k is used, to make sure the mcu pin never has an undefined logical value ("floating"). When it comes to the resistance value, it is somewhat arbitrary in that it does its job. A different value could have been selected.
 For the current that flows through the resistor, when the button is pressed, we have:
 
@@ -168,7 +171,7 @@ If a much smaller value for the resistance was used, then the current would be m
 \subsubsection{Programmer}
 
 The programmer is the device that allows for (re)programming of the mcu. The way it is connected is rather straightforward and can be seen in Fig. \ref{fig:programmer}.
-Of particular interest is the use of the MCLR pin (Master Clear) in the mcu. In order for the EEPROM (electrically erasable programmable read-only memory) to be reprogrammed, the programmer device needs to raise the voltage of this pin higher than $V_{DD}$. The MCLR pin is used both for programming and reseting purposes.
+Of particular interest is the use of the MCLR pin (Master Clear) in the mcu. In order for the EEPROM (electrically erasable programmable read-only memory) to be reprogrammed, the programmer device needs to raise the voltage of this pin higher than $V_{DD}$. The MCLR pin is used both for programming and resetting purposes.
 
 \begin{figure}[htb]
     \centering
@@ -177,6 +180,7 @@ Of particular interest is the use of the MCLR pin (Master Clear) in the mcu. In 
     \label{fig:programmer}
 \end{figure}
 
+\noindent
 More details about the reprogramming of the flash memory of the mcu can be found in \cite{mcu}, in the section "FLASH PROGRAM MEMORY".
 
 \FloatBarrier
@@ -187,10 +191,11 @@ More details about the reprogramming of the flash memory of the mcu can be found
 
 A reset button is needed in case something goes wrong during the execution of the program in the mcu, or if one simply needs to start the execution from the start again. Notice that the MCLR (Master Clear) pin is also used by the programmer for programming and debugging, as can be found in \cite{mcu}.
 
+\noindent
 The reset activation logic in our mcu is negative or inverse, as can be seen in Fig. \ref{fig:reset}. A diode and a pull-up resistor (similar to the pull-down used for the other button) connect the voltage feed to the mcu. Once the button is pressed, a connection with the ground is made and the mcu is reset. Remember from the previous section, that during programming of the mcu, the voltage for this particular pin is raised higher than 3.3V. For this reason, the diode is needed in series with the pull-up resistor.
 Again the choice of the resistance value is a bit arbitrary.
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/MCLRandBatteryMeasurement.PNG}
     \caption{The reset button and the battery voltage measurement circuit}
@@ -213,13 +218,13 @@ If we call the unknown resistor $R_8$, as in the figure, we can use the known eq
 
 $$V_{MCU} = \frac{R_8}{47+R_8} * 9V = 3.3V$$
 
+\noindent
 With a value of $ R_8 = 22k $, we can easily calculate the resulting $V_{MCU} = 2.87V$. This is a convenient value, since for example another battery of higher voltage, e.g. 10V, could be used. By choosing this value we fulfill our initial purpose and have some flexibility for higher voltages.
 
 \FloatBarrier
 \vspace{1cm}
 
 \subsubsection{Universal Asynchronous Communication (UART)}
-
 
 Despite us building an autonomous micromouse robot that can navigate in a labyrinth, we would still like to be able to issue stand-alone commands via UART. Hence, the UART sub-circuit of Fig. \ref{fig:uart}. The connection is straight-forward. Only attention is required in connecting RX to TX of the mcu and vice-versa.
 
@@ -236,7 +241,7 @@ Despite us building an autonomous micromouse robot that can navigate in a labyri
 
 \subsubsection{Light-emmiting Diodes (LEDs)}
 
-To motivate the use of 2 LEDs in our micromouse, imagine the following: The PCB lies on the 2 wheels, which are screwed on either side somewhere in the middle. Naturally, the PCB will tilt forwards or backwards until it touches the ground, depending on where most weight lies (front sensors). This is highly unwanted: Not only would it result in an unelegant movement creating uneccessary impedance, but the PCB could be potentially damaged by friction and by ground anomalies.
+To motivate the use of two LEDs in our micromouse, imagine the following: The PCB lies on the two wheels, which are screwed on either side somewhere in the middle. Naturally, the PCB will tilt forwards or backwards until it touches the ground, depending on where most weight lies (front sensors). This is highly unwanted: Not only would it result in an unelegant movement creating uneccessary impedance, but the PCB could be potentially damaged by friction and by ground anomalies.
 
 Therefore, for mechanical stability, we use one LED on the front and one on the back of our PCB. They are through-hole components, with the head of the LED resting on the under side of the PCB. The smooth surface of the head works to our favor, not only stabilizing the micromouse, but also offering minimum resistance while moving. The height of the protruding LED head can be decided during soldering according to mechanical needs.
 
@@ -249,8 +254,9 @@ The sub-circuit for controlling the LEDs can be seen in Fig. \ref{fig:leds}.
     \caption{The LEDs used for mechanical stability}
     \label{fig:leds}
 \end{figure}
-\FloatBarrier
 
+\FloatBarrier
+\noindent
 The sub-circuits for both LEDs are identical, so let us examine one of them, say the front one. The main component, besides the LED, is an N-channel metal-oxide semiconductor field-effect transistor (MOSFET).
 
 To motivate the need for the MOSFET, imagine connecting the LED directly to the I/O pin. In the datasheet of a typical low current LED (and also the one we will be using) \cite{leds}, we find that the current can be somewhere between 25 to 140 mA. However, the value of 140mA can only be reached under certain PWM conditions. In our case, 20mA steady current will suffice for a bright enough LED. Also the voltage drop on the LED is 2.2 to 2.5V for $I = 20mA$.
@@ -306,8 +312,10 @@ To understand their pins, have a look at Fig. \ref{fig:sensorsData} taken from t
     \caption{Internal schematic of the distance sensors}
     \label{fig:sensorsData}
 \end{figure}
+
 \FloatBarrier
 
+\noindent
 Instead of connecting the voltage feed directly to 5V, we use a P-channel MOSFET to turn the sensors on and off at will. The connection of the transistor is the opposite of the N-channel described above (Section LEDs) and its functionality is the same: It is used as a switch. Notice the 47k resistors that connect the gates of the transistors to the pins of the mcu. By offering current from the pins, we close the switch and activate the sensors. Being able to turn the sensors on and off mostly offers flexibility in software.
 
 Last, we feed the incoming data from the sensors to dedicated analog pins in our mcu.
@@ -333,9 +341,10 @@ In this section, we list the actual components we chose to order. Most of the co
     \caption{Components ordered from Mouser}
     \label{fig:compMou}
 \end{figure}
-\FloatBarrier
 
-Notice that the quantities mentioned are not referring to one board only. The quantities ordered were chosen with the thought of building 4 PCBs, checking the availability of existing components in the lab and the minimum components order of the suppliers. 
+\FloatBarrier
+\noindent
+Notice that the quantities mentioned are not referring to one board only. The quantities ordered were chosen with the thought of building four PCBs, checking the availability of existing components in the lab and the minimum components order of the suppliers. 
 For the number of components needed per board, please refer to the Schematic and Fig. \ref{fig:comp1} and \ref{fig:comp2}.
 
 \begin{figure}[htb]
@@ -362,23 +371,23 @@ For the number of components needed per board, please refer to the Schematic and
 In this Section, the PCB of the micromouse will be presented. All in all, the PCB is the body and soul of the robot: Its physical aspect constitutes the largest part of the robot, hosts the mcu (the brain of the robot) and all the necessary components already described in the Schematic Section. 
 The finished PCB can be seen in Fig. \ref{fig:pcb}. The dimensions are: From head to tail 11.6 cm and from side to side 8.5 cm. The printed PCB can be seen in Fig. \ref{fig:print} .
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/PCB.PNG}
     \caption{The final PCB version}
     \label{fig:pcb}
 \end{figure}
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/hardware/printed.jpg}
     \caption{The printed board (bottom layer)}
     \label{fig:print}
 \end{figure}
 
-Our PCB features 2 layers: The top and bottom layer. Keep in mind that they are both physically and electrically isolated, unless we deliberately create a connection, as explained later. All necessary concepts are explained when needed in the following subsections, so it is important to read through them in order.
-
-The process roughly consists of 3 steps, corresponding to the subsections that follow.
+\noindent
+Our PCB features two layers: The top and bottom layer. Keep in mind that they are both physically and electrically isolated, unless we deliberately create a connection, as explained later. All necessary concepts are explained when needed in the following subsections, so it is important to read through them in order.\\
+The process roughly consists of three steps, corresponding to the subsections that follow.
 
 \FloatBarrier
 
@@ -399,7 +408,7 @@ The final placement of components can be seen in Fig. \ref{fig:comp}.
     \label{fig:comp}
 \end{figure}
 
-As mentioned, in our case, a 2 layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, notice that there are 2 different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
+As mentioned, in our case, a two layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, notice that there are two different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
 
 The through-hole components actually go through the PCB. The manufacturer needs to drill holes for this purpose. An advantage of this type is mechanical stability. Another advantage comes in the tracing phase, when connecting the components: The through-hole ones can have traces leading to and from them in both the top and bottom layers. The reason is obvious, they have physical presence in both layers, since they go through the surface of the PCB to the other side. However, the whole concept does occupy more space than the SMD components. Also, drilling holes costs more, when ordering the PCB.
 
@@ -418,15 +427,15 @@ The buttons need not necessarily be placed close to  the mcu. Admittedly, a more
 
 Notice the empty space in the middle of the board. It is planned for the battery. In our case, instead of using a through-hole battery case on the board, the battery is to be floating above it, in a dedicated case of the casing. Even though it would be possible to dismiss the space kept on the board, we chose to keep it as a plan B, just in case the casing is not available. To the left and right of the battery more space is kept for the motors, dictated by their dimensions and the casing to host them. Finally, notice the four drills at the left and right sides of the board. As will be explained later, the design of the casing allows for sliding the board in it, before the motors and wheels are placed. However, just in case extra stability is needed, these four holes allow for screws to hold the PCB and the casing together.
 
-Since we are still in the middle of the board, notice the 2 voltage regulators, in succession of the battery pins. It is convenient, in our case, to have the source in the middle of the board.
+Since we are still in the middle of the board, notice the two voltage regulators, in succession of the battery pins. It is convenient, in our case, to have the source in the middle of the board.
 
-Moving on to the back of the PCB, the H-bridge needs to be placed in the middle of the 2 motors' pins. The back LED, much like the front one in placed approximately in the middle of the edge, since its role is mechanical stability. The little tail, where the LED is placed, is just a nice artistic touch, as are the front cuts on the board.
+Moving on to the back of the PCB, the H-bridge needs to be placed in the middle of the two motors' pins. The back LED, much like the front one in placed approximately in the middle of the edge, since its role is mechanical stability. The little tail, where the LED is placed, is just a nice artistic touch, as are the front cuts on the board.
 
 
 \subsubsection{Tracing (Connecting Components)}
 
 Now that the components have been placed and the shape of the PCB decided, they need to be connected. This procedure is called "tracing", since the components are connected through copper traces on the board.
-As mentioned above, the traces can be on the top or bottom layer and the 2 layers are isolated, hence the traces on different layers are also isolated from each other. 
+As mentioned above, the traces can be on the top or bottom layer and the two layers are isolated, hence the traces on different layers are also isolated from each other. 
 The final tracing can be seen in Fig. \ref{fig:pcb} above.
 A view with the traces on the top layer can be seen in Fig. \ref{fig:top}. The view featuring only the traces on the bottom layer can be seen in Fig. \ref{fig:bottom}.
 
@@ -445,7 +454,7 @@ A view with the traces on the top layer can be seen in Fig. \ref{fig:top}. The v
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 This is a good point to introduce the concept of "via points". Notice how traces on the top layer (red) change to traces on the bottom layer (blue) and vice versa. The point where the layer (and color) changes is a via point. A via point is a drill on the PCB, to allow for the trace to change layer. 
 Hopefully, the above discussion about SMD and through-hole components makes more sense now. Notice how, in some cases, the traces change layer just before connecting to an SMD component, in order to get to the component's layer.
 All in all, drawing traces in an organized manner is not straight-forward. Two restrictions to keep in mind: Keep both the number of via points and the length of the traces as low as possible. The reason for the first being the cost and complexity of the PCB and for the latter, the cost and the accuracy of the corresponding signal: The longer the trace, the larger its resistance, the bigger the noise that is picked up.
@@ -465,14 +474,15 @@ For example, it is known that motors can draw a lot of current, especially when 
 
 Eagle offers a nice feature when it comes to measuring trace length and acquiring an estimation of relevant values. A ULP script provides us with this info, by running the command \textit{run length-freq-ri} in Eagle's command line. An example from our circuit can be seen in Fig. \ref{fig:length}. Notice how the estimation for the maximum current on the trace is shown in the end right column and how the wider traces of the motor (e.g. M1+, M2+, etc.) can take more than 1A.
 
-\begin{figure}[htb]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{figures/hardware/ULP.PNG}
     \caption{Trace length and other info}
     \label{fig:length}
 \end{figure}
 
-All in all, we kept it simple and well in the limits with  the choice of the width: There are only 3 different widths in our PCB traces. The largest is 1.016mm and is used for the connections between the motors, the H-bridge and the battery. Then we have 0.6096mm for the connections from the 5V regulator (essentially the sensors). Last, the smaller width is 0.4064mm and is used for all the rest. Especially in the case of the close to each other mcu pins, a larger width would be a nuisance, since there needs to be a minimum clearance between the traces.
+\noindent
+All in all, we kept it simple and well in the limits with  the choice of the width: There are only three different widths in our PCB traces. The largest is 1.016 mm and is used for the connections between the motors, the H-bridge and the battery. Then we have 0.6096 mm for the connections from the 5V regulator (essentially the sensors). Last, the smaller width is 0.4064 mm and is used for all the rest. Especially in the case of the close to each other mcu pins, a larger width would be a nuisance, since there needs to be a minimum clearance between the traces.
 
 \vspace{1cm}
 
@@ -486,6 +496,7 @@ In reality, there is a much more important motivation to create a GND plane, ins
     \label{fig:gnd}
 \end{figure}
 
+\noindent
 The copper traces run through this all-connecting surface, in order to connect the necessary pins. This is especially visible in the above pictures of the actual PCB, where the green entire surface is GND and the tracks running through it are the traces mentioned above, playing the role of wires in a physical circuit.
 
 The GND surface can be applied to one of the layers or both. In our case, we placed one only on the top layer,since the SMD components on the bottom layer that needed to be connected to GND were very few. The solution might not seem very elegant, but is functional: A trace runs from the gnd pin of the component, on the bottom layer, and ends in a via point. Hence, it connects to the GND on the top layer. An example from our circuit can be seen in Fig. \ref{fig:via}.
@@ -524,11 +535,11 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
 \subsubsection{CAD Modelling}
 \begin{itemize}
     \item Base Casing\\ 
-    This casing is the encompassing platform, on which all hardware components are placed. See Fig. ref{fig:base_casing} for the CAD model of the base casing.
+    This casing is the encompassing platform, on which all hardware components are placed. See Fig. \ref{fig:base_casing} for the CAD model of the base casing.
 
     PCB rests on the bottom wrapper, and is fastened on with screws. Motors are mounted on the side with screws as well. Sensors are placed one front centre, another two facing left and right.
 
-    In this CAD model, there are several components. Other than the base wall, the most prominent components are the sensor casings. These are actually one component, but imported on 3 positions, modified according to other components and integrated into the assembly design. 
+    In this CAD model, there are several components. Other than the base wall, the most prominent components are the sensor casings. These are actually one component, but imported on three positions, modified according to other components and integrated into the assembly design. 
 
     The approach to model the sensor casing separately as a component and later integrate reduces duplicate work. This separation also ensures that even a change in sensor model would only result in limited modification work to the final design.
     
@@ -536,7 +547,7 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
     \item Battery Cover\\ 
     In order to secure the battery safely and make our robot space efficient, a battery cover is designed to hold the battery above PCB and other components. It also serves as a covering case for aesthetic purposes to some extent.
 
-    This cover is designed to be a snap fit with the base casing, see Fig {fig:SnapFit}.
+    This cover is designed to be a snap fit with the base casing, see Fig \ref{fig:SnapFit}.
 
     For designing the surface of this cover, the free-form modelling and sculpting feature is used, in addition to the more traditional parametric modelling and solid modelling. This allows us to more easily model a visually pleasing surface to the design, giving our mouse a more “sporty” look, rather than the usual “boxy” appearance from more traditional CAD methods.
 
@@ -548,14 +559,14 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
 \subsubsection{3D printing the casing}
 \begin{itemize}
     \item Method\\ 
-    There are many types of 3D printing process, most common ones include Material Extrusion method such as Fused Deposition Modeling (FDM), and Vat Polymerization such as Stereolithography (SLA), Direct Light Processing (DLP). FDM is most widely available method of 3D printing, meanwhile SLA has a better dimensional accuracy (lower limit ± 0.10 mm in a desktop SLA printer compared to lower limit ± 0.5 mm in a desktop FDM printer).
+    There are many types of 3D printing process, most common ones include Material Extrusion method such as Fused Deposition Modeling (FDM), and Vat Polymerization such as Stereolithography (SLA), Direct Light Processing (DLP). FDM is most widely available method of 3D printing, meanwhile SLA has a better dimensional accuracy (lower limit $\pm$ 0.10 mm in a desktop SLA printer compared to lower limit $\pm$ 0.5 mm in a desktop FDM printer).
 
-    The 3D printing method we used is Fused Deposition Modeling (FDM). Out of the 2 available 3D printer FDM and SLA, the FDM method is chosen for its shorter lead and print time, as it does not require a curing process as for SLA. The dimensional accuracy is also acceptable to our application.
+    The 3D printing method we used is Fused Deposition Modeling (FDM). Out of the two available 3D printer FDM and SLA, the FDM method is chosen for its shorter lead and print time, as it does not require a curing process as for SLA. The dimensional accuracy is also acceptable to our application.
     
     
 
     \item Material\\ 
-    There are 2 kinds of material for the FDM printer available for us, which are also the 2 most widely used materials for FDM 3D printing, namely PLA (Polylactic Acid) and ABS (Acrylonitrile Butadiene Styrene). They both can be used to print dimensional accurate parts, with very similar cost. PLA is under correct condition biodegradable, whereas ABS is not but recyclable.
+    There are two kinds of material for the FDM printer available for us, which are also the two most widely used materials for FDM 3D printing, namely PLA (Polylactic Acid) and ABS (Acrylonitrile Butadiene Styrene). They both can be used to print dimensional accurate parts, with very similar cost. PLA is under correct condition biodegradable, whereas ABS is not but recyclable.
 
     ABS is chosen for our project due to its improved ductility, higher flexural strength, and slightly better mechanical properties. Because ABS is less brittle than PLA, it has also better machinability, that means drilling hole or sanding would be easier, which we will likely do, whereas PLA would require more care during such post-processing.
 

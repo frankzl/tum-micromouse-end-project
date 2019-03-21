@@ -10,7 +10,7 @@ There are some predefined conditions and tools that we used as a starting point 
 
 \begin{itemize}
     \item Geometric constraints\\ 
-    As was mentioned in the previous section, the geometric parameters of the maze in our case were as following: 8x8 identical squares with a side of 16cm. Therefore, our "mouse" was logically required to be smaller than 16cm in width and length, ideally the size that would allow it to move freely while performing any type of movement within the maze (therefore leaving at least 2-3 centimeters of distance to the surrounding walls)
+    As it was mentioned in the previous section, the geometric parameters of the maze in our case were as following: 8x8 identical squares with a side of 16 cm. Therefore, our "mouse" was logically required to be smaller than 16 cm in width and length, ideally the size that would allow it to move freely while performing any type of movement within the maze (therefore leaving at least 2-3 cm of distance to the surrounding walls)
     \item Power supply\\
     According to the unified formal requirements of the Micromouse competition, the robot should be autonomous, which infers carrying it's own power supply in form of a standard 9V battery.
     \item Sensing the environment\\
@@ -18,7 +18,7 @@ There are some predefined conditions and tools that we used as a starting point 
     \item Motors\\
     In order for the "mouse" to move, we were provided with predefined 2619-SR-IE2-16 motors and sets of wheels of different diameter.
     \item Microcontroller\\
-    Initially, for the educational purposes and in order to gain some knowledge in configuring and setting up the microcontroller to control the needed peripherals, a pair of dsPIC30F4011 microcontrollers was provided. Appropriate for the goal task microcontroller was decided to be chosen later. Overall, it had to have all required pins and interfaces, such as:\\
+    Initially, for the educational purposes and in order to gain some knowledge in configuring and setting up the microcontroller to control the needed peripherals, a pair of dsPIC30F4011 microcontrollers was provided. Appropriate for the goal, the microcontroller was decided to be chosen later. Overall, it had to have all required pins and interfaces, such as:\\
     - PWM outputs for the motor control\\
     - analog inputs to receive data from sensors\\
     - enough extra pins to connect peripherals (such as LEDs)\\
@@ -29,6 +29,7 @@ There are some predefined conditions and tools that we used as a starting point 
     In order for all of the components (such as the board, the motors and the battery) to hold together in one single "mouse" unit, it was set that a custom casing must be designed and printed.
 \end{itemize}
 
+\noindent
 Based on those conditions and also tools and devices provided, we came up with the implementation plan, which can be seen in detail in the next part.
 
 \subsection{Work program and Gantt chart}
@@ -56,7 +57,7 @@ The practial course was comprised of the following topics:
 \end{itemize}
 
 \noindent
-During the practial course we applied our learnings onto a breadboard. Which can be seen in Fig. \ref{fig:breadboard}. By doing this we got an idea of what kind of electronic parts we will need to get accustomed with for the creation of the final micromouse. Our acquired knowledge will be described in more detail in the next chapter.
+During the practial course we applied our learnings onto a breadboard. Which can be seen in Fig. \ref{fig:breadboard}. By doing this we got an idea of what kind of electrical parts we will need to get accustomed with for the creation of the final micromouse. Our acquired knowledge will be described in more detail in the next chapter.
 
 \begin{figure}[H]
     \centering
@@ -66,15 +67,18 @@ During the practial course we applied our learnings onto a breadboard. Which can
 \end{figure}
 
 \noindent
-While going through the practical course, we fetched all the requirements we would need during the preparations of building the micromouse. All of them are described in the previous chapter \ref{chap:design_cond} \\
+While going through the practical course, we fetched all the requirements we would need during the preparations of building the micromouse. All of them are described in the previous chapter \ref{chap:design_cond}.\\
 
 \noindent
-The former idea of splitting us students into two separate groups was canceled because it took us too long to complete the basic introduction (as it was initially planned) plus the fact that we all were inexperienced in electrical engineering. Instead we formed two teams: One was responsible for the hardware the other one for the software design. This and other issues are mentioned in chapter \ref{chap:challenges}.\\
+The former idea of splitting us students into two separate groups was canceled because it took us too long to complete the basic introduction (as it was initially planned) plus the fact that we all were inexperienced in electrical engineering. Instead, we formed two teams after the first half of the semester: One was responsible for the hardware and the other one for the software design.\\
 So after all requirements were known and the conceptual design phase was completed, we started with designing the hardware and software. Both are described in more detail in the chapters \ref{chap:hardware} and \ref{chap:software} respectively. \\
-In order to construct a PCB with all the parts we need, we are using Autodesk Eagle. For writing the software we are using the MPLABX environment. \\
+In order to construct a PCB with all the parts we needed, we were using Autodesk Eagle. For writing the software we were using the MPLABX environment. \\
 
 \noindent
-The testing part concludes the overall development stage. But because testing is such a crucial element during a development, especially when designing hardware is a part of it, every step has to be done with caution. Hence, a failure of an electrical compound can easily lead to a broken part, which will result in unnecessary costs and time delays. The test results can be found in chapter \ref{chap:tests}. \\
+The testing phase concludes the overall development stage. But because testing is such a crucial element during a development, especially when designing hardware is a part of it, every step has to be done with caution. Hence, a failure of any electrical component can easily lead to a broken part and result in unnecessary costs and time delays. The test results can be found in chapter \ref{chap:tests}.\\
+
+\noindent
+All challenges and other issues we had faced during the whole development are mentioned in chapter \ref{chap:challenges}.\\
 
 \textcolor{red}{I would suggest to fit here the part with "design decisions based on the aforementioned conditions (justification)"
 \textit{ This is where I'm a bit lost. We could include some "ideal" version of this chart here, but where exactly should we describe all the changes in planning and organization and why they had to be done at each stage of building the prototype and the final version of the mouse?  Should it be described here? Or later in the "problems and challenges"?
