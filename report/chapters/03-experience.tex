@@ -38,17 +38,35 @@ Consequently, interrupts enable a quick reaction and are efficient for asynchron
 To be signalled to the CPU by the interrupt controller, the interrupt must be enabled and have a priority higher than the current CPU priority.\\
 The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table. (refer to datasheet table 7-1)
 
+\begin{figure}
+    \caption{Principle of the Timer 1}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/t1_demo.png}
+            \label{fig:t1_demo}
+\end{figure}
+
 \subsection{Timer: timer driven by interrupt}
 
-Timers are used to measure the time or generate the accurate time delay using a binary counter that can be configured to count clock pulses. Once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
+
+Timers are used to measure the time or generate the accurate time delay using a \textcolor{red}{binary counter} \textcolor{green}{counter} that can be configured to count clock pulses. As seen in figure \ref{fig:t1_demo}, once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
 
 To generate the range of delays, we must set the maximum count value using the following formulas:\\
 We first multiply the cycle period by a prescaler, to deduce the time between two increments of the counter:
 $$tick=prescaler*T_{CY}$$
-Then we derive the maxcount:
+Then we derive the maxcount which we store inside our period register (PR):
 $$maxcount=Timer delay/tick$$
-The prescaler is necessary when the maxcount exceeds its maximum value $$(2^{16}-1=65535).$$ 
-If many solutions are possible, the smallest prescaler value should be chosen to increase the timer resolution. 
+\textcolor{red}{The prescaler is necessary when the maxcount exceeds its maximum value $$(2^{16}-1=65535).$$ }
+\textcolor{blue}{If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or third clock cycle depending on our prescaler. This allows us to wait twice or thrice the amount of time.}
+
+
+\textcolor{blue}{Depending on our application, we choose a different prescaler:
+\begin{enumerate}
+    \item If we need a high timer resolution, the smallest prescaler value should be chosen. 
+    \item If we do not care about the resolution, the highest prescaler value should be chosen. Any error in the time period relative to the period itself would be smaller with a larger period (in our case, a larger prescaler).
+\end{enumerate}
+}
+\textcolor{red}{If many solutions are possible, the smallest prescaler value should be chosen to increase the timer resolution.}
+
 
 \subsection{Pulse Width Modulation:} 
 
