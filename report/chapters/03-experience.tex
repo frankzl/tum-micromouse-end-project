@@ -2,39 +2,45 @@
 
 \textcolor{red}{Explaining the theory intuitively is nice, but please, could you add references? Even if it comes down to Alex's document.}
 
-The first part of the practical course was dedicated to learning the main control practices and hardware features of the dsPIC digital signal controllers from Microchip, widely used in embedded applications and robotics.
+The first part of the practical course was dedicated to learning the main control practices and hardware features of the dsPIC digital signal controllers from Microchip, widely used in embedded applications and robotics.\\
 
+\noindent
 \textbf{Developed skills:}
 \begin{itemize}
     \item extracting relevant information from datasheets
     \item expressing it in C language
-    \item Cross-compiling
-    \item Debugging (using Simulation environment)
+    \item cross-compiling
+    \item debugging (using Simulation environment)
 \end{itemize}
 
-In the following section we introduce the most important aspects of each hardware peripheral of the microcontroller. For more details refer to dsPICOverview.\\
-Refer to the Software section of the report to have more details about the peripheral’s settings used for our robot.
+\noindent
+In the following section we introduce the most important aspects of each hardware peripheral of the microcontroller. For more details refer to dsPIC overview.\\
+Refer to the software section of the report to have more details about the peripheral’s settings used for our robot.
 
-\subsection{Digital I/O:}
+\subsection{Digital I/O}
 
-The general purpose I/O pins allow the microcontroller to monitor and control other devices.
-Many pins are shared between several peripherals and the general purpose I/O pins.  An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic.\\
+The general purpose I/O (GPIO) pins allow the microcontroller to monitor and control other devices.
+Many pins are shared between several peripherals and the GPIO pins.  An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic.\\
 All port pins have three Special Function Registers (SFR), registers that control various aspects of the microprocessor's function, directly associated with the operation of the port pin:
 \begin{itemize}
-    \item \textbf{TRIS}: the TRI-State Register sets the direction of the pin. 1 corresponds to an input pin and 0 to an output pin.\\
+    \item \textbf{TRIS}\\
+    The TRI-State Register sets the direction of the pin. The value "1" corresponds to an input pin and "0" to an output pin.\\
     The direction needs to be set before reading or writing the data from the ports. \\
     Only pins configured as digital can be used as input or output pins. Pins configured as analogue must be used as input pin.
-    \item \textbf{LAT}: it sets the output value of the pin and returns the logic state of the output latch.
-    \item \textbf{PORT}: it returns the logic state of the pin. 
+    \item \textbf{LAT}\\
+    It sets the output value of the pin and returns the logic state of the output latch.
+    \item \textbf{PORT}\\
+    It returns the logic state of the pin. 
 \end{itemize}
 To avoid Read-Modify-Write issue, we always read from the port and write to the latch.
 
-\subsection{Interrupts:}
+\subsection{Interrupts}
 
 Interrupts are mechanisms that allow the microcontroller to react to external and internal events.\\
 When the microcontroller receives an interrupt request (IRQ), it jumps to the interrupt service routine (ISR), executes it and returns back to the main program. 
 Consequently, interrupts enable a quick reaction and are efficient for asynchronous events as they allow the microcontroller to allocate its maximum processing time for other tasks by avoiding redundant checking tasks.\\
 
+\noindent
 To be signalled to the CPU by the interrupt controller, the interrupt must be enabled and have a priority higher than the current CPU priority.\\
 The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table. (refer to datasheet table 7-1)
 
@@ -42,15 +48,16 @@ The natural priority is considered when two interrupts with the same assigned pr
 
 Timers are used to measure the time or generate the accurate time delay using a binary counter that can be configured to count clock pulses. Once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
 
+\noindent
 To generate the range of delays, we must set the maximum count value using the following formulas:\\
 We first multiply the cycle period by a prescaler, to deduce the time between two increments of the counter:
 $$tick=prescaler*T_{CY}$$
 Then we derive the maxcount:
 $$maxcount=Timer delay/tick$$
-The prescaler is necessary when the maxcount exceeds its maximum value $$(2^{16}-1=65535).$$ 
+The prescaler is necessary when the maxcount exceeds its maximum value: $$(2^{16}-1=65535).$$ 
 If many solutions are possible, the smallest prescaler value should be chosen to increase the timer resolution. 
 
-\subsection{Pulse Width Modulation:} 
+\subsection{Pulse Width Modulation} 
 
 \textcolor{red}{Could you please add references?}
 \textcolor{red}{Could you please remove the colons for each subsection's title?}
