@@ -565,7 +565,7 @@ Based on that, we pick $K_i = 0.2$ because it almost perfectly shoots up to our 
 \subsubsection{Test of PI(D) Gains}
 Finally, we put the chosen values $K_p = 8$ and $K_i = 0.2$ to the test with different setpoints (see figure \ref{fig:PI_final}). Unsurprisingly, the PI-controller performs best for the setpoint $47$ because we have chosen the gains based on their performance on the setpoint $47$.
 But the controller also performs almost as well on all higher setpoints. For the setpoints $<47$ we observe that the velocity overshooots for a short period before it readjusts itself to the setpoint. On average it takes roughly $10-20 ms$ longer compared the setpoint $47$ which is negligible for our application.\\\\
-\textbf{Remarks}
+\textbf{Remarks}\\
 If we had used the D term, we might have been able to use a larger I term. Since a high I term causes oscillation and the D term dampens oscillation, the two terms could have balanced each other out. This could yield a better overall result on all setpoints, but requires more tests. Adding one variable complicates the whole problem as it adds another dimension to test in.
 
 
