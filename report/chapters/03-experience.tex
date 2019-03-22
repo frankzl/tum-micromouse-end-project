@@ -17,7 +17,7 @@ Refer to the software section of the report to have more details about the perip
 
 \subsection{Digital I/O}
 
-The general purpose I/O (GPIO) pins allow the microcontroller to monitor and control other devices. Many pins are shared between several peripherals and the GPIO pins. An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic as shown in the figure \ref{fig:gpio} bellow\\
+The general purpose I/O (GPIO) pins allow the microcontroller to monitor and control other devices. Many pins are shared between several peripherals and the GPIO pins. An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic as shown in the figure \ref{fig:gpio} below.\\
 
 \begin{figure}[H]
     \caption{Shared port structure \cite{alex}}
@@ -144,7 +144,7 @@ For successful communication, both the device’s receiver and transmitter shoul
 Quadrature encoders (also known as incremental encoders or optical encoders) are used for position and speed detection of rotating motion systems. They enable closed loop control of many motor control applications.
 \vskip 0.2in
 \noindent
-The Quadrature Encoder module provides a simple interface to incremental optical encoders, which allows to obtain signed velocity using 2 photo-transistors that are offset by 1 quarter of the cycle period. It accepts the A, B and index connections from the incremental encoder and stores the accumulated count pulses in a dedicated 16-bit time base.
+The Quadrature Encoder module provides a simple interface to incremental optical encoders, which allows to obtain signed velocity using two photo-transistors that are offset by one quarter of the cycle period. It accepts the A, B and index connections from the incremental encoder and stores the accumulated count pulses in a dedicated 16-bit time base.
 
 \begin{figure}[H]
     \caption{Principle of a Quadrature Encoder \cite{alex}}

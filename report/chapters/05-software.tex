@@ -6,7 +6,7 @@ In this section, we first describe the settings used to configure the different 
 \textbf{MCU specification:}
 \vskip 0.1in
 \noindent
-As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has 2 quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed bellow:
+As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has two quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed below:
 \begin{itemize}
     \item 44 pins
     \item 3.3V device 
@@ -158,7 +158,7 @@ We define a DMA data buffer adcData, a global variable where all conversion resu
 We store one sample per channel and generate an interrupt after the 3 channel values have been transferred. The interrupt service routine stops the sampling that is again started at each timer interrupt call. 
 \vskip 0.1in
 \noindent
-We set the dma operating mode to a peripheral indirect addressing mode ((peripheral generates destination address [increment by 2]) and a continuous no ping pong setting (continuous transfer of data with the same buffer start address) as shown in the figure bellow:
+We set the dma operating mode to a peripheral indirect addressing mode ((peripheral generates destination address [increment by 2]) and a continuous no ping pong setting (continuous transfer of data with the same buffer start address) as shown in the figure below:
 
 \begin{figure}[H]
     \centering
@@ -254,7 +254,7 @@ Since the controller registers have a limit, it is also necessary to limit the o
 
 \subsubsection*{Cascade controller: position and velocity}
 
-We use 2 controllers to adjust both the position and speed of each wheel. 
+We use two controllers to adjust both the position and speed of each wheel. 
 \vskip 0.1in
 \noindent
 The position control is performed with a simple P controller which error is the different between the measures distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
