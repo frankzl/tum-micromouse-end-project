@@ -282,8 +282,7 @@ As seen in figure \ref{fig:DC_V} the increase in the velocity decreases down for
 Using the output of the PID controller, we shall regulate the duty cycle to maintain a certain velocity.
 
 \subsubsection{PID Gains}
-In this section different gain values for the PID controller are tested out to figure out the most suitable ones for our motors. The effect of the P, I and D terms on our velocity are evaluated systematically.
-
+In this section different gain values for the PID controller are tested out to figure out the most suitable ones for our motors.
 \subsubsection*{P term}
 \begin{wrapfigure}{r}{0.45\textwidth}
     \centering
@@ -291,6 +290,7 @@ In this section different gain values for the PID controller are tested out to f
     \begin{axis}[
             legend pos=south east,
             width=7cm,
+            height=5cm,
             xlabel=Time (ms),
             ylabel=Velocity (cp10)]
         \addplot [mark=none, red] table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
@@ -330,6 +330,7 @@ In order to choose a suitable value for $K_p$, we first figure out the effect of
     \begin{axis}[
             legend pos=outer north east,
             width=10cm,
+            height=7cm,
             xlabel=Time (ms),
             ylabel=Velocity (cp10)]
         \addplot [mark=none, black] table [x=time(ms), y=$P1$]{figures/data/P_demo.csv};
