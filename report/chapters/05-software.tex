@@ -182,21 +182,204 @@ Here goes the whole logic of the mouse movement control (how should it behave wh
 }
 
 \subsubsection{Proportional-Integral-Derivative Controller (PID)}
-\subsubsection*{Need for control loop feedback}
+\subsubsection*{Motivation}
 
 The robot velocity is controlled by varying the PWM duty cycle but it is not guaranteed that the motor is driving exactly at this value. A feedback mechanism is necessary to control and verify this value.\\
-A proportional–integral–derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value e(t) as the difference between a desired setpoint (SP) and a measured process variable (PV) and applies a correction based on proportional, integral, and derivative terms.\\
+A proportional-integral-derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value $e(t)$ as the difference between a desired \textbf{setpoint ($SP$)} and a measured \textbf{process variable ($PV$)} and applies a correction based on proportional, integral, and derivative terms. The output $u(t)$ depends on our use case. This becomes more clear when we look at our motors.\\
 The overall control function can be expressed mathematically as : 
-$$Output = K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
-$$e(t) = setpoint - input $$
+$$u(t)= K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
+$$e(t) = SP - PV$$
  
 where Kp, Ki, and Kd, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively.
 
-\subsubsection*{P term}
+\subsubsection*{PID for velocity control}
+A PID controller controls a variable by manipulating the responsible parameters. In our case, we want to control the velocity of the motor by varying the duty cycle. 
 
-KP is proportional to the current value of the error. \\
+We have two definitions of velocity: counts per second ($v_{cps}$ and angular velocity ($v_\omega$).
+$$v_{cps}(n) = \frac{POSCNT(n) - POSCNT(n-1)}{T_{update}}$$
+$$v_{\omega}(n) = v_{cps}(n) * \frac{\omega_{base}}{k_{E}*Gr}$$
+
+with $k_E$ as our edge gain, $\omega_{base} = \frac{2\pi}{16}$ as our base angular resolution and $Gr$ as our gearing ratio of the gearbox.
+
+Since we want to control our motor velocity, it is sufficient to work with $v_{cps}$ instead of $v_{\omega}$. 
+The velocity is measured once every 10 ms in the timer interrupt.
+We therefore introduce our new velocity ``clicks per 10 ms'' ($v_{cp10}$) so that we require one less computation.
+
+$$v_{cp10} = POSCNT(n) - POSCNT(n-1)$$
+
+For the following sections, any velocity value measured, is actually $v_{cp10}$.
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            width=11cm,
+            xlabel=Duty Cycle(\%),
+            ylabel=Velocity (cp10)]
+        \addplot table [x=DC(percentage), y=Velocity(cp10)]{figures/data/V_DC.dat};
+    \end{axis}
+\end{tikzpicture}
+    \caption{Effect of the duty cycle on the motor velocity} \label{fig:DC_V}
+\end{figure}
+
+\textbf{Note: All measurements in the PID sections were taken using the breadboard (figure \ref{fig:breadboard}) as we did not manage to finish the final micromouse in time.}
+
+
+As seen in figure \ref{fig:DC_V} the increase in the velocity decreases down for higher duty cycle values. The maximum measured velocity is 67 cp10. When we want to drive the motor at a certain speed, we cannot expect the corresponding DC percentage to be the same at all times. Errors might occur such that we need slightly different DC values every time.
+Using the output of the PID controller, we shall regulate the duty cycle to maintain a certain velocity.
+
+\subsubsection*{P term}
+Initially, we only want to observe the effect of the ``P term''.
+KP is proportional to the current value of the error.
+A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
+The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
+        \addlegendentry{target 67}
+        \addplot table [x=time(ms), y=$target_{57}$]{figures/data/P1.csv};
+        \addlegendentry{target 57}
+        \addplot table [x=time(ms), y=$target_{47}$]{figures/data/P1.csv};
+        \addlegendentry{target 47}
+    \end{axis}
+\end{tikzpicture}
+    \caption{P-Controller (P=1): Targeting different velocities} \label{fig:P1}
+\end{figure}
+
+
 A simple P controller prevents the system from reaching its target value. The system settles in a steady state error since it requires an error to generate the proportional response.\\
 Graph test1 : Test of P controller on the motor. the target value is not reached
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, black] table [x=time(ms), y=$P1$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=1$}
+        \addplot [mark=none, blue] table [x=time(ms), y=$P2$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=2$}
+        \addplot [mark=none, red] table [x=time(ms), y=$P3$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=3$}   
+        \addplot [mark=none, green] table [x=time(ms), y=$P4$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=4$}   
+        \addplot [mark=none, yellow] table [x=time(ms), y=$P10$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=10$}   
+        \addplot [mark=none, orange] table [x=time(ms), y=$P30$]{figures/data/P_demo.csv};
+        \addlegendentry{$P=30$}   
+
+    \end{axis}
+\end{tikzpicture}
+    \caption{P-Controller (P=1): Targeting velocity 47 with different P values} \label{fig:P_demo}
+\end{figure}
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, orange] table [x=time(ms), y=I0]{figures/data/I_demo.csv};
+        \addlegendentry{P=1, I=0}
+        \addplot [mark=none, blue] table [x=time(ms), y=I1]{figures/data/I_demo.csv};
+        \addlegendentry{P=1, I=1}
+        \addplot [mark=none, red] table [x=time(ms), y=I2]{figures/data/I_demo.csv};
+        \addlegendentry{P=1, I=2}   
+        \addplot [mark=none, green] table [x=time(ms), y=I5]{figures/data/I_demo.csv};
+        \addlegendentry{P=1, I=5}   
+        \addplot [mark=none, black, densely dotted] table [x=time(ms), y=T47]{figures/data/I_demo.csv};
+        \addlegendentry{target 47}
+
+    \end{axis}
+\end{tikzpicture}
+    \caption{PI-Controller (P=0): Targeting velocity 47 with different I values} \label{fig:I_demo}
+\end{figure}
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, orange] table [x=time(ms), y=D0]{figures/data/D_demo.csv};
+        \addlegendentry{P=1, I=1, D=0}
+        \addplot [mark=none, blue] table [x=time(ms), y=D1] {figures/data/D_demo.csv};
+        \addlegendentry{P=1, I=1, D=1}
+        \addplot [mark=none, red] table [x=time(ms), y=D2]  {figures/data/D_demo.csv};
+        \addlegendentry{P=1, I=1, D=2}   
+        \addplot [mark=none, green] table [x=time(ms), y=D5]{figures/data/D_demo.csv};
+        \addlegendentry{P=1, I=1, D=5}   
+        \addplot [mark=none, black, densely dotted] table [x=time(ms), y=T47]{figures/data/D_demo.csv};
+        \addlegendentry{target 47}
+    \end{axis}
+\end{tikzpicture}
+    \caption{PID-Controller (P=1, I=1): Targeting velocity 47 with different D values} \label{fig:D_demo}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, orange] table [x=time(ms), y=P1]{figures/data/P_final.csv};
+        \addlegendentry{P=1}
+        \addplot [mark=none, blue] table [x=time(ms), y=P2]{figures/data/P_final.csv};
+        \addlegendentry{P=2}
+        \addplot [mark=none, red] table [x=time(ms), y=P5]{figures/data/P_final.csv};
+        \addlegendentry{P=5}   
+        \addplot [mark=none, green] table [x=time(ms), y=P8]{figures/data/P_final.csv};
+        \addlegendentry{P=8}   
+        \addplot [mark=none, yellow] table [x=time(ms), y=P10]{figures/data/P_final.csv};
+        \addlegendentry{P=10}   
+        \addplot [mark=none, black, dotted] table [x=time(ms), y=T47]{figures/data/P_final.csv};
+        \addlegendentry{target 47}   
+
+    \end{axis}
+\end{tikzpicture}
+    \caption{Final P-Controller: Targeting velocity 47 with different P values} \label{fig:P_final}
+\end{figure}
+
+\begin{figure}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=outer north east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, orange] table [x=time(ms), y=PI0]{figures/data/I_final.csv};
+        \addlegendentry{P=8, I=0}
+        \addplot [mark=none, blue] table [x=time(ms), y=PI81]{figures/data/I_final.csv};
+        \addlegendentry{P=8, I=1}
+        \addplot [mark=none, red] table [x=time(ms), y=PI805]{figures/data/I_final.csv};
+        \addlegendentry{P=8, I=0.5}
+        \addplot [mark=none, green] table [x=time(ms), y=PI802]{figures/data/I_final.csv};
+        \addlegendentry{P=8, I=0.2}
+        \addplot [mark=none, black, dotted] table [x=time(ms), y=T47]{figures/data/I_final.csv};
+        \addlegendentry{target 47}   
+
+    \end{axis}
+\end{tikzpicture}
+    \caption{Final PI-Controller (P=8): Targeting velocity 47 with different I values} \label{fig:I_final}
+\end{figure}
+
 \subsubsection{I term}
 
 It accounts for past values of the error and integrates them over time to produce the I term. \\
