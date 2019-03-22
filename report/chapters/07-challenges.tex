@@ -89,15 +89,31 @@ During the whole implementation process we've faced a significant amount of chal
       \item Problem encountered:\\
       Any mechanical design of parts needs to take into account tolerance of dimensional errors. With the FDM 3D printer that we used providing a dimensional accuracy of lower limit of around $\pm$ 0.5 mm, and ordered parts such as the distance sensor having a (default) tolerance of $\pm$ 0.3 mm \cite{sens}, it is worth paying attention when designing for fitting these parts to the casing.
       \item Solution found:\\
-      The solution is quite straightforward, it is to design for the maximum error, and leave enough room for a tight fit. One exception is the case snap fit, where the clearance between two fit structures is 0.4 mm as recommended in [  ].
+      The solution is quite straightforward, it is to design for the maximum error, and leave enough room for a tight fit. One exception is the case snap fit, where the clearance between two fit structures is 0.5 mm as recommended in \cite{low}.
       
   \end{itemize}
   \item Design for 3D Printing
   \begin{itemize}
       \item Problem encountered:\\
       3D printing is a relatively fast and cheap way to produce prototypes, but it comes with its limitations. The 3D printing method we used (FDM) requires certain support structures to be added if there are steep overhanging parts, because heated and fluid material can not be deposited onto thin air. Without support structure, the print would deform and sometimes cause print fail. If support structures are used, removing such structures will leave the surface rough.
+
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/RoughEdge.jpg}
+              \caption{Rough edge caused by lack of support structure, designed in a way that it is only optics issue and can be fix by post processing}
+    \end{minipage}
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/RoughSurface.jpg}
+              \caption{Rough surface after removing support structure, as this is a non-critical surface, it does not cause any functional issues}
+                \label{fig:3dprintroughsurface}
+    \end{minipage}
+\end{figure}
+
       \item Solution found:\\
-      To alleviate such problem, it is firstly important to be mindful of the limitations that come with 3D printing, when designing parts that are supposed to be 3D printed. Avoid support structure as much as possible, one helpful thing to keep in mind is the 45 degree rule of FDM printing. It is said that FDM 3D printers can handle a overhanging structure of 45 degree, larger than that the print will deform. Therefore, by utilising this design rule, many overhanging structures can be avoided. Since support structures leave rough edges, it is important to identify the critical surfaces that require a high precision and accuracy to not have support structures, these surfaces are called critical surfaces. These critical surfaces are identified, such as inside wall of sensor casing, and designed in a way that they do not need support structures. However, it is sometimes difficult to avoid such support structures, it is then best to place support structures on non-critical surfaces, so that the negative consequence is only optical rather than functional.
+      To alleviate such problem, it is firstly important to be mindful of the limitations that come with 3D printing, when designing parts that are supposed to be 3D printed. Avoid support structure as much as possible, one helpful thing to keep in mind is the 45 degree rule of FDM printing. It is said that FDM 3D printers can handle a overhanging structure of 45 degree, larger than that the print will deform. Therefore, by utilising this design rule, many overhanging structures can be avoided. Since support structures leave rough edges, it is important to identify the critical surfaces that require a high precision and accuracy to not have support structures, these surfaces are called critical surfaces. These critical surfaces are identified, such as inside wall of sensor casing, and designed in a way that they do not need support structures. However, it is sometimes difficult to avoid such support structures, it is then best to place support structures on non-critical surfaces, so that the negative consequence is only optical rather than functional, see figure \ref{fig:3dprintroughsurface}.
       
       Second, when printing, a well chosen printing configuration can also help. Sometimes just by rotating the angle, at which the part is printed, can save a lot of support structures, by utilising the 45 degree rule.
       
