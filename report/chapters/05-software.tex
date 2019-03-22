@@ -146,7 +146,7 @@ $$T_{SAMP}-(T_{ACQ}+T_{CONV})*3=10ms-6us$$
 Hence, we have enough margin since the sampling starts not immediately after last conversion but when ASAM bit is set in timer ISR.
 \vskip 0.2in
 \noindent
-\textbf{Remarks:}
+\textbf{Remarks}
 \vskip 0.1in
 \noindent
 If the acquisition time is too short, the sample and hold will not settle and the accuracy will decrease.\\
@@ -225,7 +225,7 @@ This leads the motor to run at a constant speed: $$V=DC*maxspeed$$ with maxspeed
 The function also considers the sign of the input to set the driving direction (a position DC value implies going forward and vice versa)\\
 \vskip 0.2in
 \noindent
-\textit{remarks}
+\textbf{Remarks}
 \begin{itemize}
     \item We first make a sanity check to ensure that the input value falls in the range $[-100, 100]$
     \item Since the motor only supports up to 6V input voltage, we multiply the PDC value with the factor 6/9 since we use a battery that outputs 9V.
@@ -305,7 +305,7 @@ In this section different gain values for the PID controller are tested out to f
 \end{wrapfigure}
 Initially, we only want to observe the effect of the ``P term''.
 KP is proportional to the current value of the error.
-\\A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
+\\A simple P-controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
 The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero and we would drive the motor with a duty cycle of 0\%.
 \\\\
 \textbf{Idea:} To figure out an initial $K_p$, we look at the following scenario:
@@ -445,14 +445,22 @@ is the slope of our error curve. To observe the effect of the D term, we assign 
 In figure \ref{fig:D_demo} the $K_d$ value has an effect on the oscillation of our velocity. A higher $K_p$ dampens the oscillation around the setpoint. The period of the oscillations is also higher.\\\\
 Because we are already reach the targeted velocity with a PI-controller - as seen in the \textit{I term} section - we do not investigate the effect of the D term further. It is sufficient for our project to use a PI-controller.\\\\
 
-\subsubsection{Choice of PID Gains}
+\subsubsection{Choice of PI(D) Gains}
+From our previous experiments we concluded that
+\begin{enumerate}
+    \item $K_p$ is responsible for getting close to our setpoint and the duration it takes to get there.
+    \item $K_i$ is responsible to actually get to the setpoint
+    \item $K_d$ is responsible for dampening the oscillation potentially caused by the P and I term.
+\end{enumerate}
+
+As mentioned, we simplify our PID controller and ignore the D part. We start out by choosing the $K_p$ gain.
 
 \begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
             legend pos=outer north east,
-            width=10cm,
+            width=9cm,
             xlabel=Time (ms),
             ylabel=Velocity (cp10)]
         \addplot [mark=none, orange] table [x=time(ms), y=P1]{figures/data/P_final.csv};
@@ -472,6 +480,18 @@ Because we are already reach the targeted velocity with a PI-controller - as see
 \end{tikzpicture}
     \caption{Final P-Controller: Targeting velocity 47 with different P values} \label{fig:P_final}
 \end{figure}
+\subsubsection*{Choosing $K_p$}
+Targeting the velocity of 47 with different $K_p$ gains, results in the curves in figure \ref{fig:P_final}. 
+For our $K_p$ choice we keep in mind:
+\begin{enumerate}
+    \item We want to add an I term later with a $K_i$ gain. The P-controller alone should therefore not reach our targeted velocity so that adding the I term will not cause our controller to overshoot our target.
+    \item The velocity curve should have a high gradient in the beginning so that it can reach our setpoint quickly.
+    \item The velocity curve should not oscillate.
+\end{enumerate}
+With these criteria in mind, we pick $K_p = 8$ as its curve quickly ascends close to our setpoint without overshooting and oscillating strongly.
+
+\subsubsection*{Choosing $K_i$}
+We keep the found $K_p$ value fixed to 8 and optimize the $K_i$ value to reach the velocity 47 again (see figure \ref{fig:I_final})
 
 \begin{figure}[H]
     \centering
@@ -497,19 +517,52 @@ Because we are already reach the targeted velocity with a PI-controller - as see
     \caption{Final PI-Controller (P=8): Targeting velocity 47 with different I values} \label{fig:I_final}
 \end{figure}
 
+Following the similar criteria as for the choice of $K_p$:
+\begin{enumerate}
+    \item The velocity curve should overshoot the setpoint as little as possible
+    \item The oscillation around the setpoint should be as small as possible.
+\end{enumerate}
+Based on that, we pick $K_i = 0.2$ because it almost perfectly shoots up to our desired setpoint and stops there without oscillating too strongly.
+
+\begin{figure}[H]
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=south east,
+            width=10cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, red] table [x=time(ms), y=T67]{figures/data/final.csv};
+        \addlegendentry{target 67}
+        \addplot [mark=none, brown] table [x=time(ms), y=T57]{figures/data/final.csv};
+        \addlegendentry{target 57}
+        \addplot [mark=none, blue] table [x=time(ms), y=T47]{figures/data/final.csv};
+        \addlegendentry{target 47}
+        \addplot [mark=none, green] table [x=time(ms), y=T37]{figures/data/final.csv};
+        \addlegendentry{target 37}
+        \addplot [mark=none, orange] table [x=time(ms), y=T27]{figures/data/final.csv};
+        \addlegendentry{target 27}
+        \addplot [mark=none, black] table [x=time(ms), y=T17]{figures/data/final.csv};
+        \addlegendentry{target 17}
+    \end{axis}
+\end{tikzpicture}
+    \caption{Final PI-Controller ($P=8, I=0.2$): Targeting different velocities} \label{fig:PI_final}
+\end{figure}
+
+\subsubsection{Test of PI(D) Gains}
+Finally, we put the chosen values $K_p = 8$ and $K_i = 0.2$ to the test with different setpoints (see figure \ref{fig:PI_final}). Unsurprisingly, the PI-controller performs best for the setpoint $47$ because we have chosen the gains based on their performance on the setpoint $47$.
+But the controller also performs almost as well on all higher setpoints. For the setpoints $<47$ we observe that the velocity overshooots for a short period before it readjusts itself to the setpoint. On average it takes roughly $10-20 ms$ longer compared the setpoint $47$ which is negligible for our application.\\\\
+\textbf{Remarks}
+If we had used the D term, we might have been able to use a larger I term. Since a high I term causes oscillation and the D term dampens oscillation, the two terms could have balanced each other out. This could yield a better overall result on all setpoints, but requires more tests. Adding one variable complicates the whole problem as it adds another dimension to test in.
+
+
 \subsubsection*{Cascade controller: position and velocity}
 
 We use two controllers to adjust both the position and speed of each wheel. 
 \vskip 0.1in
 \noindent
-The position control is performed with a simple P controller which error is the different between the measures distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
-We only need a P controller because the inertia of the robot leads to an integration (the wheels automatically integrate) as the robot moves on.
+The position control is performed with a simple P-controller whose error is the difference between the measured distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
+We only need a P-controller because the inertia of the robot leads to an integration (the wheels automatically integrate) as the robot moves on.
 \vskip 0.1in
 \noindent
-The output of this controller (desired velocity) is used as the setpoint for the PI controller that adjusts the speed of the wheel. It takes as input the error between the desired and current velocity and returns a PDC value that sets the new motor speed.
-\vskip 0.1in
-\noindent
-To find the optimal parameters that maximize the responsiveness to the error we perform loop tuning. Refer to test section for more on loop tuning. 
-
-\subsubsection{State Machine}
-
+The output of this controller (desired velocity) is used as the setpoint for our PI-controller that adjusts the speed of the wheel. It takes as input the error between the desired and current velocity and returns a PDC value that sets the new motor speed.
