@@ -532,14 +532,29 @@ An instance of the interface can be seen in Fig. \ref{fig:drc}.
 
 To house not only the PCB, but also sensors ,motors and the battery in a safe and robust way, a set of casing for the micromouse is designed and 3D printed.
 
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/CADrendering.png}
+              \caption{A rendering of the MicroMouse casing CAD 3D Model}
+    \end{minipage}
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/FusionModelling.PNG}
+              \caption{MicroMouse casing in Fusion 360 CAD modelling environment}
+                \label{fig:CaseModelling}
+    \end{minipage}
+\end{figure}
+
 \subsubsection{CAD Modelling}
 \begin{itemize}
     \item Base Casing\\ 
-    This casing is the encompassing platform, on which all hardware components are placed. See Fig. \ref{fig:base_casing} for the CAD model of the base casing.
+    This casing is the encompassing platform, on which all hardware components are placed. See figure \ref{fig:CaseModelling} for the CAD model of the base casing.
 
     PCB rests on the bottom wrapper, and is fastened on with screws. Motors are mounted on the side with screws as well. Sensors are placed one front centre, another two facing left and right.
 
-    In this CAD model, there are several components. Other than the base wall, the most prominent components are the sensor casings. These are actually one component, but imported on three positions, modified according to other components and integrated into the assembly design. 
+    In this CAD model, there are several components. Other than the base wall, the most prominent components are the sensor casings. These are actually one component, but imported on 3 positions, modified according to other components and integrated into the assembly design. 
 
     The approach to model the sensor casing separately as a component and later integrate reduces duplicate work. This separation also ensures that even a change in sensor model would only result in limited modification work to the final design.
     
@@ -547,7 +562,7 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
     \item Battery Cover\\ 
     In order to secure the battery safely and make our robot space efficient, a battery cover is designed to hold the battery above PCB and other components. It also serves as a covering case for aesthetic purposes to some extent.
 
-    This cover is designed to be a snap fit with the base casing, see Fig \ref{fig:SnapFit}.
+    This cover is designed to be a snap fit with the base casing, see figure \ref{fig:SnapFitBase} and \ref{fig:SnapFitCover}.
 
     For designing the surface of this cover, the free-form modelling and sculpting feature is used, in addition to the more traditional parametric modelling and solid modelling. This allows us to more easily model a visually pleasing surface to the design, giving our mouse a more “sporty” look, rather than the usual “boxy” appearance from more traditional CAD methods.
 
@@ -555,6 +570,21 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
 
 \end{itemize}
 
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/SnapFitBase.PNG}
+              \caption{Snap fit design on the base part}
+                \label{fig:SnapFitBase}
+    \end{minipage}
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/SnapFitCover.PNG}
+              \caption{Snap fit design on the cover part}
+                \label{fig:SnapFitCover}
+    \end{minipage}
+\end{figure}
 
 \subsubsection{3D printing the casing}
 \begin{itemize}
@@ -563,8 +593,20 @@ To house not only the PCB, but also sensors ,motors and the battery in a safe an
 
     The 3D printing method we used is Fused Deposition Modeling (FDM). Out of the two available 3D printer FDM and SLA, the FDM method is chosen for its shorter lead and print time, as it does not require a curing process as for SLA. The dimensional accuracy is also acceptable to our application.
     
+\begin{figure}[htb]
+    \centering
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/PrintingProcess.jpg}
+              \caption{A Case being printed}
+    \end{minipage}
+    \begin{minipage}{.45\textwidth}
+          \centering
+            \includegraphics[width=.9\linewidth]{figures/Casing/Battery_Case_Micromouse_STL.png}
+              \caption{Model in STL format for slicer program to process}
+    \end{minipage}
+\end{figure}
     
-
     \item Material\\ 
     There are two kinds of material for the FDM printer available for us, which are also the two most widely used materials for FDM 3D printing, namely PLA (Polylactic Acid) and ABS (Acrylonitrile Butadiene Styrene). They both can be used to print dimensional accurate parts, with very similar cost. PLA is under correct condition biodegradable, whereas ABS is not but recyclable.
 
