@@ -148,7 +148,7 @@ Hence, we have enough margin since the sampling starts not immediately after las
 \textbf{Remarks}
 \vskip 0.1in
 \noindent
-If the acquisition time is too short, the sample and hold will not settle and the accuracy will decrease.\\
+If the acquisition time is too short, the sample and hold unit will not settle and the accuracy will decrease.\\
 During the conversion the capacitor is discharging. If the conversion time is too long, we lose accuracy. \\
 We tried to find a trade-off between to ensure optimal accuracy.
 
@@ -423,7 +423,7 @@ Introducing the $K_i$ helps us reach the value, but a further increase of the $K
 
 \subsubsection*{Clamping I term and PID output}
 
-The integral term can grow very largely through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it’s necessary to limit this term in our implementation.\\
+The integral term can grow very large through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it is necessary to limit this term in our implementation.\\
 Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check. 
 
 \subsubsection*{D term}
@@ -574,7 +574,7 @@ If we had used the D term, we might have been able to use a larger I term. Since
 We use two controllers to adjust both the position and speed of each wheel. 
 \vskip 0.1in
 \noindent
-The position control is performed with a simple P-controller whose error is the difference between the measured distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
+The position control is performed with a simple P-controller whose error is the difference between the measured distance from the wall to the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
 We only need a P-controller because the inertia of the robot leads to an integration (the wheels automatically integrate) as the robot moves on.
 \vskip 0.1in
 \noindent

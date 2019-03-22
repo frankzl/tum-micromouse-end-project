@@ -30,7 +30,7 @@ The general purpose I/O (GPIO) pins allow the microcontroller to monitor and con
 All port pins have three Special Function Registers (SFR), registers that control various aspects of the microprocessor's function, directly associated with the operation of the port pin:
 \begin{itemize}
     \item \textbf{TRIS}\\
-    The TRI-State Register sets the direction of the pin. The value "1" corresponds to an input pin and "0" to an output pin.\\
+    The TRI-State Register sets the direction of the pin. The value ``1'' corresponds to an input pin and ``0'' to an output pin.\\
     The direction needs to be set before reading or writing the data from the ports. \\
     Only pins configured as digital can be used as input or output pins. Pins configured as analog must be used as input pin.
     \item \textbf{LAT}\\
@@ -44,7 +44,7 @@ To avoid Read-Modify-Write issue, we always read from the port and write to the 
 \textit{Read-Modify-Write issue:}
 
 \noindent
-Since pins are grouped in port categories, in order to change a pin value, it is required to first load the port register in ALU, change the value with bit operations using a specific mask value and finally write the result into the port register. If there isn’t a long delay between two write instructions on the same port, the second operation may overwrite the first due to propagation delay. This issue is not encountered when writing on latch write since we read directly from the latch register. 
+Since pins are grouped in port categories, in order to change a pin value, it is required to first load the port register in ALU, change the value with bit operations using a specific mask value and finally write the result into the port register. If there is not a long delay between two write instructions on the same port, the second operation may overwrite the first due to propagation delay. This issue is not encountered when writing on latch write since we read directly from the latch register. 
 
 \subsection{Interrupts}
 
@@ -56,7 +56,7 @@ Consequently, interrupts enable a quick reaction and are efficient for asynchron
 To be signalled to the CPU by the interrupt controller, the interrupt must be enabled and have a priority higher than the current CPU priority.\\
 The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table.(refer to MCU datasheet table 7-1\cite{mcu})
 
-\subsection{Timer: timer driven by interrupt}\label{subsec:timer}
+\subsection{Timer}\label{subsec:timer}
 
 \begin{figure}[H]
     \centering
@@ -75,12 +75,12 @@ Then we derive the maxcount which we store inside our period register (PR):
 $$maxcount=Timer delay/tick$$
 
 \noindent
-If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or third clock cycle depending on our prescaler. This allows us to wait twice or thrice the amount of time.
+If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or fourth clock cycle depending on our prescaler. This allows us to wait twice or four times the amount of time.
 
 Depending on our application, we choose a different prescaler:
 \begin{enumerate}
     \item If we need a high timer resolution, the smallest prescaler value should be chosen. 
-    \item If we do not care about the resolution, the highest prescaler value should be chosen. Any error in the time period relative to the period itself would be smaller with a larger period (in our case, a larger prescaler).
+    \item If we do not care about the resolution, the highest prescaler value should be chosen. Errors in the time period relative to the period itself would be smaller with a longer period (in our case: a larger prescaler causes a longer period).
 \end{enumerate}
 
 \subsection{Pulse Width Modulation} 
@@ -91,7 +91,7 @@ The duty cycle is defined as the proportion of time the PWM output is switched o
 The PWM period ($T_{PWM}$) is fixed and represents the cycle time of the signal.
 
 \noindent
-As seen in figure \ref{fig:pwm_demo} we can vary the duty cycle by changing the time that the PWM output is switched on ($T_{DC}$).
+As seen in figure \ref{fig:pwm_demo}, we can vary the duty cycle by changing the time that the PWM output is switched on ($T_{DC}$).
 
 $$DC = \frac{T_{DC}}{T_{PWM}}$$
 
@@ -111,10 +111,10 @@ $$DC = \frac{T_{DC}}{T_{PWM}}$$
 
 \noindent
 The PWM frequency is application dependent. However, we should keep in mind that high frequency requires very fast switches and may cause electromagnetic interference problems. Whereas, low frequency causes the load to follow the pulse.\\
-For driving a motor, a typical value would range between 5kHz and 50kHz but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
+For driving a motor, a typical value would range between 5kHz and 50kHz, but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
 
 
-The main elements of a PWM generator are a timer/counter and a comparator whose outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value ($PDC$). When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value ($PTPER$) and then resets, completing one PWM period (see figure \ref{fig:pwm_choice}.
+The main elements of a PWM generator are a timer/counter and a comparator whose output drives the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value ($PDC$). When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value ($PTPER$) and then resets, completing one PWM period (see figure \ref{fig:pwm_choice}).
 
 PWM period:
 $$T_{PWM}=T_{CY}*(PTPER+1)*PTMR Prescale Value$$
@@ -125,7 +125,7 @@ $$DC=100* \frac{PDC}{(2*(PTPER+1)}$$
 
 \subsection{Universal Asynchronous Receiver Transmitter}
 
-UART is the most commonly used protocol for asynchronous serial communication in microcontrollers due to its simplicity, easy implementation, and minimum hardware requirements.\\
+UART is the most commonly used protocol for asynchronous serial communication in microcontrollers due to its simplicity, easy implementation and minimum hardware requirements.\\
 
 \begin{figure}[H]
     \centering
@@ -171,12 +171,12 @@ However, the high resolution of the encoders leads rapidly to an overflow or und
 
 \subsection{Analog to Digital Converter}
 
-Since we employ a digital microcontroller, it is necessary to convert the analog values from sensors to digital values. This is performed by the analog to digital converters (ADC).\\
+Since we employ a digital microcontroller, it is necessary to convert the analog values from sensors to digital values. This is performed by the analog-to digital converters (ADC).\\
 The ADC module converts a continuous time and value signal to a discrete time and value signal by sampling at a fixed sample period and converting the analog values into an integer values stored in a k-bits binary representation.
 
 \vskip 0.2in
 \noindent
-During conversion the analog signal should be "held" constant throughout the process. This is usually done with a sample and hold circuit. It takes a "snapshot" of the input signal and stores it on the plates of a capacitor to have a steady signal. The acquisition time should be long enough for the capacitor to charge enough to match, as closely as possible, the incoming voltage.
+During conversion the analog signal should be ``held'' constant throughout the process. This is usually done with a sample and hold circuit. It takes a ``snapshot'' of the input signal and stores it on the plates of a capacitor to have a steady signal. The acquisition time should be long enough for the capacitor to charge enough to match, as closely as possible, the incoming voltage.
 \vskip 0.2in
 \noindent
 After the analog input is captured by the sample-and-hold (S/H) amplifier, it is compared with the output of a digital-to-analog converter to perform the conversion. refer to figure \ref{fig:sac} 
