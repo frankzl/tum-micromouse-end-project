@@ -26,7 +26,7 @@ For more details refer to MCU datasheet \cite{mcu}(pages 3-5).
 
 \subsubsection*{Configuration bits}
 
-Configuration bits define the microcontroller’s behaviour and enable to set its essential features (Watchdog timer, System Clock Oscillator mode, Phase-Locked Loop, ...).\\
+Configuration bits define the microcontroller's behaviour and enable to set its essential features (Watchdog timer, System Clock Oscillator mode, Phase-Locked Loop, ...).\\
 These settings are required before the program starts to run and cannot be changed during the run-time.\\
 \vskip 0.1in
 \noindent
@@ -56,9 +56,6 @@ PPS capable pins are identified in the pinout with the designation RPn, with n t
 \noindent
 We start by selecting fixed pins for the following modules / functions: A2D, PWM, OSCL, Programmer, MCLR. We then, find a pin mapping for the rest of the peripherals from the remappable pins that optimizes the PCB wiring.
 
-\textcolor{red}{
-maybe a diagram of which peripheral maps to which pin
-}
 \vskip 0.2in
 \noindent
 \textit{Software:}
