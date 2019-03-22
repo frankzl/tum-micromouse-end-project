@@ -75,6 +75,7 @@ $$tick=prescaler*T_{CY}= 64*25ns= 1.6us $$
 We derive the maximum count with:
 $$max\_count=(10 ms)/tick=6250 (6250<2^{16}-1)$$
 
+\noindent
 Hence, we set the period \textbf{PR = 6250 - 1} with a prescaler of \textbf{64}. We choose a high prescaler due to reasons mentioned in \ref{subsec:timer}
 
 \subsubsection*{Pulse Width Modulation (PWM)}
@@ -86,6 +87,7 @@ We want to set the registers, such that we achieve a frequency of 20 kHz.
 $$f_{PWM} = 20 kHz$$
 $$T_{PWM} = \frac{1}{f_{PWM}} = 50 us$$
 
+\noindent
 We fix the prescaler to be \textbf{1}. Given that $T_{PWM} = 50 us$ and $T_{CY}=25 ns$, we conclude:
 
 $$T_{PWM} = prescaler * T_{CY} * (PTPER + 1)$$
@@ -180,6 +182,7 @@ In our case, we use it to commmunicate with an outside computer to send commands
     \label{fig:uart_demo}
 \end{figure}
 
+\noindent
 Figure \ref{fig:uart_demo} shows the transmission of a string consisting of three characters.
 The dsPIC33FJ64MC804 allows us to specify the properties of our transmission. The most important settings:
 \begin{itemize}
@@ -189,6 +192,7 @@ The dsPIC33FJ64MC804 allows us to specify the properties of our transmission. Th
     \item Stop bit: 1
 \end{itemize}
 
+\noindent
 In order to send out messages, we require another module. We therefore connect our microcontroller to the \textbf{HC-05 Bluetooth Module} (figure \ref{fig:hc_05} so that we can send messages to that module which again transfers those messages via bluetooth to our computer where we read out the values.
 
 \begin{figure}[htb]
@@ -207,6 +211,7 @@ In order to send out messages, we require another module. We therefore connect o
     \end{minipage}
 \end{figure}
 
+\noindent
 The 3-wire UART as seen in figure \ref{fig:wire_3} shows our configuration for a full-duplex communication. The Bluetooth module sends out the message it gets on the reception line (Rx) and sends back messages to the microcontroller through its transmission line (Tx). To receive the message from our microcontroller, we need to connect our computer to the HC-05 module via bluetooth.
 
 It is important to configure the baud rate of the HC-05 module in advance, such that it matches our microcontroller's baud rate. Also, in order to read out values, the baud rate on the PC we are reading from, must also match (in this case 57.6 kbit/s)
@@ -241,7 +246,8 @@ A proportional-integral-derivative controller (PID) is a control loop feedback m
 The overall control function can be expressed mathematically as: 
 $$u(t)= K_{p}*e(t) + K_{i}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
 $$e(t) = SP - PV$$
- 
+
+\noindent
 where $K_p$, $K_i$, and $K_d$, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively, also known as gains \cite{aastrom2002control}.
 
 \subsubsection*{PID for velocity control}
@@ -266,6 +272,7 @@ We have two definitions of velocity taken from \cite{alex}: counts per second ($
 $$v_{cps}(n) = \frac{POSCNT(n) - POSCNT(n-1)}{T_{update}}$$
 $$v_{\omega}(n) = v_{cps}(n) * \frac{\omega_{base}}{k_{E}*Gr}$$
 
+\noindent
 with $k_E$ as our edge gain, $\omega_{base} = \frac{2\pi}{16}$ as our base angular resolution and $Gr$ as our gearing ratio of the gearbox.
 \\\\
 Since we want to control our motor velocity, it is sufficient to work with $v_{cps}$ instead of $v_{\omega}$. 
@@ -274,6 +281,7 @@ We therefore introduce our new velocity ``clicks per 10 ms'' ($v_{cp10}$) so tha
 
 $$v_{cp10} = POSCNT(n) - POSCNT(n-1)$$
 
+\noindent
 For the following sections, any velocity measured, is actually $v_{cp10}$.
 \\\\
 \textbf{Note: All measurements in the PID sections were taken using the breadboard (figure \ref{fig:breadboard}) as we did not manage to finish the final micromouse in time.}
@@ -321,6 +329,7 @@ $$e_{max} = 134$$
 $$u(t) = K_p * 134 \stackrel{!}{=} 100 (\%)$$
 $$\iff K_p = \frac{100}{134} \approx 0.75$$\\
 
+\noindent
 Unfortunately, this does not help us reach our desired velocities. In figure \ref{fig:P1} we have already tested a gain value of 1 ($>0.75$) and have not reached the target.\\\\
 In order to choose a suitable value for $K_p$, we first figure out the effect of larger $K_p$ values on the final velocity.
 \\
@@ -350,6 +359,8 @@ In order to choose a suitable value for $K_p$, we first figure out the effect of
 \end{tikzpicture}
     \caption{P-Controller (P=1): Targeting velocity 67 with different P values} \label{fig:P_demo}
 \end{figure}
+
+\noindent
 In figure \ref{fig:P_demo} the effect of different gain values $K_p$ on the velocity is plotted. The desired velocity was set to 67 in all cases. A higher value for $K_p$ allows the controller to get closer to the actual desired velocity and it also leads to a higher gradient initially. So not only do we get closer to our desired velocity, but we also reach it faster.\\
 
 \begin{wrapfigure}{r}{0.45\textwidth}
@@ -370,12 +381,15 @@ In figure \ref{fig:P_demo} the effect of different gain values $K_p$ on the velo
 \end{tikzpicture}
     \caption{P-Controller (P=30): Targeting different velocities} \label{fig:P30}
 \end{wrapfigure}
+
+\noindent
 Looking at the results, it might appear that setting the gain $K_p = 30$ solves our problem since we can actually get very close to 67. If we use that gain value to set different velocity values, we observe higher oscillation (see figure \ref{fig:P30}.\\
 By setting the $K_p$ to a very high value, the controller becomes more affected by small error values. Even small errors are scaled up by our $K_p$ such that they strongly influence the output of the controller.
 
 $$u(t) = K_p * e(t)$$
 $$|e(t)| > 0 \wedge K_p \gg 1 \Rightarrow u(t) \gg 0$$\\\\
 
+\noindent
 This observation can obviously not be made for the velocity of 67, as it is our maximum velocity and the P-controller will never fully reach that value. There is no significant oscillation for the maximum value. For the further tests, we target the velocity 47 so that we are able to observe these effects.
 
 \subsubsection*{I term}
@@ -407,6 +421,7 @@ We have measured the effect of different $K_i$ values on our velocity and plotte
     \caption{PI-Controller (P=0): Targeting velocity 47 with different I values} \label{fig:I_demo}
 \end{figure}
 
+\noindent
 Introducing the $K_i$ helps us reach the value, but a further increase of the $K_i$ gain causes stronger oscillation around the targeted value. When the gain $K_i$ is set to 5, the oscillation in speed continues even after one second. For lower gain values the velocity converges faster to our desired velocity. We keep this in mind when we choose our final gains.
 
 \subsubsection*{Clamping I term and PID output}
@@ -442,6 +457,7 @@ is the slope of our error curve. To observe the effect of the D term, we assign 
     \caption{PID-Controller (P=1, I=1): Targeting velocity 47 with different D values} \label{fig:D_demo}
 \end{figure}
 
+\noindent
 In figure \ref{fig:D_demo} the $K_d$ value has an effect on the oscillation of our velocity. A higher $K_p$ dampens the oscillation around the setpoint. The period of the oscillations is also higher.\\\\
 Because we are already reach the targeted velocity with a PI-controller - as seen in the \textit{I term} section - we do not investigate the effect of the D term further. It is sufficient for our project to use a PI-controller.\\\\
 
