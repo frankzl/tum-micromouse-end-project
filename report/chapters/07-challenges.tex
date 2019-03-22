@@ -28,6 +28,16 @@ During the whole implementation process we've faced a significant amount of chal
 \end{enumerate}
 
 \subsection{Software design challenges}
+\begin{itemize}
+    \item PID loop tuning: 
+     \begin{itemize}
+      \item Problem encountered:\\
+    We couldn’t perform any tests to find the optimal PID gains since the robot wasn’t assembled and the new microcontroller can’t be implemented on a breadboard. 
+      \item Solution found:\\
+    we performed the PID loop tuning by adapting the code to run on the the disPIC30F microcontroller mounted on a breadboard with 1 wheel. This solution is not optimal, since the final weight of the robot could change the parameters but it gives a reasonable estimate for our problem. 
+        \end{itemize}
+\end{itemize}
+
 \subsection{PCB design challenges}
 \begin{enumerate}
   \item Missing knowledge of a PCB
