@@ -44,7 +44,7 @@ To avoid Read-Modify-Write issue, we always read from the port and write to the 
 \textit{Read-Modify-Write issue:}
 
 \noindent
-Since pins are grouped in port categories, in order to change a pin value, it is required to first load the port register in ALU, change the value with bit operations using a specific mask value and finally write the result into the port register. If there isn’t a long delay between 2 write instructions on the same port, the second operation may overwrite the first due to propagation delay. This issue is not encountered when writing on latch write since we read directly from the latch register. 
+Since pins are grouped in port categories, in order to change a pin value, it is required to first load the port register in ALU, change the value with bit operations using a specific mask value and finally write the result into the port register. If there isn’t a long delay between two write instructions on the same port, the second operation may overwrite the first due to propagation delay. This issue is not encountered when writing on latch write since we read directly from the latch register. 
 
 \subsection{Interrupts}
 
@@ -166,7 +166,7 @@ Whenever the wheel is rotated, light emitted from the LED will hit the photo-tra
 The two channels, Phase A (QEA) and Phase B (QEB) enable to know the direction of the motor. If Phase A leads Phase B, then the direction of the motor is forward (counter is incremented). If Phase A lags Phase B then the direction of the motor is reverse (counter is decremented). A third channel, termed Index pulse, occurs once per revolution and is used as a reference to establish an absolute position.\\
 However, the high resolution of the encoders leads rapidly to an overflow or underflow of the 16 bits counter register. To keep track of the total counts, a global variable should be updated accordingly at each interrupt call.
 
-\subsection{analog to Digital Converter}
+\subsection{Analog to Digital Converter}
 
 Since we employ a digital microcontroller, it is necessary to convert the analog values from sensors to digital values. This is performed by the analog to digital converters (ADC).\\
 The ADC module converts a continuous time and value signal to a discrete time and value signal by sampling at a fixed sample period and converting the analog values into an integer values stored in a k-bits binary representation.
