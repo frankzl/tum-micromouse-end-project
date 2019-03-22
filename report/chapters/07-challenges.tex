@@ -32,9 +32,9 @@ During the whole implementation process we've faced a significant amount of chal
     \item PID loop tuning: 
      \begin{itemize}
       \item Problem encountered:\\
-    We couldn’t perform any tests to find the optimal PID gains since the robot wasn’t assembled and the new microcontroller can’t be implemented on a breadboard. 
+    We could not perform any tests to find the optimal PID gains since the robot was not assembled and the new microcontroller cannot be implemented on a breadboard. The same issue also applied to the other peripherals.
       \item Solution found:\\
-    we performed the PID loop tuning by adapting the code to run on the the disPIC30F microcontroller mounted on a breadboard with one wheel. This solution is not optimal, since the final weight of the robot could change the parameters but it gives a reasonable estimate for our problem. 
+    we performed the PID loop tuning by adapting the code to run on the the disPIC30F microcontroller mounted on a breadboard with one wheel. This solution is not optimal, since the final weight of the robot could change the parameters but it gives a reasonable estimate for our problem. For some peripherals, like the timer, we could run simulations to validate them, but for others like the ADC converter we are still uncertain how it would perform once the board is actually assembled.
         \end{itemize}
 \end{itemize}
 
