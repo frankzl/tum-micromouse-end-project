@@ -234,12 +234,27 @@ The robot velocity is controlled by varying the PWM duty cycle but it is not gua
 \noindent
 A proportional-integral-derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value $e(t)$ as the difference between a desired \textbf{setpoint ($SP$)} and a measured \textbf{process variable ($PV$)} and applies a correction based on proportional, integral, and derivative terms. The output $u(t)$ depends on our use case. This becomes more clear when we look at our motors.\\
 The overall control function can be expressed mathematically as : 
-$$u(t)= K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
+$$u(t)= K_{p}*e(t) + K_{i}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
 $$e(t) = SP - PV$$
  
-where Kp, Ki, and Kd, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively.
+where $K_p$, $K_i$, and $K_d$, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively, also known as gains.
 
 \subsubsection*{PID for velocity control}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            width=6cm,
+            xlabel=Duty Cycle(\%),
+            ylabel=Velocity (cp10)]
+        \addplot table [x=DC(percentage), y=Velocity(cp10)]{figures/data/V_DC.dat};
+    \end{axis}
+\end{tikzpicture}
+    \caption{Effect of the duty cycle on the motor velocity} \label{fig:DC_V}
+\end{wrapfigure}
+
+
 A PID controller controls a variable by manipulating the responsible parameters. In our case, we want to control the velocity of the motor by varying the duty cycle. 
 
 We have two definitions of velocity: counts per second ($v_{cps}$ and angular velocity ($v_\omega$).
@@ -247,46 +262,27 @@ $$v_{cps}(n) = \frac{POSCNT(n) - POSCNT(n-1)}{T_{update}}$$
 $$v_{\omega}(n) = v_{cps}(n) * \frac{\omega_{base}}{k_{E}*Gr}$$
 
 with $k_E$ as our edge gain, $\omega_{base} = \frac{2\pi}{16}$ as our base angular resolution and $Gr$ as our gearing ratio of the gearbox.
-
+\\\\
 Since we want to control our motor velocity, it is sufficient to work with $v_{cps}$ instead of $v_{\omega}$. 
 The velocity is measured once every 10 ms in the timer interrupt.
 We therefore introduce our new velocity ``clicks per 10 ms'' ($v_{cp10}$) so that we require one less computation.
 
 $$v_{cp10} = POSCNT(n) - POSCNT(n-1)$$
 
-For the following sections, any velocity value measured, is actually $v_{cp10}$.
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            width=11cm,
-            xlabel=Duty Cycle(\%),
-            ylabel=Velocity (cp10)]
-        \addplot table [x=DC(percentage), y=Velocity(cp10)]{figures/data/V_DC.dat};
-    \end{axis}
-\end{tikzpicture}
-    \caption{Effect of the duty cycle on the motor velocity} \label{fig:DC_V}
-\end{figure}
-
+For the following sections, any velocity measured, is actually $v_{cp10}$.
+\\\\
 \textbf{Note: All measurements in the PID sections were taken using the breadboard (figure \ref{fig:breadboard}) as we did not manage to finish the final micromouse in time.}
-
-
+\\\\
 As seen in figure \ref{fig:DC_V} the increase in the velocity decreases down for higher duty cycle values. The maximum measured velocity is 67 cp10. When we want to drive the motor at a certain speed, we cannot expect the corresponding DC percentage to be the same at all times. Errors might occur such that we need slightly different DC values every time.
 Using the output of the PID controller, we shall regulate the duty cycle to maintain a certain velocity.
 
 \subsubsection*{P term}
-Initially, we only want to observe the effect of the ``P term''.
-KP is proportional to the current value of the error.
-A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
-The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero
-
-\begin{figure}
+\begin{wrapfigure}{r}{0.45\textwidth}
     \centering
 \begin{tikzpicture}
     \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
+            legend pos=north west,
+            width=8cm,
             xlabel=Time (ms),
             ylabel=Velocity (cp10)]
         \addplot table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
@@ -298,14 +294,28 @@ The closer we get to our target value, the lower our P-controller output will be
     \end{axis}
 \end{tikzpicture}
     \caption{P-Controller (P=1): Targeting different velocities} \label{fig:P1}
-\end{figure}
+\end{wrapfigure}
+Initially, we only want to observe the effect of the ``P term''.
+KP is proportional to the current value of the error.
+\\A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
+The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero and we would drive the motor with a duty cycle of 0\%.
+\\\\
+\textbf{Idea:} To figure out an initial $K_p$, we look at the following scenario: \\
+\begin{enumerate}
+    \item We are driving the motor with maximum speed in clockwise direction. ($67$ cp10)
+    \item We now want to drive with maximum speed in the opposite direction. ($-67$ cp10)
+\end{enumerate}
+Hence, the absolute maximum error value fed into our PID controller will always be
+\\$| 67 - (-67)| = 134$. The maximum force to drive our motor is a 100\%.
+So in the described scenario, we would flip the direction bits of the motor and drive it with 100\% duty cycle to correct the error.\\
+Just considering the P-controller, we come up with the following gain:
+$$e_{max} = 134$$
+$$u(t) = K_p * 134 \stackrel{!}{=} 100 (\%)$$
+$$\iff K_p = \frac{100}{134} \approx 0.75$$\\
 
-
-A simple P controller prevents the system from reaching its target value. The system settles in a steady state error since it requires an error to generate the proportional response.\\
-\vskip 0.1in
-\noindent
-\textcolor{red}{add graph here}
-Graph test1 : Test of P controller on the motor. the target value is not reached
+Unfortunately, this does not help us reach our desired velocities. In figure \ref{fig:P1} we have already tested a gain value of 1 ($>0.75$) and have not reached the target.\\\\
+In order to choose a suitable value for $K_p$, we first figure out the effect of larger $K_p$ values on the final velocity.
+\\
 \begin{figure}
     \centering
 \begin{tikzpicture}
@@ -331,6 +341,9 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
 \end{tikzpicture}
     \caption{P-Controller (P=1): Targeting velocity 47 with different P values} \label{fig:P_demo}
 \end{figure}
+\\\\
+Graph test1 : Test of P controller on the motor. the target value is not reached
+
 
 \begin{figure}
     \centering
