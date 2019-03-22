@@ -1,15 +1,17 @@
 \section{Software design} \label{chap:software}
-In this section, we first describe the settings used to configure the different modules of the microcontroller and then introduce the controller design 
+In this section, we first describe the settings used to configure the different modules of the microcontroller and then introduce the controller design.
+
+\textcolor{red}{Is this written by Meryem? I recognise from the long complicated sentences :p. Maybe some . could be added here and there and connection words be used, haha. Just kidding, it's fine.}
 
 \vskip 0.2in
 \noindent
 \textbf{MCU specification:}
 \vskip 0.1in
 \noindent
-As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has two quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed below:
+As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has 2 quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed bellow:
 \begin{itemize}
     \item 44 pins
-    \item 3.3V device 
+    \item 3.3V device
     \item 16-bit wide data path
     \item up to 40 MIPS operation
     \item Flexible clock options (External, crystal, resonator, internal RC)
@@ -20,7 +22,8 @@ As mentioned in the Hardware section, we choose to build the robot using the dsP
     \item 2-Quadrature Encoder Interface modules
     \item Peripherals with supported DMA functionality
 \end{itemize}
-For more details refer to datasheet (pages 3-5)
+For more details refer to datasheet (pages 3-5).
+\textcolor{red}{Which datasheet? Proper reference.}
 
 \subsection{Primary configuration}
 
@@ -30,6 +33,9 @@ Configuration bits define the microcontroller’s behaviour and enable to set it
 These settings are required before the program starts to run and cannot be changed during the run-time.\\
 \vskip 0.1in
 \noindent
+
+\textcolor{red}{What are macros? Also, why noindent? Everything was flowing so so smoothly...}
+
 We invoke pre-processors macros to set the device configuration bits in the main header file.\\
 In the main c file, we configure PLL to set the internal clock frequency, call all initialization functions for each of the modules and finally run an infinite background loop so that the system never stops.
 \vskip 0.2in
@@ -37,17 +43,17 @@ In the main c file, we configure PLL to set the internal clock frequency, call a
 \textbf{Oscillator setup}
 \vskip 0.1in
 \noindent
-Configure Phase Lock Loop (PLL) for the system clock reference at 40MHz 
-	$$F_{IN} (Oscillator frequency) = 16MHz  $$  
+Configure Phase Lock Loop (PLL) for the system clock reference at 40MHz
+	$$F_{IN} (Oscillator frequency) = 16MHz  $$
     $$F_{OSC} (Clock frequency) =  80MHz$$
  	$$F_{CY} = 1/2 * F_{OSC} = 1/2 * (F_{IN}*M/(N1*N2)) = 0.5 * (16MHz*20/(2*2)) = 40 MIPS$$
 $$Fcy=40Mhz, Tcy=25ns$$
-After the PLL setup, we wait in while loop, for PLL to lock, i.e. stabilize. 
+After the PLL setup, we wait in while loop, for PLL to lock, i.e. stabilize.
 
 \subsubsection*{Pin Mapping}
 
 Peripheral Pin Select (PPS) allows the programmer to map the I/O of most digital peripherals to a selection of pins using an internal switch matrix.
-PPS capable pins are identified in the pinout with the designation RPn, with n the port’s pin number. 
+PPS capable pins are identified in the pinout with the designation RPn, with n the port’s pin number.
 \vskip 0.2in
 \noindent
 \textit{Strategy for pin choice}
@@ -65,12 +71,13 @@ maybe a diagram of which peripheral maps to which pin
 \noindent
 Before performing pin remapping, we unlock the oscillator, configure the pin mapping, lock the oscillator (enable it again) and wait for a short delay for the remapping to stabilize.\\
 The setup differs between input and output pins. For input pin mapping, we need to configure the pin number to the peripheral register. For output pin mapping, we choose the pin register and then map it to the corresponding device code (table 11-2 in datasheet)
+\textcolor{red}{which datasheet? There are a couple in literature.}
 
 \subsection{Peripherals}
 \subsubsection*{Timer 1}
 The dsPIC33F device family offers several 16-bit Timer modules. We use the timer 1 to function as a real time clock that generate cyclic internal events.\\
 We set the timer period to 10ms, which is derived from the external oscillator clock.
-$$tick=prescaler*T_{CY}= 64*25ns= 1.6us $$ 
+$$tick=prescaler*T_{CY}= 64*25ns= 1.6us $$
 We derive the maximum count with:
 $$max\_count=(10 ms)/tick=6250 (6250<2^{16}-1)$$
 
@@ -126,7 +133,7 @@ In a general configuration, ADC raises an interrupt when all the configured chan
 \textbf{Sampling and conversion settings:}
 \vskip 0.1in
 \noindent
-Requirements from datasheet table 31-16: 
+Requirements from datasheet table 31-16:
 \begin{itemize}
     \item minimum conversion clock $T_{AD} = 117.6 ns$
     \item minimum acquisition time $T_{ACQ}=3*tad= 352.8ns $
@@ -141,7 +148,7 @@ We derive the ADC Conversion Clock from the system clock with:
     \item ADC total Conversion time (12 bit): $T_{CONV}=14*T_{AD}=2.8us$
     \item sampling rate (user 10ms timer) is 100sps ($100sps < 500Ksps$)
 \end{itemize}
-$$T_{SAMP}-(T_{ACQ}+T_{CONV})*3=10ms-6us$$ 
+$$T_{SAMP}-(T_{ACQ}+T_{CONV})*3=10ms-6us$$
 Hence, we have enough margin since the sampling starts not immediately after last conversion but when ASAM bit is set in timer ISR.
 \vskip 0.2in
 \noindent
@@ -154,11 +161,13 @@ We tried to find a trade-off between to ensure optimal accuracy.
 
 \subsubsection*{Direct Memory Access (DMA)}
 
+\textcolor{red}{Nice, more than sufficient, long explanation. Bravo.}
+
 We define a DMA data buffer adcData, a global variable where all conversion results are stored in the same order in which the conversions are performed by the ADC module.\\
-We store one sample per channel and generate an interrupt after the 3 channel values have been transferred. The interrupt service routine stops the sampling that is again started at each timer interrupt call. 
+We store one sample per channel and generate an interrupt after the 3 channel values have been transferred. The interrupt service routine stops the sampling that is again started at each timer interrupt call.
 \vskip 0.1in
 \noindent
-We set the dma operating mode to a peripheral indirect addressing mode ((peripheral generates destination address [increment by 2]) and a continuous no ping pong setting (continuous transfer of data with the same buffer start address) as shown in the figure below:
+We set the dma operating mode to a peripheral indirect addressing mode ((peripheral generates destination address [increment by 2]) and a continuous no ping pong setting (continuous transfer of data with the same buffer start address) as shown in the figure bellow:
 
 \begin{figure}[H]
     \centering
@@ -169,7 +178,7 @@ We set the dma operating mode to a peripheral indirect addressing mode ((periphe
 
 \subsubsection*{Universal Asynchronous Receiver Transmitter (UART)}
 Our dsPIC33FJ64MC804 has a Universal Asynchronous Receiver Transmitter (UART)  module for serial port communication.
-The UART can communicate with peripheral devices. 
+The UART can communicate with peripheral devices.
 In our case, we use it to commmunicate with an outside computer to send commands or read out values. This was especially useful to find fitting parameters for our gains in the controller logic (chapter).
 
 \begin{figure}[htb]
@@ -179,7 +188,7 @@ In our case, we use it to commmunicate with an outside computer to send commands
     \label{fig:uart_demo}
 \end{figure}
 
-Figure \ref{fig:uart_demo} shows the transmission of a string consisting of three characters. 
+Figure \ref{fig:uart_demo} shows the transmission of a string consisting of three characters.
 The dsPIC33FJ64MC804 allows us to specify the properties of our transmission. The most important settings:
 \begin{itemize}
     \item Baud rate: 57.6 kbit/s
@@ -218,209 +227,28 @@ Here goes the whole logic of the mouse movement control (how should it behave wh
 }
 
 \subsubsection{Proportional-Integral-Derivative Controller (PID)}
-\subsubsection*{Motivation}
+\subsubsection*{Need for control loop feedback}
+
+\textcolor{red}{Could you add a reference from a book or a blog, where you learnt about the PID controller? I am sure the readers are thirsty for more...}
 
 The robot velocity is controlled by varying the PWM duty cycle but it is not guaranteed that the motor is driving exactly at this value. A feedback mechanism is necessary to control and verify this value.\\
 \vskip 0.1in
 \noindent
-A proportional-integral-derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value $e(t)$ as the difference between a desired \textbf{setpoint ($SP$)} and a measured \textbf{process variable ($PV$)} and applies a correction based on proportional, integral, and derivative terms. The output $u(t)$ depends on our use case. This becomes more clear when we look at our motors.\\
-The overall control function can be expressed mathematically as : 
-$$u(t)= K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
-$$e(t) = SP - PV$$
- 
+A proportional– integral –derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value e(t) as the difference between a desired setpoint (SP) and a measured process variable (PV) and applies a correction based on proportional, integral, and derivative terms.\\
+The overall control function can be expressed mathematically as :
+$$Output = K_{P}*e(t) + K_{I}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
+$$e(t) = setpoint - input $$
+\noindent
 where Kp, Ki, and Kd, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively.
 
-\subsubsection*{PID for velocity control}
-A PID controller controls a variable by manipulating the responsible parameters. In our case, we want to control the velocity of the motor by varying the duty cycle. 
-
-We have two definitions of velocity: counts per second ($v_{cps}$ and angular velocity ($v_\omega$).
-$$v_{cps}(n) = \frac{POSCNT(n) - POSCNT(n-1)}{T_{update}}$$
-$$v_{\omega}(n) = v_{cps}(n) * \frac{\omega_{base}}{k_{E}*Gr}$$
-
-with $k_E$ as our edge gain, $\omega_{base} = \frac{2\pi}{16}$ as our base angular resolution and $Gr$ as our gearing ratio of the gearbox.
-
-Since we want to control our motor velocity, it is sufficient to work with $v_{cps}$ instead of $v_{\omega}$. 
-The velocity is measured once every 10 ms in the timer interrupt.
-We therefore introduce our new velocity ``clicks per 10 ms'' ($v_{cp10}$) so that we require one less computation.
-
-$$v_{cp10} = POSCNT(n) - POSCNT(n-1)$$
-
-For the following sections, any velocity value measured, is actually $v_{cp10}$.
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            width=11cm,
-            xlabel=Duty Cycle(\%),
-            ylabel=Velocity (cp10)]
-        \addplot table [x=DC(percentage), y=Velocity(cp10)]{figures/data/V_DC.dat};
-    \end{axis}
-\end{tikzpicture}
-    \caption{Effect of the duty cycle on the motor velocity} \label{fig:DC_V}
-\end{figure}
-
-\textbf{Note: All measurements in the PID sections were taken using the breadboard (figure \ref{fig:breadboard}) as we did not manage to finish the final micromouse in time.}
-
-
-As seen in figure \ref{fig:DC_V} the increase in the velocity decreases down for higher duty cycle values. The maximum measured velocity is 67 cp10. When we want to drive the motor at a certain speed, we cannot expect the corresponding DC percentage to be the same at all times. Errors might occur such that we need slightly different DC values every time.
-Using the output of the PID controller, we shall regulate the duty cycle to maintain a certain velocity.
-
 \subsubsection*{P term}
-Initially, we only want to observe the effect of the ``P term''.
-KP is proportional to the current value of the error.
-A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
-The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero
 
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
-        \addlegendentry{target 67}
-        \addplot table [x=time(ms), y=$target_{57}$]{figures/data/P1.csv};
-        \addlegendentry{target 57}
-        \addplot table [x=time(ms), y=$target_{47}$]{figures/data/P1.csv};
-        \addlegendentry{target 47}
-    \end{axis}
-\end{tikzpicture}
-    \caption{P-Controller (P=1): Targeting different velocities} \label{fig:P1}
-\end{figure}
-
-
+KP is proportional to the current value of the error. \\
 A simple P controller prevents the system from reaching its target value. The system settles in a steady state error since it requires an error to generate the proportional response.\\
 \vskip 0.1in
 \noindent
 \textcolor{red}{add graph here}
 Graph test1 : Test of P controller on the motor. the target value is not reached
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot [mark=none, black] table [x=time(ms), y=$P1$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=1$}
-        \addplot [mark=none, blue] table [x=time(ms), y=$P2$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=2$}
-        \addplot [mark=none, red] table [x=time(ms), y=$P3$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=3$}   
-        \addplot [mark=none, green] table [x=time(ms), y=$P4$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=4$}   
-        \addplot [mark=none, yellow] table [x=time(ms), y=$P10$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=10$}   
-        \addplot [mark=none, orange] table [x=time(ms), y=$P30$]{figures/data/P_demo.csv};
-        \addlegendentry{$P=30$}   
-
-    \end{axis}
-\end{tikzpicture}
-    \caption{P-Controller (P=1): Targeting velocity 47 with different P values} \label{fig:P_demo}
-\end{figure}
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot [mark=none, orange] table [x=time(ms), y=I0]{figures/data/I_demo.csv};
-        \addlegendentry{P=1, I=0}
-        \addplot [mark=none, blue] table [x=time(ms), y=I1]{figures/data/I_demo.csv};
-        \addlegendentry{P=1, I=1}
-        \addplot [mark=none, red] table [x=time(ms), y=I2]{figures/data/I_demo.csv};
-        \addlegendentry{P=1, I=2}   
-        \addplot [mark=none, green] table [x=time(ms), y=I5]{figures/data/I_demo.csv};
-        \addlegendentry{P=1, I=5}   
-        \addplot [mark=none, black, densely dotted] table [x=time(ms), y=T47]{figures/data/I_demo.csv};
-        \addlegendentry{target 47}
-
-    \end{axis}
-\end{tikzpicture}
-    \caption{PI-Controller (P=0): Targeting velocity 47 with different I values} \label{fig:I_demo}
-\end{figure}
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot [mark=none, orange] table [x=time(ms), y=D0]{figures/data/D_demo.csv};
-        \addlegendentry{P=1, I=1, D=0}
-        \addplot [mark=none, blue] table [x=time(ms), y=D1] {figures/data/D_demo.csv};
-        \addlegendentry{P=1, I=1, D=1}
-        \addplot [mark=none, red] table [x=time(ms), y=D2]  {figures/data/D_demo.csv};
-        \addlegendentry{P=1, I=1, D=2}   
-        \addplot [mark=none, green] table [x=time(ms), y=D5]{figures/data/D_demo.csv};
-        \addlegendentry{P=1, I=1, D=5}   
-        \addplot [mark=none, black, densely dotted] table [x=time(ms), y=T47]{figures/data/D_demo.csv};
-        \addlegendentry{target 47}
-    \end{axis}
-\end{tikzpicture}
-    \caption{PID-Controller (P=1, I=1): Targeting velocity 47 with different D values} \label{fig:D_demo}
-\end{figure}
-
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot [mark=none, orange] table [x=time(ms), y=P1]{figures/data/P_final.csv};
-        \addlegendentry{P=1}
-        \addplot [mark=none, blue] table [x=time(ms), y=P2]{figures/data/P_final.csv};
-        \addlegendentry{P=2}
-        \addplot [mark=none, red] table [x=time(ms), y=P5]{figures/data/P_final.csv};
-        \addlegendentry{P=5}   
-        \addplot [mark=none, green] table [x=time(ms), y=P8]{figures/data/P_final.csv};
-        \addlegendentry{P=8}   
-        \addplot [mark=none, yellow] table [x=time(ms), y=P10]{figures/data/P_final.csv};
-        \addlegendentry{P=10}   
-        \addplot [mark=none, black, dotted] table [x=time(ms), y=T47]{figures/data/P_final.csv};
-        \addlegendentry{target 47}   
-
-    \end{axis}
-\end{tikzpicture}
-    \caption{Final P-Controller: Targeting velocity 47 with different P values} \label{fig:P_final}
-\end{figure}
-
-\begin{figure}
-    \centering
-\begin{tikzpicture}
-    \begin{axis}[
-            legend pos=outer north east,
-            width=10cm,
-            xlabel=Time (ms),
-            ylabel=Velocity (cp10)]
-        \addplot [mark=none, orange] table [x=time(ms), y=PI0]{figures/data/I_final.csv};
-        \addlegendentry{P=8, I=0}
-        \addplot [mark=none, blue] table [x=time(ms), y=PI81]{figures/data/I_final.csv};
-        \addlegendentry{P=8, I=1}
-        \addplot [mark=none, red] table [x=time(ms), y=PI805]{figures/data/I_final.csv};
-        \addlegendentry{P=8, I=0.5}
-        \addplot [mark=none, green] table [x=time(ms), y=PI802]{figures/data/I_final.csv};
-        \addlegendentry{P=8, I=0.2}
-        \addplot [mark=none, black, dotted] table [x=time(ms), y=T47]{figures/data/I_final.csv};
-        \addlegendentry{target 47}   
-
-    \end{axis}
-\end{tikzpicture}
-    \caption{Final PI-Controller (P=8): Targeting velocity 47 with different I values} \label{fig:I_final}
-\end{figure}
-
 \subsubsection*{I term}
 
 It accounts for past values of the error and integrates them over time to produce the I term. \\
@@ -433,11 +261,11 @@ Graph test 2: Test of PI controller on the motor. The target value is reached
 \subsubsection*{Clamping I term and PID output}
 
 The integral term can grow very largely through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it’s necessary to limit this term.\\
-Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check. 
+Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check.
 
 \subsubsection*{Cascade controller: position and velocity}
 
-We use two controllers to adjust both the position and speed of each wheel. 
+We use 2 controllers to adjust both the position and speed of each wheel.
 \vskip 0.1in
 \noindent
 The position control is performed with a simple P controller which error is the different between the measures distance to the wall of the right and left sensors. The goal is to have the robot in the middle of the cell, i.e. with the same distance to the right and left wall.\\
@@ -447,9 +275,6 @@ We only need a P controller because the inertia of the robot leads to an integra
 The output of this controller (desired velocity) is used as the setpoint for the PI controller that adjusts the speed of the wheel. It takes as input the error between the desired and current velocity and returns a PDC value that sets the new motor speed.
 \vskip 0.1in
 \noindent
-To find the optimal parameters that maximize the responsiveness to the error we perform loop tuning. Refer to test section for more on loop tuning. 
+To find the optimal parameters that maximize the responsiveness to the error we perform loop tuning. Refer to test section for more on loop tuning.
 
 \subsubsection{State Machine}
-
-
-
