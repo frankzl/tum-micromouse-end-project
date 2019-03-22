@@ -303,7 +303,7 @@ The distance sensors are necessary for perceiving the distance from maze walls. 
 \end{figure}
 
 \FloatBarrier
-
+\noindent
 To understand their pins, have a look at Fig. \ref{fig:sensorsData} taken from the datasheet \cite{sens}.
 
 \begin{figure}[htb]
@@ -408,6 +408,7 @@ The final placement of components can be seen in Fig. \ref{fig:comp}.
     \label{fig:comp}
 \end{figure}
 
+\noindent
 As mentioned, in our case, a two layer PCB is designed. The top and bottom layers, both contain components. To fully appreciate this fact, notice that there are two different kinds of components used on a PCB: Through-hole and surface mount (SMD). 
 
 The through-hole components actually go through the PCB. The manufacturer needs to drill holes for this purpose. An advantage of this type is mechanical stability. Another advantage comes in the tracing phase, when connecting the components: The through-hole ones can have traces leading to and from them in both the top and bottom layers. The reason is obvious, they have physical presence in both layers, since they go through the surface of the PCB to the other side. However, the whole concept does occupy more space than the SMD components. Also, drilling holes costs more, when ordering the PCB.
@@ -417,6 +418,7 @@ Now the SMD components are soldered only on the surface of the PCB (top or botto
 \FloatBarrier
 \vspace{1cm}
 
+\noindent
 For now, let us consider some of the needs that led to this particular placement of components. The following train of thought is definitely not unique and a different placement could have been chosen.
 
 Referring to Fig. \ref{fig:comp}, let's start with the sensors' pin headers. It is clear that the distance sensors need to  be placed in the front (right side of the PCB). Therefore their pins have to be placed nearby. Now, notice the analog nature of the sensors output: We want the traces of those signals to the mcu to be as short as possible, since analog signals are susceptible to noise. Hence the mcu is placed in the front of the board, as well.
@@ -465,6 +467,7 @@ The total resistance of a trace is given by the following formula
 
 $$R = \rho * \frac{l}{A}$$
 
+\noindent
 Here, $\rho$ is the specific electrical resistance of copper (as material). It equals to $1.68*10^{-8} \Omega *m$ at $20 \degree C$.
 l is the length of the trace and A is the height of the trace (usually 0.035mm) multiplied with the width.
 In order for the right width to be chosen, we need to consider the desirable value for the resistance. And in order to do that, again $\Omega$hm's Law has to be considered, referring to the current we expect to run through our trace.
@@ -486,6 +489,7 @@ All in all, we kept it simple and well in the limits with  the choice of the wid
 
 \vspace{1cm}
 
+\noindent
 The last concept to be introduced in this chapter is the "ground plane" (GND). The ground plane is a convenient way of connecting all the GND nodes (pins) of the components, meaning the pins that need to be connected to 0V. For our purposes here, we will call it ground. In essence, it is a layer that can be placed on a PCB layer, which connects everything on it. It can be seen in Fig. \ref{fig:gnd}.
 In reality, there is a much more important motivation to create a GND plane, instead of connecting pins of components like with positive voltage: Noise rejection. We will not go into this here, but it is worth considering the noise signals coming out of the pcb and the ones produced from the pcb. Closed traces of high-frequency current may function as antennas, when the space they encompass is large. This would be the case if one used traces also for the 0V connections. By using a GND plane, however, this area is kept to a minimum, limiting the noise produced.
 
