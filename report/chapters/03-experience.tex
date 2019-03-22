@@ -74,6 +74,7 @@ $$tick=prescaler*T_{CY}$$
 Then we derive the maxcount which we store inside our period register (PR):
 $$maxcount=Timer delay/tick$$
 
+\noindent
 If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or third clock cycle depending on our prescaler. This allows us to wait twice or thrice the amount of time.
 
 Depending on our application, we choose a different prescaler:
@@ -108,6 +109,7 @@ $$DC = \frac{T_{DC}}{T_{PWM}}$$
     \label{fig:pwm_choice}
 \end{figure}
 
+\noindent
 The PWM frequency is application dependent. However, we should keep in mind that high frequency requires very fast switches and may cause electromagnetic interference problems. Whereas, low frequency causes the load to follow the pulse.\\
 For driving a motor, a typical value would range between 5kHz and 50kHz but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
 
@@ -132,6 +134,7 @@ UART is the most commonly used protocol for asynchronous serial communication in
     \label{fig:uartProtocol}
 \end{figure}
 
+\noindent
 As shown in figure \ref{fig:uartProtocol}, when no character is transmitted, the bus is typically logically high and transmission begins with the start bit which is logically low. After this, typically 8 data bits are transmitted and the transmission finishes with a logical high as a stop bit.\\
 
 \noindent
@@ -210,6 +213,7 @@ The DMA channel supports different operating modes:
     \item Ping-Pong mode (Auto-switch between two start addresses offsets (DMAxSTA or DMAxSTB) after each transfer complete)
 \end{itemize}
 
+\noindent
 Please refer to the DMA section of the Family reference manual \cite{dma} for more details about these operating modes.
 
 
@@ -236,10 +240,12 @@ We practiced using many “modeling” features, as well as “assembly” featu
     \end{minipage}
 \end{figure}
 
+\noindent
 In the workshop, a synchronisation feature between Autodesk EAGLE and Autodesk Fusion 360 is briefly introduced, which has the potential to reduce the back-and-forth process between CAD 3D model design and PCB design. However, in practice, we find that the lack of 3D models from the electronic components that we are using renders the usefulness of this feature somewhat limited.
 
 In order to tackle some of the challenges we faced for designing the casing, some more advanced features of Fusion 360 have been utilised.
 
+\noindent
 One example is to set “parameter” values when creating the parts, which allowed easy modification to the model. This is helpful because our design processes are parallel to each other, and in the end the casing has to matched the physical dimension of the board. Therefore a back-and-forth process between PCB design and CAD design is unavoidable. The “parameter” feature in Fusion 360 accelerates this process and saves a lot of time and unnecessary work.
 
 Furthermore the freeform and sculpting tool enables us to create more free flowing surfaces. This tool is traditionally reserved for industrial designers, and by combining this with the CAD solid modelling environment, Fusion 360 has partially earned its namesake: a fusion of different design processes. For our project, it enabled a more interesting look to the design.
