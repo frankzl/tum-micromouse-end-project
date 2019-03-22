@@ -281,15 +281,15 @@ Using the output of the PID controller, we shall regulate the duty cycle to main
     \centering
 \begin{tikzpicture}
     \begin{axis}[
-            legend pos=north west,
-            width=8cm,
+            legend pos=south east,
+            width=7cm,
             xlabel=Time (ms),
             ylabel=Velocity (cp10)]
-        \addplot table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
+        \addplot [mark=none, red] table [x=time(ms), y=$target_{67}$]{figures/data/P1.csv};
         \addlegendentry{target 67}
-        \addplot table [x=time(ms), y=$target_{57}$]{figures/data/P1.csv};
+        \addplot [mark=none, brown] table [x=time(ms), y=$target_{57}$]{figures/data/P1.csv};
         \addlegendentry{target 57}
-        \addplot table [x=time(ms), y=$target_{47}$]{figures/data/P1.csv};
+        \addplot [mark=none, blue] table [x=time(ms), y=$target_{47}$]{figures/data/P1.csv};
         \addlegendentry{target 47}
     \end{axis}
 \end{tikzpicture}
@@ -300,7 +300,7 @@ KP is proportional to the current value of the error.
 \\A simple P controller cannot actually maintain the target value. The system settles in a steady state error since it requires an error to generate the proportional response.
 The closer we get to our target value, the lower our P-controller output will become. Hence, if we were to reach the target value, the error would become zero and we would drive the motor with a duty cycle of 0\%.
 \\\\
-\textbf{Idea:} To figure out an initial $K_p$, we look at the following scenario: \\
+\textbf{Idea:} To figure out an initial $K_p$, we look at the following scenario:
 \begin{enumerate}
     \item We are driving the motor with maximum speed in clockwise direction. ($67$ cp10)
     \item We now want to drive with maximum speed in the opposite direction. ($-67$ cp10)
@@ -339,13 +339,42 @@ In order to choose a suitable value for $K_p$, we first figure out the effect of
 
     \end{axis}
 \end{tikzpicture}
-    \caption{P-Controller (P=1): Targeting velocity 47 with different P values} \label{fig:P_demo}
+    \caption{P-Controller (P=1): Targeting velocity 67 with different P values} \label{fig:P_demo}
 \end{figure}
-\\\\
-Graph test1 : Test of P controller on the motor. the target value is not reached
+In figure \ref{fig:P_demo} the effect of different gain values $K_p$ on the velocity is plotted. The desired velocity was set to 67 in all cases. A higher value for $K_p$ allows the controller to get closer to the actual desired velocity and it also leads to a higher gradient initially. So not only do we get closer to our desired velocity, but we also reach it faster.\\
 
+\begin{wrapfigure}{r}{0.45\textwidth}
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[
+            legend pos=south east,
+            width=7cm,
+            xlabel=Time (ms),
+            ylabel=Velocity (cp10)]
+        \addplot [mark=none, red] table [x=time(ms), y=T67]{figures/data/P30.csv};
+        \addlegendentry{target 67}
+        \addplot [mark=none, brown] table [x=time(ms), y=T57]{figures/data/P30.csv};
+        \addlegendentry{target 57}
+        \addplot [mark=none, blue] table [x=time(ms), y=T47]{figures/data/P30.csv};
+        \addlegendentry{target 47}
+    \end{axis}
+\end{tikzpicture}
+    \caption{P-Controller (P=30): Targeting different velocities} \label{fig:P30}
+\end{wrapfigure}
+Looking at the results, it might appear that setting the gain $K_p = 30$ solves our problem since we can actually get very close to 67. If we use that gain value to set different velocity values, we observe higher oscillation (see figure \ref{fig:P30}.\\
+By setting the $K_p$ to a very high value, the controller becomes more affected by small error values. Even small errors are scaled up by our $K_p$ such that they strongly influence the output of the controller.
 
-\begin{figure}
+$$u(t) = K_p * e(t)$$
+$$|e(t)| > 0 \wedge K_p \gg 1 \Rightarrow u(t) \gg 0$$\\\\
+
+This observation can obviously not be made for the velocity of 67, as it is our maximum velocity and the P-controller will never fully reach that value. There is no significant oscillation for the maximum value. For the further tests, we target the velocity 47 so that we are able to observe these effects.
+
+\subsubsection*{I term}
+The I term in the PID accounts for past values of the error and integrates them over time to produce the I term. (In the code we sum up all the previous error values.)
+Introducing the I term, solves the previous problem with a historic cumulative value of the error. It allows us to reach the actual desired velocity.\\\\
+We have measured the effect of different $K_i$ values on our velocity and plotted the values in figure \ref{fig:I_demo}.
+
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -369,7 +398,10 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
     \caption{PI-Controller (P=0): Targeting velocity 47 with different I values} \label{fig:I_demo}
 \end{figure}
 
-\begin{figure}
+Introducing the $K_i$ helps us reach the value, but a further increase of the $K_i$ gain causes stronger oscillation around the targeted value. When the gain $K_i$ is set to 5, the oscillation in speed continues even after one second. For lower gain values the velocity converges faster to our desired velocity. We keep this in mind when we choose our final gains.
+
+\subsubsection{D term}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -442,15 +474,6 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
 \end{tikzpicture}
     \caption{Final PI-Controller (P=8): Targeting velocity 47 with different I values} \label{fig:I_final}
 \end{figure}
-
-\subsubsection*{I term}
-
-It accounts for past values of the error and integrates them over time to produce the I term. \\
-Introducing the I term, solves the previous problem with a historic cumulative value of the error.
-\vskip 0.1in
-\noindent
-\textcolor{red}{add graph here}
-Graph test 2: Test of PI controller on the motor. The target value is reached
 
 \subsubsection*{Clamping I term and PID output}
 
