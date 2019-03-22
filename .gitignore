@@ -314,3 +314,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+report/.DS_Store
+report/.vscode/settings.json
+.DS_Store

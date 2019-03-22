@@ -1,11 +1,9 @@
 \section{Learning}
-
-\textcolor{red}{Explaining the theory intuitively is nice, but please, could you add references? Even if it comes down to Alex's document.}
-
+\noindent
 The first part of the practical course was dedicated to learning the main control practices and hardware features of the dsPIC digital signal controllers from Microchip, widely used in embedded applications and robotics.\\
 
 \noindent
-\textbf{Developed skills:}
+\textbf{Developed skills}
 \begin{itemize}
     \item extracting relevant information from datasheets
     \item expressing it in C language
@@ -14,19 +12,31 @@ The first part of the practical course was dedicated to learning the main contro
 \end{itemize}
 
 \noindent
-In the following section we introduce the most important aspects of each hardware peripheral of the microcontroller. For more details refer to dsPIC overview.\\
-Refer to the software section of the report to have more details about the peripheral’s settings used for our robot.
+In the following section we introduce the most important aspects of each hardware peripheral of the microcontroller. For more details refer to dsPIC overview document \cite{alex}.\\
+Please refer to the software section of the report to have more details about the peripheral’s settings used for our robot.
 
 \subsection{Digital I/O}
 
-The general purpose I/O (GPIO) pins allow the microcontroller to monitor and control other devices.
-Many pins are shared between several peripherals and the GPIO pins.  An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic.\\
+\textcolor{red}{Please reference Alex's document AGAIN, as above. It adds credibility and a sense that you know what you are talking about. (Which I know you do ;) )}
+
+The general purpose I/O (GPIO) pins allow the microcontroller to monitor and control other devices. Many pins are shared between several peripherals and the GPIO pins. An output multiplexer allows the peripheral to direct its outputs to the pin when the peripheral is enabled. Otherwise, the port is controlled by the I/O logic as shown in the figure \ref{fig:gpio} bellow.\\
+
+\textcolor{red}{Please have the Figure labels under the pics, as in every other section! Copy the code from there}
+
+\begin{figure}[H]
+    \caption{Shared port structure \cite{alex}}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/GPIO.PNG}
+            \label{fig:gpio}
+\end{figure}
+
+\noindent
 All port pins have three Special Function Registers (SFR), registers that control various aspects of the microprocessor's function, directly associated with the operation of the port pin:
 \begin{itemize}
     \item \textbf{TRIS}\\
     The TRI-State Register sets the direction of the pin. The value "1" corresponds to an input pin and "0" to an output pin.\\
     The direction needs to be set before reading or writing the data from the ports. \\
-    Only pins configured as digital can be used as input or output pins. Pins configured as analogue must be used as input pin.
+    Only pins configured as digital can be used as input or output pins. Pins configured as analog must be used as input pin.
     \item \textbf{LAT}\\
     It sets the output value of the pin and returns the logic state of the output latch.
     \item \textbf{PORT}\\
@@ -34,7 +44,11 @@ All port pins have three Special Function Registers (SFR), registers that contro
 \end{itemize}
 To avoid Read-Modify-Write issue, we always read from the port and write to the latch.
 
+\textcolor{red}{Please explain the issue shortly for extra points.}
+
 \subsection{Interrupts}
+
+\textcolor{red}{After the first paragraph, refer the reader to both Alex document and the datasheet of the mcu AND the family reference datasheet please.}
 
 Interrupts are mechanisms that allow the microcontroller to react to external and internal events.\\
 When the microcontroller receives an interrupt request (IRQ), it jumps to the interrupt service routine (ISR), executes it and returns back to the main program. 
@@ -42,19 +56,18 @@ Consequently, interrupts enable a quick reaction and are efficient for asynchron
 
 \noindent
 To be signalled to the CPU by the interrupt controller, the interrupt must be enabled and have a priority higher than the current CPU priority.\\
-The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table. (refer to datasheet table 7-1)
+The natural priority is considered when two interrupts with the same assigned priority would occur simultaneously. This priority is linked to their position in the vector table.(refer to datasheet table 7-1)
 
-\begin{figure}
+\subsection{Timer: timer driven by interrupt}
+
+\begin{figure}[H]
     \caption{Principle of the Timer 1 \cite{alex}}
         \centering
             \includegraphics[width=0.5\textwidth]{figures/software/t1_demo.png}
             \label{fig:t1_demo}
 \end{figure}
 
-\subsection{Timer: timer driven by interrupt}
-
-
-Timers are used to measure the time or generate the accurate time delay using a \textcolor{red}{binary counter} \textcolor{green}{counter} that can be configured to count clock pulses. As seen in figure \ref{fig:t1_demo}, once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
+Timers are used to measure the time or generate the accurate time delay using a binary counter that can be configured to count clock pulses. As seen in figure \ref{fig:t1_demo}, once it reaches the maximum set value, it rolls back to zero setting up an overflow flag and generates the interrupt if enabled. \\
 
 \noindent
 To generate the range of delays, we must set the maximum count value using the following formulas:\\
@@ -62,55 +75,51 @@ We first multiply the cycle period by a prescaler, to deduce the time between tw
 $$tick=prescaler*T_{CY}$$
 Then we derive the maxcount which we store inside our period register (PR):
 $$maxcount=Timer delay/tick$$
-\textcolor{red}{The prescaler is necessary when the maxcount exceeds its maximum value $$(2^{16}-1=65535).$$ }
-\textcolor{blue}{If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or third clock cycle depending on our prescaler. This allows us to wait twice or thrice the amount of time.}
 
+If we did not use a prescaler, the maximum time we could set between T1 interrupts would be $T_{CY}*(2^{16}-1)$. But since we can use a prescaler, we only count for example every second or third clock cycle depending on our prescaler. This allows us to wait twice or thrice the amount of time.
 
-\textcolor{blue}{Depending on our application, we choose a different prescaler:
+Depending on our application, we choose a different prescaler:
 \begin{enumerate}
     \item If we need a high timer resolution, the smallest prescaler value should be chosen. 
     \item If we do not care about the resolution, the highest prescaler value should be chosen. Any error in the time period relative to the period itself would be smaller with a larger period (in our case, a larger prescaler).
 \end{enumerate}
-}
-\textcolor{red}{If many solutions are possible, the smallest prescaler value should be chosen to increase the timer resolution.}
 
+\textcolor{red}{Hello, this is your automated reminder for referencing what you wrote and explained. If you want to avoid repetition and appear even cooler, reference SPECIFIC SUBSECTIONS of Alex document and/or the datasheet.}
 
 \subsection{Pulse Width Modulation} 
 
-\textcolor{red}{Could you please add references?}
-\textcolor{red}{Could you please remove the colons for each subsection's title?}
+\noindent
+Pulse width modulation (PWM) is the method of choice to control the amount of energy that is supplied to an actuator, light source or any other device when employing digital control systems.\\
+The duty cycle is defined as the proportion of time the PWM output is switched on with respect to the PWM period.
+The PWM period ($T_{PWM}$) is fixed and represents the cycle time of the signal.
 
+\noindent
+As seen in figure \ref{fig:pwm_demo} we can vary the duty cycle by changing the time that the PWM output is switched on ($T_{DC}$).
 
-\begin{figure}
+$$DC = \frac{T_{DC}}{T_{PWM}}$$
+
+\begin{figure}[H]
     \caption{Principle of PWM \cite{alex}}
         \centering
             \includegraphics[width=0.5\textwidth]{figures/software/pwm_demo.png}
             \label{fig:pwm_demo}
 \end{figure}
 
-Pulse width modulation (PWM) is the method of choice to control the amount of energy that is supplied to an actuator, light source or any other device when employing digital control systems.\\
-The duty cycle is defined as the proportion of time the PWM output is switched on with respect to the PWM period.
-The PWM period ($T_{PWM}$) is fixed and represents the cycle time of the signal.
-
-As seen in figure \ref{fig:pwm_demo} we can vary the duty cycle by changing the time that the PWM output is switched on ($T_{DC}$).
-
-$$DC = \frac{T_{DC}}{T_{PWM}}$$
-
-\begin{figure}
+\begin{figure}[H]
     \caption{Resolution of a PWM duty cycle \cite{alex}}
         \centering
             \includegraphics[width=0.5\textwidth]{figures/software/pwm_choice.png}
-            \label{fig:pwm_demo}
+            \label{fig:pwm_choice}
 \end{figure}
 
 The PWM frequency is application dependent. However, we should keep in mind that high frequency requires very fast switches and may cause electromagnetic interference problems. Whereas, low frequency causes the load to follow the pulse.\\
 For driving a motor, a typical value would range between 5kHz and 50kHz but for an accurate value we should consider the mechanical time constant and the electrical time constant of the motor.
 
 
-The main elements of a PWM generator are a timer/counter and a comparator \textcolor{red}{which} \textcolor{blue}{whose} outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value ($PDC$). When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value ($PTPER$) and then resets, completing one PWM period (see figure \ref{fig:pwm_choice}.
+The main elements of a PWM generator are a timer/counter and a comparator whose outputs drive the PWM signal. At the beginning of the cycle, the PWM signal is switched on. The comparator compares the timer/counter value with the duty cycle value ($PDC$). When this value is reached, the PWM output is switched off. The counter continues to increase until it reaches the PWM period value ($PTPER$) and then resets, completing one PWM period (see figure \ref{fig:pwm_choice}.
 
 PWM period:
-$$T_{PWM}=\frac{T_{CY}*(PTPER+1)}{PTMR Prescale Value}$$
+$$T_{PWM}=T_{CY}*(PTPER+1)*PTMR Prescale Value$$
 
 DC: 
 $$DC=100* \frac{PDC}{(2*(PTPER+1)}$$
@@ -119,52 +128,89 @@ $$DC=100* \frac{PDC}{(2*(PTPER+1)}$$
 \subsection{Universal Asynchronous Receiver Transmitter:}
 
 UART is the most commonly used protocol for asynchronous serial communication in microcontrollers due to its simplicity, easy implementation, and minimum hardware requirements.\\
-When no character is transmitted, the bus is typically logically high and transmission begins with the start bit which is logically low. After this, typically 8 data bits are transmitted and the transmission finishes with a logical high as a stop bit.\\
+
+\textcolor{red}{Reminder: Please fix the labels of the figures.}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/software/UART_com.PNG}
+    \caption{UART transmission protocol\cite{alex}}
+    \label{fig:uartProtocol}
+\end{figure}
+
+As shown in figure \ref{fig:uartProtocol}, when no character is transmitted, the bus is typically logically high and transmission begins with the start bit which is logically low. After this, typically 8 data bits are transmitted and the transmission finishes with a logical high as a stop bit.\\
+
+\noindent
 To receive data from UART, we utilize a UART receive interrupt that will trigger every time a data packet is received in the UART receive registers (U1RXREG). This data is transferred to another variable and the receive buffer is cleared if full.
 
+
+\noindent
 The main criterion for UART communication is its baud rate, i.e. transmission speed. It is measured in bits per second and usually takes the following values: 9600bits/s, 28.8kbits/s, 57.6kbits/s.
 This value is stored in U1/2BRG register and is derived from the clock cycle.
 $$BaudRate = \frac{f_{CY}}{UnBRG+1}$$
 For successful communication, both the device’s receiver and transmitter should be set to same baud rate.
 
+\textcolor{red}{Hello, this is your automated reminder for referencing what you wrote and explained. If you want to avoid repetition and appear even cooler, reference SPECIFIC SUBSECTIONS of Alex document and/or the datasheet.}
 
-\subsection{Quadrature Encoder Interface:}
+\subsection{Quadrature Encoder Interface}
 
 Quadrature encoders (also known as incremental encoders or optical encoders) are used for position and speed detection of rotating motion systems. They enable closed loop control of many motor control applications.
-
+\vskip 0.2in
+\noindent
 The Quadrature Encoder module provides a simple interface to incremental optical encoders, which allows to obtain signed velocity using 2 photo-transistors that are offset by 1 quarter of the cycle period. It accepts the A, B and index connections from the incremental encoder and stores the accumulated count pulses in a dedicated 16-bit time base.
 
-\begin{figure}
+\begin{figure}[H]
     \caption{Principle of a Quadrature Encoder \cite{alex}}
-        \centering
-            \includegraphics[width=0.5\textwidth]{figures/software/qei_demo.png}
-            \label{fig:qei_demo}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/software/qei_demo.png}
+    \label{fig:qei_demo}
 \end{figure}
-
+\vskip 0.2in
+\noindent
 Whenever the wheel is rotated, light emitted from the LED will hit the photo-transistor if there is a hole between them. Light sensor and emitter are separated by the wheel seen in figure \ref{fig:qei_demo}. The time passed between the phototransistor turning on after registering light and turning off again after the light disappears behind the wheel, will determine the velocity of our motor.
-
+\vskip 0.2in
+\noindent
 The two channels, Phase A (QEA) and Phase B (QEB) enable to know the direction of the motor. If Phase A leads Phase B, then the direction of the motor is forward (counter is incremented). If Phase A lags Phase B then the direction of the motor is reverse (counter is decremented). A third channel, termed Index pulse, occurs once per revolution and is used as a reference to establish an absolute position.\\
 However, the high resolution of the encoders leads rapidly to an overflow or underflow of the 16 bits counter register. To keep track of the total counts, a global variable should be updated accordingly at each interrupt call.
 
-\subsection{Analogue to Digital Converter:}
+\subsection{analog to Digital Converter}
 
-Since we employ a digital microcontroller, it is necessary to convert the analogue values from sensors to digital values. This is performed by the analogue to digital converters (ADC).\\
-The ADC module converts a continuous time and value signal to a discrete time and value signal by sampling at a fixed sample period and converting the analogue values into an integer values stored in a k-bits binary representation.
+Since we employ a digital microcontroller, it is necessary to convert the analog values from sensors to digital values. This is performed by the analog to digital converters (ADC).\\
+The ADC module converts a continuous time and value signal to a discrete time and value signal by sampling at a fixed sample period and converting the analog values into an integer values stored in a k-bits binary representation.
 
-During conversion the analogue signal should be "held" constant throughout the process. This is usually done with a sample and hold circuit. It takes a "snapshot" of the input signal and stores it on the plates of a capacitor to have a steady signal. The acquisition time should be long enough for the capacitor to charge enough to match, as closely as possible, the incoming voltage.\\
-After the analogue input is captured by the sample-and-hold (S/H) amplifier, it is compared with the output of a digital-to-analogue converter to perform the conversion. 
-
+\vskip 0.2in
+\noindent
+During conversion the analog signal should be "held" constant throughout the process. This is usually done with a sample and hold circuit. It takes a "snapshot" of the input signal and stores it on the plates of a capacitor to have a steady signal. The acquisition time should be long enough for the capacitor to charge enough to match, as closely as possible, the incoming voltage.
+\vskip 0.2in
+\noindent
+After the analog input is captured by the sample-and-hold (S/H) amplifier, it is compared with the output of a digital-to-analog converter to perform the conversion. refer to figure \ref{fig:sac} 
+\vskip 0.2in
+\noindent
 DSPs have integrated ADCs, depending on the dsPIC type, they are either 10 bit or 12 bit ADCs.  The most commonly used ADCs are based on the successive approximation principle which uses a binary search to find each bit of the output voltage.\\
+
+\begin{figure}[H]
+    \caption{Successive Approximation Conversion principle\cite{alex}}
+        \centering
+            \includegraphics[width=0.5\textwidth]{figures/software/SAC.PNG}
+            \label{fig:sac}
+\end{figure}
+\noindent
 ADC raises an interrupt when all the configured channels have been sampled. The results are available on the 16 16-bit ADC buffers (ADCBUF0, …, ADCUFF).
 
 
-\subsection{Direct Memory Access:}
+\subsection{Direct Memory Access}
 
 Direct memory access (DMA) is the ability for an I/O device to transfer data directly to or from memory.  It can be seen as a co-processor that is used to quickly transfer data between main memory and peripherals without the intervention of the CPU. Hence, freeing up the CPU for more valuable tasks while the DMA controller takes care of the data movement and pointer incrementing.
 
+\textcolor{red}{"some families" is a bit too general, maybe bring up an example as well?}
+
+\vskip 0.2in
+\noindent
 Some dsPIC families have an integrated DMA controller optimized for high-performance, real-time, embedded applications. DMA uses a second bus master within the system and therefore, can continue to transfer data when the CPU has entered Idle mode.\\
 When data is ready to be transferred from the peripheral, a DMA request is issued by the peripheral. When the block transfer is complete, the DMA channel issues an interrupt (if enabled).
-
+\vskip 0.2in
+\noindent
 The DMA channel supports different operating modes:
 \begin{itemize}
     \item Post-Increment or static DPSRAM addressing.
@@ -173,7 +219,9 @@ The DMA channel supports different operating modes:
     \item Ping-Pong mode (Auto-switch between two start addresses offsets (DMAxSTA or DMAxSTB) after each transfer complete)
 \end{itemize}
 
+\textcolor{red}{Hahaha, nice click reference bellow, but could you also add it as a proper reference in the bib file please? I want to see it in the reference list and a number here!}
 
+Please refer to the \href{http://ww1.microchip.com/downloads/en/devicedoc/70215c.pdf}{DMA section of the Family reference manual }for more details about these operating modes.
 
 
 \subsection{Fusion Workshop}
@@ -182,6 +230,8 @@ For learning Autodesk Fusion 360, a one-day workshop was held. In this workshop,
 One very helpful thing that we learned in the workshop is to import 3rd party parts. The 3D model of the motor that we are using is imported, such that a fitting motor mount can be designed very precisely and accurately according to the dimension of the motor. (Fig. \ref{fig:fusion_import})
 
 We practiced using many “modeling” features, as well as “assembly” features such as joint, and changing “physical material” and “appearance” to create a box with a moving joint that can be opened and has varying appearances. Later the user collaboration feature was demonstrated using these boxes by assembling them on a table. (Fig. \ref{fig:fusion_collab_table})
+
+\textcolor{red}{Please copy code for centering pictures.}
 
 \begin{figure}[htb]
     \begin{minipage}[b]{0.4\textwidth}
