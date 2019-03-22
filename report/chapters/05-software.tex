@@ -281,7 +281,7 @@ For the following sections, any velocity measured, is actually $v_{cp10}$.
 As seen in figure \ref{fig:DC_V} the increase in the velocity decreases down for higher duty cycle values. The maximum measured velocity is 67 cp10. When we want to drive the motor at a certain speed, we cannot expect the corresponding DC percentage to be the same at all times. Errors might occur such that we need slightly different DC values every time.
 Using the output of the PID controller, we shall regulate the duty cycle to maintain a certain velocity.
 
-\subsubsection{PID Gains}
+\subsubsection{Effect of PID Gains}
 In this section different gain values for the PID controller are tested out to figure out the most suitable ones for our motors.
 \subsubsection*{P term}
 \begin{wrapfigure}{r}{0.45\textwidth}
@@ -409,7 +409,16 @@ We have measured the effect of different $K_i$ values on our velocity and plotte
 
 Introducing the $K_i$ helps us reach the value, but a further increase of the $K_i$ gain causes stronger oscillation around the targeted value. When the gain $K_i$ is set to 5, the oscillation in speed continues even after one second. For lower gain values the velocity converges faster to our desired velocity. We keep this in mind when we choose our final gains.
 
+\subsubsection*{Clamping I term and PID output}
+
+The integral term can grow very largely through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it’s necessary to limit this term in our implementation.\\
+Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check. 
+
 \subsubsection*{D term}
+The D term
+$K_d \frac{de(t)}{dt}$
+is the slope of our error curve. To observe the effect of the D term, we assign our $K_p$ and $K_i$ gains the fixed values of 1.
+
 \begin{figure}[H]
     \centering
 \begin{tikzpicture}
@@ -433,6 +442,10 @@ Introducing the $K_i$ helps us reach the value, but a further increase of the $K
     \caption{PID-Controller (P=1, I=1): Targeting velocity 47 with different D values} \label{fig:D_demo}
 \end{figure}
 
+In figure \ref{fig:D_demo} the $K_d$ value has an effect on the oscillation of our velocity. A higher $K_p$ dampens the oscillation around the setpoint. The period of the oscillations is also higher.\\\\
+Because we are already reach the targeted velocity with a PI-controller - as seen in the \textit{I term} section - we do not investigate the effect of the D term further. It is sufficient for our project to use a PI-controller.\\\\
+
+\subsubsection{Choice of PID Gains}
 
 \begin{figure}[H]
     \centering
@@ -483,19 +496,6 @@ Introducing the $K_i$ helps us reach the value, but a further increase of the $K
 \end{tikzpicture}
     \caption{Final PI-Controller (P=8): Targeting velocity 47 with different I values} \label{fig:I_final}
 \end{figure}
-
-<<<<<<< HEAD
-=======
-\subsubsection*{I term}
-
-It accounts for past values of the error and integrates them over time to produce the I term. \\
-Introducing the I term, solves the previous problem with a historic cumulative value of the error.
-
->>>>>>> fdbc692aee3c651dc77c4ca63bdc11671511a83d
-\subsubsection*{Clamping I term and PID output}
-
-The integral term can grow very largely through time, especially when the set point cannot be reached and may lead to a saturating the output or inducing a lag of the response in the step down, i.e. when decreasing the setpoint. For this reason, it’s necessary to limit this term.\\
-Since the controller registers have a limit, it is also necessary to limit the output of the controller for sanity check. 
 
 \subsubsection*{Cascade controller: position and velocity}
 
