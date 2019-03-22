@@ -219,7 +219,7 @@ In the following section we describe the motivation, analysis and tests performe
 \subsubsection{Motor speed control}
 To control the motor velocity, we use a drive function that takes as input the DC ratio and sets the PWM PDC register accordingly. \\
 \noindent
-This leads the motor to run at a constant speed: $$V=DC*maxspeed$$ with maxspeed=68 (68 corresponds to the number of counts per interrupt call, i.e. 10ms). \\
+This leads the motor to run at a constant speed: $$V=DC*maxspeed$$ with $maxspeed=67$ ($67$ corresponds to the number of counts per interrupt call, i.e. 10ms). \\
 \vskip 0.2in
 \noindent
 The function also considers the sign of the input to set the driving direction (a position DC value implies going forward and vice versa)\\
@@ -238,11 +238,11 @@ The robot velocity is controlled by varying the PWM duty cycle but it is not gua
 \vskip 0.1in
 \noindent
 A proportional-integral-derivative controller (PID) is a control loop feedback mechanism widely used in industrial control systems and a variety of other applications requiring continuously modulated control. A PID controller continuously calculates an error value $e(t)$ as the difference between a desired \textbf{setpoint ($SP$)} and a measured \textbf{process variable ($PV$)} and applies a correction based on proportional, integral, and derivative terms. The output $u(t)$ depends on our use case. This becomes more clear when we look at our motors.\\
-The overall control function can be expressed mathematically as : 
+The overall control function can be expressed mathematically as: 
 $$u(t)= K_{p}*e(t) + K_{i}*\int_t e(t) dt + K_{d}*\frac{d e(t)}{dt} $$
 $$e(t) = SP - PV$$
  
-where $K_p$, $K_i$, and $K_d$, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively, also known as gains.
+where $K_p$, $K_i$, and $K_d$, all non-negative, denote the coefficients for the proportional, integral, and derivative terms respectively, also known as gains \cite{aastrom2002control}.
 
 \subsubsection*{PID for velocity control}
 
@@ -262,7 +262,7 @@ where $K_p$, $K_i$, and $K_d$, all non-negative, denote the coefficients for the
 
 A PID controller controls a variable by manipulating the responsible parameters. In our case, we want to control the velocity of the motor by varying the duty cycle. 
 
-We have two definitions of velocity: counts per second ($v_{cps}$ and angular velocity ($v_\omega$).
+We have two definitions of velocity taken from \cite{alex}: counts per second ($v_{cps}$ and angular velocity ($v_\omega$).
 $$v_{cps}(n) = \frac{POSCNT(n) - POSCNT(n-1)}{T_{update}}$$
 $$v_{\omega}(n) = v_{cps}(n) * \frac{\omega_{base}}{k_{E}*Gr}$$
 
@@ -556,7 +556,7 @@ But the controller also performs almost as well on all higher setpoints. For the
 If we had used the D term, we might have been able to use a larger I term. Since a high I term causes oscillation and the D term dampens oscillation, the two terms could have balanced each other out. This could yield a better overall result on all setpoints, but requires more tests. Adding one variable complicates the whole problem as it adds another dimension to test in.
 
 
-\subsubsection*{Cascade controller: position and velocity}
+\subsubsection{Cascade controller: position and velocity}
 
 We use two controllers to adjust both the position and speed of each wheel. 
 \vskip 0.1in
