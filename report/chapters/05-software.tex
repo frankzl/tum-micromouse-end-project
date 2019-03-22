@@ -1,14 +1,12 @@
 \section{Software design} \label{chap:software}
 In this section, we first describe the settings used to configure the different modules of the microcontroller and then introduce the controller design.
 
-\textcolor{red}{Is this written by Meryem? I recognise from the long complicated sentences :p. Maybe some . could be added here and there and connection words be used, haha. Just kidding, it's fine.}
-
 \vskip 0.2in
 \noindent
 \textbf{MCU specification:}
 \vskip 0.1in
 \noindent
-As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has two quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed below:
+As mentioned in the Hardware section, we choose to build the robot using the dsPIC33FJ64MC804 microcontroller since it has 2 quadrature encoder interface modules and will enable to control both wheels of the motor and provides other features listed below:
 \begin{itemize}
     \item 44 pins
     \item 3.3V device
@@ -22,8 +20,7 @@ As mentioned in the Hardware section, we choose to build the robot using the dsP
     \item 2-Quadrature Encoder Interface modules
     \item Peripherals with supported DMA functionality
 \end{itemize}
-For more details refer to datasheet (pages 3-5).
-\textcolor{red}{Which datasheet? Proper reference.}
+For more details refer to MCU datasheet \cite{mcu}(pages 3-5).
 
 \subsection{Primary configuration}
 
@@ -33,8 +30,6 @@ Configuration bits define the microcontroller’s behaviour and enable to set it
 These settings are required before the program starts to run and cannot be changed during the run-time.\\
 \vskip 0.1in
 \noindent
-
-\textcolor{red}{What are macros? Also, why noindent? Everything was flowing so so smoothly...}
 
 We invoke pre-processors macros to set the device configuration bits in the main header file.\\
 In the main c file, we configure PLL to set the internal clock frequency, call all initialization functions for each of the modules and finally run an infinite background loop so that the system never stops.
@@ -70,8 +65,7 @@ maybe a diagram of which peripheral maps to which pin
 \vskip 0.1in
 \noindent
 Before performing pin remapping, we unlock the oscillator, configure the pin mapping, lock the oscillator (enable it again) and wait for a short delay for the remapping to stabilize.\\
-The setup differs between input and output pins. For input pin mapping, we need to configure the pin number to the peripheral register. For output pin mapping, we choose the pin register and then map it to the corresponding device code (table 11-2 in datasheet)
-\textcolor{red}{which datasheet? There are a couple in literature.}
+The setup differs between input and output pins. For input pin mapping, we need to configure the pin number to the peripheral register. For output pin mapping, we choose the pin register and then map it to the corresponding device code (table 11-2 in mcu datasheet \cite{mcu})
 
 \subsection{Peripherals}
 \subsubsection*{Timer 1}
@@ -161,8 +155,6 @@ We tried to find a trade-off between to ensure optimal accuracy.
 
 \subsubsection*{Direct Memory Access (DMA)}
 
-\textcolor{red}{Nice, more than sufficient, long explanation. Bravo.}
-
 We define a DMA data buffer adcData, a global variable where all conversion results are stored in the same order in which the conversions are performed by the ADC module.\\
 We store one sample per channel and generate an interrupt after the three channel values have been transferred. The interrupt service routine stops the sampling that is again started at each timer interrupt call.
 \vskip 0.1in
@@ -220,11 +212,25 @@ The 3-wire UART as seen in figure \ref{fig:wire_3} shows our configuration for a
 It is important to configure the baud rate of the HC-05 module in advance, such that it matches our microcontroller's baud rate. Also, in order to read out values, the baud rate on the PC we are reading from, must also match (in this case 57.6 kbit/s)
 
 
-\subsection{Controller Design and Approach}
+\subsection{PID Controller Design}
 
-\textcolor{red}{
-Here goes the whole logic of the mouse movement control (how should it behave when is faced with the wall or on contrary - with the gap in the labyrinth). PID controller design and the logic behind it.
-}
+In the following section we describe the motivation, analysis and tests performed to implement a PID controller and describe how it enables the robot's speed and position control.
+
+\subsubsection*{Motor speed control}
+To control the motor velocity, we use a drive function that takes as input the DC ratio and sets the PWM PDC register accordingly. \\
+\noindent
+This leads the motor to run at a constant speed: $$V=DC*maxspeed$$ with maxspeed=68 (68 corresponds to the number of counts per interrupt call, i.e. 10ms). \\
+\vskip 0.2in
+\noindent
+The function also considers the sign of the input to set the driving direction (a position DC value implies going forward and vice versa)\\
+\vskip 0.2in
+\noindent
+\textit{remarks}
+\begin{itemize}
+    \item We first make a sanity check to ensure that the input value falls in the range $[-100, 100]$
+    \item Since the motor only supports up to 6V input voltage, we multiply the PDC value with the factor 6/9 since we use a battery that outputs 9V.
+\end{itemize}
+
 
 \subsubsection{Proportional-Integral-Derivative Controller (PID)}
 \subsubsection*{Motivation}
@@ -316,7 +322,7 @@ $$\iff K_p = \frac{100}{134} \approx 0.75$$\\
 Unfortunately, this does not help us reach our desired velocities. In figure \ref{fig:P1} we have already tested a gain value of 1 ($>0.75$) and have not reached the target.\\\\
 In order to choose a suitable value for $K_p$, we first figure out the effect of larger $K_p$ values on the final velocity.
 \\
-\begin{figure}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -345,7 +351,7 @@ In order to choose a suitable value for $K_p$, we first figure out the effect of
 Graph test1 : Test of P controller on the motor. the target value is not reached
 
 
-\begin{figure}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -369,7 +375,7 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
     \caption{PI-Controller (P=0): Targeting velocity 47 with different I values} \label{fig:I_demo}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -393,7 +399,7 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -419,7 +425,7 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
     \caption{Final P-Controller: Targeting velocity 47 with different P values} \label{fig:P_final}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
 \begin{tikzpicture}
     \begin{axis}[
@@ -447,10 +453,6 @@ Graph test1 : Test of P controller on the motor. the target value is not reached
 
 It accounts for past values of the error and integrates them over time to produce the I term. \\
 Introducing the I term, solves the previous problem with a historic cumulative value of the error.
-\vskip 0.1in
-\noindent
-\textcolor{red}{add graph here}
-Graph test 2: Test of PI controller on the motor. The target value is reached
 
 \subsubsection*{Clamping I term and PID output}
 
